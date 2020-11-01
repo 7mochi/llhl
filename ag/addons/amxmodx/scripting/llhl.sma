@@ -89,7 +89,6 @@ new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
 static Float:gActualServerFPS;
 
-// Sounds to check if sv_ag_check_soundfiles is 1
 new const gConsistencySoundFiles[][] = {
     "ambience/pulsemachine.wav",
     "common/npc_step1.wav", "common/npc_step2.wav", "common/npc_step3.wav", "common/npc_step4.wav",
