@@ -30,16 +30,6 @@
     - sv_ag_destroyable_satchel_hp "1"
     - sv_ag_block_namechange_inmatch "1"
 
-    # To do: (Plugin)
-    - Block also model changes when a match is in progress
-    - Block low values of the cvar default_fov, to avoid zoom alias
-    - Take screenshots at death (They'll be taken at random times)
-    - Redirect spectators to HLTV (Optional, through a vote or a cvar)
-
-    # To do: (Repository) 
-    - Add Github CI
-    - Add Readme
-
     # Thanks to:
     - Th3-822: FPS Limiter
     - Alka: Server FPS
