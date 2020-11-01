@@ -1,0 +1,25 @@
+[en]
+FPSL_PROTECTOR_KICK = CVAR Blocker/Protector Detected
+FPSL_WARNING_MSG = Your 'fps_max' can't be higher than %d
+FPSL_KICK = Your 'fps_max' value is higher than %d
+FPSL_KICK_MSG = %s has been kicked for exceeding the 'fps_max' limit
+FILECONSISTENCY_MSG = %s (%s) has been kicked for having a different file than the one on the server: sound/%s
+FILECONSISTENCY_KICK = You have a different file than the one on the server: %s
+DEMO_RECORDING = Recording %s.dem
+UNSTUCK_ON_COOLDOWN = You have to wait %.1f seconds to use the command again
+UNSTUCK_FREESPOT_NOTFOUND = No free spot was found where you can relocate
+UNSTUCK_PLAYER_DEAD = You can't use this command while you're dead
+BLOCK_NAMECHANGE_MSG = You can't change your name while a match is in progress.
+
+[es]
+FPSL_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
+FPSL_WARNING_MSG = El valor de 'fps_max' no puede ser mayor que %d
+FPSL_KICK = El valor de 'fps_max' que estas usando es mayor que %d
+FPSL_KICK_MSG = %s ha sido kickeado por superar el limite de 'fps_max'
+FILECONSISTENCY_MSG = %s (%s) ha sido kickeado por tener un archivo distinto al del servidor: sound/%s
+FILECONSISTENCY_KICK = Tienes un archivo distinto al del servidor: %s
+DEMO_RECORDING = Grabando %s.dem
+UNSTUCK_ON_COOLDOWN = Debes esperar %.1f segundos para poder usar nuevamente el comando.
+UNSTUCK_FREESPOT_NOTFOUND = No se encontro ningun lugar libre para reubicarte.
+UNSTUCK_PLAYER_DEAD = No puedes usar este comando mientras estas muerto
+BLOCK_NAMECHANGE_MSG = No puedes cambiar tu nombre mientras hay una partida en curso.
