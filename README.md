@@ -8,7 +8,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - /unstuck command (10 seconds cooldown)
 - Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6
 - Be able to destroy other players satchels (Optional, disabled by default)
-- Block nickname changes when a game is in progress (Optional, enabled by default)
+- Block nickname and model changes when a game is in progress (Optional, both enabled by default)
 - New intermission mode
 
 ## New cvars
@@ -23,7 +23,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - sv_ag_block_namechange_inmatch "1"
 
 ## Thanks to
-- Th3-822: FPS Limiter
+- Th3-822: FPS Limiter and blocking name and model changes
 - Alka: Server FPS
 - Arkshine: Unstuck command
 - naz: Useful codes for hook messages from AG engine
