@@ -10,6 +10,7 @@ UNSTUCK_ON_COOLDOWN = You have to wait %.1f seconds to use the command again
 UNSTUCK_FREESPOT_NOTFOUND = No free spot was found where you can relocate
 UNSTUCK_PLAYER_DEAD = You can't use this command while you're dead
 BLOCK_NAMECHANGE_MSG = You can't change your name while a match is in progress.
+BLOCK_MODELCHANGE_MSG = You can't change your model while a match is in progress.
 
 [es]
 FPSL_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -23,3 +24,4 @@ UNSTUCK_ON_COOLDOWN = Debes esperar %.1f segundos para poder usar nuevamente el 
 UNSTUCK_FREESPOT_NOTFOUND = No se encontro ningun lugar libre para reubicarte.
 UNSTUCK_PLAYER_DEAD = No puedes usar este comando mientras estas muerto
 BLOCK_NAMECHANGE_MSG = No puedes cambiar tu nombre mientras hay una partida en curso.
+BLOCK_MODELCHANGE_MSG = No puedes cambiarte de model mientras hay una partida en curso.

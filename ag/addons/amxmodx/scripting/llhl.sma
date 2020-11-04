@@ -29,9 +29,10 @@
     - sv_ag_destroyable_satchel "0"
     - sv_ag_destroyable_satchel_hp "1"
     - sv_ag_block_namechange_inmatch "1"
+    - sv_ag_block_modelchange_inmatch "1"
 
     # Thanks to:
-    - Th3-822: FPS Limiter
+    - Th3-822: FPS Limiter and blocking name and model changes
     - Alka: Server FPS
     - Arkshine: Unstuck command
     - naz: Useful codes for hook messages from AG engine
@@ -72,6 +73,7 @@ enum (+=103) {
 new gGameState;
 new bool:gIsAlive[MAX_PLAYERS + 1];
 new gNumDetections[MAX_PLAYERS + 1];
+new gOldPlayerModel[MAX_PLAYERS + 1][32];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
@@ -84,6 +86,7 @@ new gCvarUnstuckMaxSearchAttempts;
 new gCvarDestroyableSatchel;
 new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
+new gCvarBlockModelChangeInMatch;
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -139,6 +142,8 @@ public plugin_init() {
     gCvarDestroyableSatchelHP = create_cvar("sv_ag_destroyable_satchel_hp", "1");
     // Block name change (Only spectators) log in match
     gCvarBlockNameChangeInMatch = create_cvar("sv_ag_block_namechange_inmatch", "1");
+    // Block model change (Only spectators) log in match
+    gCvarBlockModelChangeInMatch = create_cvar("sv_ag_block_modelchange_inmatch", "1");
 
     gGameState = GAME_IDLE;
 
@@ -160,7 +165,7 @@ public plugin_init() {
     register_message(SVC_INTERMISSION, "FwMsgIntermission");
 
     register_forward(FM_SetModel, "FwSetModel");
-    register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChanged");
+    register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChangedPre", 0);
     register_forward(FM_StartFrame, "FwStartFrame");
     
     for (new i; i < sizeof gConsistencySoundFiles; i++) {
@@ -182,6 +187,7 @@ public inconsistent_file(id, const filename[], reason[64]) {
 public client_connect(id) {
     gIsAlive[id] = false;
     gNumDetections[id] = 0;
+    gOldPlayerModel[id][0] = 0;
 }
 
 public client_disconnected(id) {
@@ -374,17 +380,31 @@ public FwSetModel(entid, model[]) {
     return FMRES_IGNORED;
 }
 
-public FwClientUserInfoChanged(id) {
-    static const name[] = "name";
-    static oldName[32], newName[32], cvar;
-    pev(id, pev_netname, oldName, charsmax(oldName));
-    if (oldName[0]) {
-        get_user_info(id, name, newName, charsmax(newName));
-        if (get_pcvar_num(gCvarBlockNameChangeInMatch) && !equal(oldName, newName) && (cvar || (cvar = get_cvar_pointer("sv_ag_match_running"))) && get_pcvar_num(cvar) && gGameState == GAME_RUNNING && hl_get_user_spectator(id)) {
-            set_user_info(id, name, oldName);
-            client_print(id, print_chat, "%L", LANG_PLAYER, "BLOCK_NAMECHANGE_MSG");
+public FwClientUserInfoChangedPre(id, info) {
+    static cvarRunning;
+    if ((cvarRunning || (cvarRunning = get_cvar_pointer("sv_ag_match_running"))) && get_pcvar_num(cvarRunning) && gGameState == GAME_RUNNING && is_user_connected(id) && hl_get_user_spectator(id)) {
+        new changed, oldValue[32], newValue[32];
+        if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue)) {
+            engfunc(EngFunc_SetClientKeyValue, id, info, "name", oldValue);
+            client_print(id, print_chat, "%L", id, "BLOCK_NAMECHANGE_MSG");
+            changed = true;
+        }
+
+        if (get_pcvar_num(gCvarBlockModelChangeInMatch) && copy(oldValue, charsmax(oldValue), gOldPlayerModel[id]) && engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue))) {
+            if (!equal(oldValue, newValue)) {
+                engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
+                client_print(id, print_chat, "%L", id, "BLOCK_MODELCHANGE_MSG");
+                changed = true;
+            }
+        } else {
+            engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+        }
+
+        if (changed){
             return FMRES_HANDLED;
         }
+    } else {
+        engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
     }
     return FMRES_IGNORED;
 }
