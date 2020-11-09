@@ -360,7 +360,7 @@ public FpsCheckReturn(id, const cvar[], const value[]) {
             static name[MAX_NAME_LENGTH];
             get_user_name(id, name, charsmax(name));
             server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_KICK", get_pcvar_num(gCvarMaxFps));
-            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarFpsMax));
+            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
             client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
         }
     }
