@@ -295,15 +295,15 @@ public CmdUnstuck(id) {
     new Float:elapsedTime = get_gametime() - gUnstuckLastUsed[id];
 
     if (elapsedTime < cooldownTime) {
-        client_print(id, print_chat, "%L", id, "UNSTUCK_ON_COOLDOWN", cooldownTime - elapsedTime);
+        client_print(id, print_chat, "%l", "UNSTUCK_ON_COOLDOWN", cooldownTime - elapsedTime);
         return PLUGIN_HANDLED;
     }
     gUnstuckLastUsed[id] = get_gametime();
     new value;
     if ((value = UnStuckPlayer(id)) != 1) {
         switch (value) {
-            case 0: client_print(id, print_chat, "%L", LANG_PLAYER, "UNSTUCK_FREESPOT_NOTFOUND");
-            case -1: client_print(id, print_chat, "%L", LANG_PLAYER, "UNSTUCK_PLAYER_DEAD");
+            case 0: client_print(id, print_chat, "%l", "UNSTUCK_FREESPOT_NOTFOUND");
+            case -1: client_print(id, print_chat, "%l", "UNSTUCK_PLAYER_DEAD");
         }
     }
     return PLUGIN_CONTINUE;
@@ -388,14 +388,14 @@ public FwClientUserInfoChangedPre(id, info) {
         new changed, oldValue[32], newValue[32];
         if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue)) {
             engfunc(EngFunc_SetClientKeyValue, id, info, "name", oldValue);
-            client_print(id, print_chat, "%L", id, "BLOCK_NAMECHANGE_MSG");
+            client_print(id, print_chat, "%l", "BLOCK_NAMECHANGE_MSG");
             changed = true;
         }
 
         if (get_pcvar_num(gCvarBlockModelChangeInMatch) && copy(oldValue, charsmax(oldValue), gOldPlayerModel[id]) && engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue))) {
             if (!equal(oldValue, newValue)) {
                 engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
-                client_print(id, print_chat, "%L", id, "BLOCK_MODELCHANGE_MSG");
+                client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
                 changed = true;
             }
         } else {
