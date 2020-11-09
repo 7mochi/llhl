@@ -28,7 +28,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 ## Requirements
 - Last HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
 - Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds)
-- [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer.
+- [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds)
 
 ## Download
 - At the moment because the plugin is in a development phase I haven't uploaded any releases, but you can try development builds, you can download them from [Github Actions](https://github.com/FlyingCat-X/llhl/actions). Click on any of the commits you want to try and download the corresponding artifact. (Windows or linux). The artifacts come with everything you need to run LLHL (Plugin, Gamemode .cfg file, Sounds to verify, amxmodx, metamod, etc).
