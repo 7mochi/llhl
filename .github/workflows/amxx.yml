@@ -1,0 +1,139 @@
+name: LLHL - Full Package Release (Development)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download latest amxmodx 1.9 (Linux)
+      run: |
+        wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx.tar.gz
+        tar -xzf amxx.tar.gz
+    - name: Download latest amxmodx 1.9 (Windows)
+      run: |
+        wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
+        mkdir amxx-windows
+        unzip amxx-windows.zip -d amxx-windows
+    - name: Download Metamod v1.21p39 (Solokiller)
+      run: |
+        wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast-Linux.zip" -O metamod.zip
+        wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast.zip" -O metamod-win.zip
+        unzip metamod.zip
+        unzip metamod-win.zip -d metamod
+    - name: Give amxxpc the required permissions
+      run: chmod +x addons/amxmodx/scripting/amxxpc
+    - name: Compile LLHL plugin
+      run: |
+        # Saving the current location to cd later
+        previousDir=$(pwd)
+
+        # Creating llhl release folder structure (Windows and linux)
+        os=("llhl-dev-linux" "llhl-dev-windows")
+        for i in "${os[@]}"
+        do
+          mkdir $i && cd $i && mkdir ag && cd ag
+          mkdir addons gamemodes sound
+
+          # Returning to the location where we were before
+          cd $previousDir
+        done
+
+        # Copy amxmodx addons folder (Windows and linux)
+        cp -a addons/* llhl-dev-linux/ag/addons
+        cp -a amxx-windows/addons/* llhl-dev-windows/ag/addons
+
+        # In case the repository has an include folder, we copy the dependencies
+        if [ -d ag/addons/amxmodx/scripting/include ]; then
+          echo "Copying non-standard dependencies..."
+          cp -a ag/addons/amxmodx/scripting/include/*.inc addons/amxmodx/scripting/include
+        fi
+
+        # Add missing native is_user_authorized (amxmodx.inc)
+        sed 's/native is_user_hltv(index);/& \nnative is_user_authorized(index);\n/' addons/amxmodx/scripting/include/amxmodx.inc -i
+
+        # Move to the folder where the compiler is located
+        cd addons/amxmodx/scripting
+
+        # Compile all plugins inside scripting folder
+        for file in $previousDir/ag/addons/amxmodx/scripting/*.sma
+        do
+          smafile="`echo $file | sed -e 's/\.sma$/\.amxx/'`"
+          echo -e "\nCompiling $(basename $file)..." 
+          ./amxxpc $file -o$previousDir/llhl-dev-linux/ag/addons/amxmodx/plugins/$(basename "$smafile")
+        done
+
+        # Returning again to the location where we were before
+        cd $previousDir
+
+        # Copy compiled plugins to windows artifact
+        cp -a llhl-dev-linux/ag/addons/amxmodx/plugins/*.amxx llhl-dev-windows/ag/addons/amxmodx/plugins
+
+        # Remove scripting folder
+        rm -r llhl-dev-linux/ag/addons/amxmodx/scripting
+        rm -r llhl-dev-windows/ag/addons/amxmodx/scripting
+
+        for systems in "${os[@]}"
+        do
+          # Copy llhl plugins list and multilanguage files
+          cp ag/addons/amxmodx/data/lang/*.txt $systems/ag/addons/amxmodx/data/lang
+          cp ag/addons/amxmodx/configs/plugins-llhl.ini $systems/ag/addons/amxmodx/configs
+
+          # Copy the rest of the directories and files from llhl repo
+          toCopy=("gamemodes" "sound" "startup_server.cfg")
+          for tc in "${toCopy[@]}"
+          do
+            # Directory
+            if [[ -d ag/$tc ]]; then
+              cp -a ag/$tc/* $systems/ag/$tc
+            # File
+            elif [[ -f ag/$tc ]]; then
+              cp -a ag/$tc $systems/ag
+            fi
+          done
+        done
+
+        # Create metamod folder and copy metamod plugin
+        mkdir llhl-dev-linux/ag/addons/metamod llhl-dev-linux/ag/addons/metamod/dlls
+        mkdir llhl-dev-windows/ag/addons/metamod llhl-dev-windows/ag/addons/metamod/dlls
+        cp metamod/*.so llhl-dev-linux/ag/addons/metamod/dlls
+        cp metamod/*.dll llhl-dev-windows/ag/addons/metamod/dlls
+
+        # Add amxmodx to metamod plugins
+        echo 'linux addons/amxmodx/dlls/amxmodx_mm_i386.so' > llhl-dev-linux/ag/addons/metamod/plugins.ini
+        echo 'win32 addons/amxmodx/dlls/amxmodx_mm.dll' > llhl-dev-windows/ag/addons/metamod/plugins.ini
+
+        liblist='// Valve Game Info file'
+        liblist+='\n// These are key/value pairs.  Certain mods will use different settings.'
+        liblist+='\ngame "Adrenaline Gamer Steam"'
+        liblist+='\nurl_info "http://half-life.pro"'
+        liblist+='\nurl_dl ""'
+        liblist+='\nversion "6.6"'
+        liblist+='\nsize "93961341"'
+        liblist+='\nsvonly "0"'
+        liblist+='\ntype "multiplayer_only"'
+        liblist+='\ncldll "0"'
+        liblist+='\nmpentity "info_player_deathmatch"'
+        liblist+='\ngamedll "addons\metamod\dlls\metamod.dll"'
+        liblist+='\ngamedll_linux "addons/metamod/dlls/metamod.so"'
+        liblist+='\ngamedll_osx "dlls/hl.dylib"'
+        liblist+='\nsecure "1"'
+
+        # Create liblist.gam file
+        echo -e $liblist > llhl-dev-linux/ag/liblist.gam
+        echo -e $liblist > llhl-dev-windows/ag/liblist.gam
+    - name: Upload llhl-dev artifacts for Linux
+      uses: actions/upload-artifact@master
+      with:
+        name: llhl-dev-linux
+        path: llhl-dev-linux
+    - name: Upload llhl-dev artifacts for Windows
+      uses: actions/upload-artifact@master
+      with:
+        name: llhl-dev-windows
+        path: llhl-dev-windows
