@@ -22,6 +22,7 @@
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
     - sv_ag_fpslimit_max_detections "2"
+    - sv_ag_min_default_fov "85"
     - sv_ag_cvar_check_interval "1.5"
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
@@ -66,7 +67,7 @@
 #define GAME_RUNNING    2
 
 enum (+=103) {
-    TASK_FPSLIMITER = 72958,
+    TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE
 };
 
@@ -79,6 +80,7 @@ new gOldPlayerModel[MAX_PLAYERS + 1][32];
 new gCvarAgStartMinPlayers;
 new gCvarMaxFps;
 new gCvarMaxDetections;
+new gCvarMinFov;
 new gCvarCheckInterval;
 new gCvarUnstuckCooldown;
 new gCvarUnstuckStartDistance;
@@ -132,6 +134,9 @@ public plugin_init() {
     // FPS Limiter
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
+    // Mininum Default Fov Allowed
+    gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
+    // CVAR Checker Interval (FPS and Fov)
     gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
     // Unstuck command
     gCvarUnstuckCooldown = create_cvar("sv_ag_unstuck_cooldown", "10.0");
@@ -172,7 +177,7 @@ public plugin_init() {
         force_unmodified(force_exactfile, {0,0,0}, {0,0,0}, gConsistencySoundFiles[i]);
     }
 
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "FpsCheckRun");
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
@@ -338,15 +343,16 @@ UnStuckPlayer(const id) {
     return 0;
 }
 
-public FpsCheckRun() {
+public CvarCheckRun() {
     static players[MAX_PLAYERS], pCount;
     get_players(players, pCount, "ch");
     for (new i = 0; i < pCount; i++) {
         if (!hl_get_user_spectator(players[i])) {
             query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
+            query_client_cvar(players[i], "default_fov", "FovCheckReturn");
         }
     }
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "FpsCheckRun", TASK_FPSLIMITER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
 }
 
 public FpsCheckReturn(id, const cvar[], const value[]) {
@@ -363,6 +369,18 @@ public FpsCheckReturn(id, const cvar[], const value[]) {
             log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
             client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
         }
+    }
+}
+
+public FovCheckReturn(id, const cvar[], const value[]) {
+    if (equali(value, "Bad CVAR request")) {
+        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
+    } else if (equali(cvar, "default_fov") && str_to_num(value) < min(85, get_pcvar_num(gCvarMinFov))) {
+        static name[MAX_NAME_LENGTH];
+        get_user_name(id, name, charsmax(name));
+        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINFOV_KICK", get_pcvar_num(gCvarMinFov));
+        log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
+        client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
     }
 }
 
