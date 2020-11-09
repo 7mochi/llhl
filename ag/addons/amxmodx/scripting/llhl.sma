@@ -276,7 +276,7 @@ public FwMsgVote(id) {
 public FwMsgIntermission(id) {
     gActualServerFPS = gServerFPS;
     client_cmd(0, "stop;wait;wait;+showscores;+showscores");
-    set_task(0.1, "TaskPreIntermission", TASK_SHOWVENGINE, .flags = "b");
+    set_task(0.1, "TaskPreIntermission", TASK_SHOWVENGINE);
     message_begin(0, SVC_FINALE);
     write_string("");
     message_end();
