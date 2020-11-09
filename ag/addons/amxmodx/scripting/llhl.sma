@@ -179,7 +179,8 @@ public inconsistent_file(id, const filename[], reason[64]) {
     new name[32], authid[32];
     get_user_name(id, name, charsmax(name));
     get_user_authid(id, authid, charsmax(authid));
-    client_print(0, print_chat, "%L", LANG_PLAYER, "FILECONSISTENCY_MSG", name, authid, filename);
+    client_print(0, print_chat, "%l", "FILECONSISTENCY_MSG", name, authid, filename);
+    log_amx("%L", LANG_SERVER, "FILECONSISTENCY_MSG", name, authid, filename);
     server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FILECONSISTENCY_KICK", filename);
     return PLUGIN_HANDLED;
 }
@@ -359,7 +360,8 @@ public FpsCheckReturn(id, const cvar[], const value[]) {
             static name[MAX_NAME_LENGTH];
             get_user_name(id, name, charsmax(name));
             server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_KICK", get_pcvar_num(gCvarMaxFps));
-            client_print(0, print_chat, "%L", LANG_PLAYER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
+            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarFpsMax));
+            client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
         }
     }
 }
