@@ -22,7 +22,7 @@
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
     - sv_ag_fpslimit_max_detections "2"
-    - sv_ag_fpslimit_check_interval "1.5"
+    - sv_ag_cvar_check_interval "1.5"
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
     - sv_ag_unstuck_max_attempts "64"
@@ -132,7 +132,7 @@ public plugin_init() {
     // FPS Limiter
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
-    gCvarCheckInterval = create_cvar("sv_ag_fpslimit_check_interval", "1.5");
+    gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
     // Unstuck command
     gCvarUnstuckCooldown = create_cvar("sv_ag_unstuck_cooldown", "10.0");
     gCvarUnstuckStartDistance = create_cvar("sv_ag_unstuck_start_distance", "32");
@@ -351,7 +351,7 @@ public FpsCheckRun() {
 
 public FpsCheckReturn(id, const cvar[], const value[]) {
     if (equali(value, "Bad CVAR request")) {
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_PROTECTOR_KICK");
+        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
     } else if (equali(cvar, "fps_max") && str_to_num(value) > max(100, get_pcvar_num(gCvarMaxFps))) {
         console_cmd(id, "^"FpS_MaX^" %d", max(100, get_pcvar_num(gCvarMaxFps)));
         if (++gNumDetections[id] < get_pcvar_num(gCvarMaxDetections)) {
