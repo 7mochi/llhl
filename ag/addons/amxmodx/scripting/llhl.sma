@@ -179,7 +179,8 @@ public inconsistent_file(id, const filename[], reason[64]) {
     new name[32], authid[32];
     get_user_name(id, name, charsmax(name));
     get_user_authid(id, authid, charsmax(authid));
-    client_print(0, print_chat, "%L", LANG_PLAYER, "FILECONSISTENCY_MSG", name, authid, filename);
+    client_print(0, print_chat, "%l", "FILECONSISTENCY_MSG", name, authid, filename);
+    log_amx("%L", LANG_SERVER, "FILECONSISTENCY_MSG", name, authid, filename);
     server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FILECONSISTENCY_KICK", filename);
     return PLUGIN_HANDLED;
 }
@@ -294,15 +295,15 @@ public CmdUnstuck(id) {
     new Float:elapsedTime = get_gametime() - gUnstuckLastUsed[id];
 
     if (elapsedTime < cooldownTime) {
-        client_print(id, print_chat, "%L", id, "UNSTUCK_ON_COOLDOWN", cooldownTime - elapsedTime);
+        client_print(id, print_chat, "%l", "UNSTUCK_ON_COOLDOWN", cooldownTime - elapsedTime);
         return PLUGIN_HANDLED;
     }
     gUnstuckLastUsed[id] = get_gametime();
     new value;
     if ((value = UnStuckPlayer(id)) != 1) {
         switch (value) {
-            case 0: client_print(id, print_chat, "%L", LANG_PLAYER, "UNSTUCK_FREESPOT_NOTFOUND");
-            case -1: client_print(id, print_chat, "%L", LANG_PLAYER, "UNSTUCK_PLAYER_DEAD");
+            case 0: client_print(id, print_chat, "%l", "UNSTUCK_FREESPOT_NOTFOUND");
+            case -1: client_print(id, print_chat, "%l", "UNSTUCK_PLAYER_DEAD");
         }
     }
     return PLUGIN_CONTINUE;
@@ -359,7 +360,8 @@ public FpsCheckReturn(id, const cvar[], const value[]) {
             static name[MAX_NAME_LENGTH];
             get_user_name(id, name, charsmax(name));
             server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_KICK", get_pcvar_num(gCvarMaxFps));
-            client_print(0, print_chat, "%L", LANG_PLAYER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
+            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
+            client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
         }
     }
 }
@@ -386,14 +388,14 @@ public FwClientUserInfoChangedPre(id, info) {
         new changed, oldValue[32], newValue[32];
         if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue)) {
             engfunc(EngFunc_SetClientKeyValue, id, info, "name", oldValue);
-            client_print(id, print_chat, "%L", id, "BLOCK_NAMECHANGE_MSG");
+            client_print(id, print_chat, "%l", "BLOCK_NAMECHANGE_MSG");
             changed = true;
         }
 
         if (get_pcvar_num(gCvarBlockModelChangeInMatch) && copy(oldValue, charsmax(oldValue), gOldPlayerModel[id]) && engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue))) {
             if (!equal(oldValue, newValue)) {
                 engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
-                client_print(id, print_chat, "%L", id, "BLOCK_MODELCHANGE_MSG");
+                client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
                 changed = true;
             }
         } else {
