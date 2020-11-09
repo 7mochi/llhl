@@ -1,5 +1,5 @@
 # LLHL
-This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/FlyingCat-X/agmodx/tree/llhl-gamemode/) that was developed for rtxa's agmodx.
+This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
 Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 
 ## Features
