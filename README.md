@@ -21,6 +21,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - sv_ag_destroyable_satchel "0"
 - sv_ag_destroyable_satchel_hp "1"
 - sv_ag_block_namechange_inmatch "1"
+- sv_ag_block_modelchange_inmatch "1"
 
 ## Thanks to
 - Th3-822: FPS Limiter and blocking name and model changes
