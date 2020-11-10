@@ -11,6 +11,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Be able to destroy other players satchels (Optional, disabled by default)
 - Block nickname and model changes when a game is in progress (Optional, both enabled by default)
 - New intermission mode
+- Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -24,6 +25,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - sv_ag_destroyable_satchel_hp "1"
 - sv_ag_block_namechange_inmatch "1"
 - sv_ag_block_modelchange_inmatch "1"
+- sv_ag_min_hltv_delay "30.0"
 
 ## Requirements
 - Last HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).

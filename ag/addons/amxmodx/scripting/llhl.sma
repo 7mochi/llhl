@@ -11,6 +11,7 @@
 
     # Features:
     - FPS Limiter (Default value is 144)
+    - FOV Limiter (Minimum value is 85)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
@@ -18,6 +19,7 @@
     - Be able to destroy other players satchels (Optional, disabled by default)
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
+    - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -31,6 +33,7 @@
     - sv_ag_destroyable_satchel_hp "1"
     - sv_ag_block_namechange_inmatch "1"
     - sv_ag_block_modelchange_inmatch "1"
+    - sv_ag_min_hltv_delay "30.0"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -89,6 +92,7 @@ new gCvarDestroyableSatchel;
 new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
+new gCvarMinHLTVDelay;
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -149,6 +153,8 @@ public plugin_init() {
     gCvarBlockNameChangeInMatch = create_cvar("sv_ag_block_namechange_inmatch", "1");
     // Block model change (Only spectators) log in match
     gCvarBlockModelChangeInMatch = create_cvar("sv_ag_block_modelchange_inmatch", "1");
+    // Minimum Delay Value (HLTV)
+    gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
     gGameState = GAME_IDLE;
 
@@ -343,11 +349,21 @@ UnStuckPlayer(const id) {
     return 0;
 }
 
+public CheckHLTVDelay(id) {
+    static hltvDelay[32];
+    get_user_info(id, "hdelay", hltvDelay, charsmax(hltvDelay));
+    if (str_to_float(hltvDelay) < get_pcvar_float(gCvarMinHLTVDelay)) {
+        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINDELAY_HLTV_KICK", get_pcvar_float(gCvarMinHLTVDelay));
+    }
+}
+
 public CvarCheckRun() {
     static players[MAX_PLAYERS], pCount;
-    get_players(players, pCount, "ch");
+    get_players(players, pCount, "c");
     for (new i = 0; i < pCount; i++) {
-        if (!hl_get_user_spectator(players[i])) {
+        if (is_user_hltv(players[i])) {
+            CheckHLTVDelay(players[i]);
+        } else if (!hl_get_user_spectator(players[i])) {
             query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
             query_client_cvar(players[i], "default_fov", "FovCheckReturn");
         }
