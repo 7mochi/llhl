@@ -13,6 +13,7 @@ UNSTUCK_FREESPOT_NOTFOUND = No free spot was found to relocate you.
 UNSTUCK_PLAYER_DEAD = You can't use this command while you're dead.
 BLOCK_NAMECHANGE_MSG = You can't change your name while a match is in progress.
 BLOCK_MODELCHANGE_MSG = You can't change your model while a match is in progress.
+MINDELAY_HLTV_KICK = Delay of your HLTV is very low (Min: %.1f)
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -29,3 +30,4 @@ UNSTUCK_FREESPOT_NOTFOUND = No se encontro ningun lugar libre para reubicarte.
 UNSTUCK_PLAYER_DEAD = No puedes usar este comando mientras estas muerto.
 BLOCK_NAMECHANGE_MSG = No puedes cambiar tu nombre mientras hay una partida en curso.
 BLOCK_MODELCHANGE_MSG = No puedes cambiarte de model mientras hay una partida en curso.
+MINDELAY_HLTV_KICK = El retraso de tu HLTV es muy bajo (Minimo: %.1f)
