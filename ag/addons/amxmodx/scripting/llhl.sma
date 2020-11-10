@@ -138,21 +138,28 @@ public plugin_init() {
     // FPS Limiter
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
+
     // Mininum Default Fov Allowed
     gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
+
     // CVAR Checker Interval (FPS and Fov)
     gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
+
     // Unstuck command
     gCvarUnstuckCooldown = create_cvar("sv_ag_unstuck_cooldown", "10.0");
     gCvarUnstuckStartDistance = create_cvar("sv_ag_unstuck_start_distance", "32");
     gCvarUnstuckMaxSearchAttempts = create_cvar("sv_ag_unstuck_max_attempts", "64");
+
     // Destroyable Satchel
     gCvarDestroyableSatchel =  create_cvar("sv_ag_destroyable_satchel", "0");
     gCvarDestroyableSatchelHP = create_cvar("sv_ag_destroyable_satchel_hp", "1");
+
     // Block name change (Only spectators) log in match
     gCvarBlockNameChangeInMatch = create_cvar("sv_ag_block_namechange_inmatch", "1");
+
     // Block model change (Only spectators) log in match
     gCvarBlockModelChangeInMatch = create_cvar("sv_ag_block_modelchange_inmatch", "1");
+    
     // Minimum Delay Value (HLTV)
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
