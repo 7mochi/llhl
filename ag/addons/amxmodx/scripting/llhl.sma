@@ -11,6 +11,7 @@
 
     # Features:
     - FPS Limiter (Default value is 144)
+    - FOV Limiter (Minimum value is 85)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
