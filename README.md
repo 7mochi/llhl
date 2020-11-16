@@ -12,6 +12,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Block nickname and model changes when a game is in progress (Optional, both enabled by default)
 - New intermission mode
 - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
+- Wallhack Blocker
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
