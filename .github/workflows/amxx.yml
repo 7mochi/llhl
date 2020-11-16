@@ -110,7 +110,7 @@ jobs:
           do
             # Directory
             if [[ -d llhl-resources/$rtc ]]; then
-              cp -a llhl-resources/$rtc/* $systems/ag/$rtc
+              cp -a llhl-resources/$rtc/* $systems/ag
             # File
             elif [[ -f llhl-resources/$rtc ]]; then
               cp -a llhl-resources/$rtc $systems/ag
