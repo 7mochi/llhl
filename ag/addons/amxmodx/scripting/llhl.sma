@@ -70,12 +70,18 @@
 #define GAME_STARTING   1
 #define GAME_RUNNING    2
 
+// Is GhostMineBlock loaded?
+#define GMB_NOTLOADED   0
+#define GMB_LOADED      1 // Reserved for future use
+#define GMB_BLOCKED     2 // Reserved for future use
+
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE
 };
 
 new gGameState;
+new gGhostMineBlockState;
 new bool:gIsAlive[MAX_PLAYERS + 1];
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][32];
@@ -94,6 +100,7 @@ new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarMinHLTVDelay;
+new gCvarBlockGhostmine;
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -126,8 +133,21 @@ public plugin_init() {
     new gamemode[32];
     get_cvar_string("sv_ag_gamemode", gamemode, charsmax(gamemode));
 
+    // Check if GhostMineBlock is loaded even when the gamemode isn't LLHL
+    if (!cvar_exists("gm_block_on")) {
+        gGhostMineBlockState = GMB_NOTLOADED;
+    } else {
+        gGhostMineBlockState = GMB_LOADED;
+    }
+
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
         server_print("[%s] The '%s' plugin can only be run in the '%s' gamemode on AG 6.6 or its Mini version for HL", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
+        // If GhostMineBlock is loaded and the gamemode isn't LLHL, it'll be deactivated
+        if (gGhostMineBlockState == GMB_LOADED) {
+            gGhostMineBlockState = GMB_BLOCKED;
+            set_cvar_num("gm_block_on", 0);
+            server_print("[%s] GhostMine blocker has been deactivated", PLUGIN_ACRONYM);
+        }
         pause("ad");
         return;
     }
@@ -166,9 +186,20 @@ public plugin_init() {
 
     gGameState = GAME_IDLE;
 
+    if (gGhostMineBlockState == GMB_LOADED) {
+        gCvarBlockGhostmine = create_cvar("sv_ag_block_ghostmine", "1");
+    }
+
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
     server_exec();
+
+    if (cvar_exists("sv_ag_block_ghostmine")) {
+        // Reload GhostMineBlock original cvar
+        set_cvar_num("gm_block_on", get_pcvar_num(gCvarBlockGhostmine));
+        hook_cvar_change(gCvarBlockGhostmine, "CvarGhostMineHook");
+        hook_cvar_change(get_cvar_pointer("gm_block_on"), "MetaCvarGhostMineHook");
+    }
 
     register_clcmd("say /unstuck", "CmdUnstuck");
     
@@ -305,8 +336,8 @@ public FwMsgIntermission(id) {
 
 public TaskPreIntermission() {
     // Show vEngine
-    set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 10.0, 0.2);
-    show_dhudmessage(0, "LLHL Mode vEngine^n----------------------^nServer fps: %.1f", gActualServerFPS);
+    set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0, 0.2);
+    show_dhudmessage(0, "LLHL Mode vEngine^n----------------------^nServer fps: %.1f^nGhostmine Blocker: %s", gActualServerFPS, !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
 }
 
 public CmdUnstuck(id) {
@@ -466,4 +497,12 @@ public FwStartFrame() {
         gServerFPS = tempFps;
         tempFps = 0.0;
     }
+}
+
+public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
+    set_cvar_string("gm_block_on", new_value);
+}
+
+public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
+    set_pcvar_string(gCvarBlockGhostmine, new_value);
 }
