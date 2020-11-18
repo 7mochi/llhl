@@ -20,6 +20,7 @@
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
+    - Wallhack Blocker
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
