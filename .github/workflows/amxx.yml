@@ -132,6 +132,10 @@ jobs:
         cp llhl-resources/metamod-plugins/whblocker-1.5.697/config.ini llhl-dev-linux/ag/addons/metamod/dlls
         cp llhl-resources/metamod-plugins/whblocker-1.5.697/config.ini llhl-dev-windows/ag/addons/metamod/dlls
 
+        # Copy GhostMineBlock to metamod plugins folder
+        cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.so llhl-dev-linux/ag/addons/metamod/dlls
+        cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.dll llhl-dev-windows/ag/addons/metamod/dlls
+
         # Add amxmodx to metamod plugins
         metamodPluginsLinux='linux addons/amxmodx/dlls/amxmodx_mm_i386.so'
         metamodPluginsLinux+='\nlinux addons/metamod/dlls/whblocker_mm_i386.so'
