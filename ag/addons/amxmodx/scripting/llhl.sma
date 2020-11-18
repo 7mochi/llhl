@@ -21,6 +21,7 @@
     - New intermission mode
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
     - Wallhack Blocker
+    - Ghostmine Blocker
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -35,6 +36,7 @@
     - sv_ag_block_namechange_inmatch "1"
     - sv_ag_block_modelchange_inmatch "1"
     - sv_ag_min_hltv_delay "30.0"
+    - sv_ag_block_ghostmine "1"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
