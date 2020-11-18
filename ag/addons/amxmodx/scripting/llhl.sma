@@ -1,7 +1,7 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
     Version: 1.0-beta
-    Date: 09/11/20
+    Date: 18/11/20
     Author: FlyingCat
 
     # Information:
