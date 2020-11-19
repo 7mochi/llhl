@@ -1,7 +1,7 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
     Version: 1.1-beta
-    Date: 18/11/20
+    Date: 19/11/20
     Author: FlyingCat
 
     # Information:
@@ -22,6 +22,7 @@
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
     - Wallhack Blocker
     - Ghostmine Blocker
+    - Simple OpenGF32 and AGFix detection (Through cheat commands)
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -37,6 +38,8 @@
     - sv_ag_block_modelchange_inmatch "1"
     - sv_ag_min_hltv_delay "30.0"
     - sv_ag_block_ghostmine "1"
+    - sv_ag_cheat_cmd_check_interval "5.0"
+    - sv_ag_cheat_cmd_max_detections "5"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -79,7 +82,9 @@
 
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
-    TASK_SHOWVENGINE
+    TASK_SHOWVENGINE,
+    TASK_OPENGFCHECKER,
+    TASK_AGFIXCHECKER
 };
 
 new gGameState;
@@ -103,6 +108,12 @@ new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarMinHLTVDelay;
 new gCvarBlockGhostmine;
+new gCvarCheatCmdCheckInterval;
+new gCvarCheatCmdMaxDetections;
+
+new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
+new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
+new gCheatNumDetections[MAX_PLAYERS + 1];
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -186,6 +197,10 @@ public plugin_init() {
     // Minimum Delay Value (HLTV)
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
+    // Simple OpenGF32 and AGFix Detection
+    gCvarCheatCmdCheckInterval = create_cvar("sv_ag_cheat_cmd_check_interval", "5.0");
+    gCvarCheatCmdMaxDetections = create_cvar("sv_ag_cheat_cmd_max_detections", "5");
+
     gGameState = GAME_IDLE;
 
     if (gGhostMineBlockState == GMB_LOADED) {
@@ -225,6 +240,11 @@ public plugin_init() {
     }
 
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
+
+    // Start by executing OpenGF32 commands
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+
+    hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
@@ -241,10 +261,45 @@ public client_connect(id) {
     gIsAlive[id] = false;
     gNumDetections[id] = 0;
     gOldPlayerModel[id][0] = 0;
+    gCheatNumDetections[id] = 0;
+    gFirstCheatValidation[id] = false;
+    gSecondCheatValidation[id] = false;
 }
 
 public client_disconnected(id) {
     gIsAlive[id] = false;
+}
+
+public client_command(id) {
+    new command[64];
+    read_argv(0, command, charsmax(command));
+    if (equali(command, "preCheck")) {
+        gFirstCheatValidation[id] = true;
+        gSecondCheatValidation[id] = false;
+        return PLUGIN_HANDLED;
+    } else if (equali(command, "bhop") || (equali(command, "agfix_bh"))) {
+        if (gFirstCheatValidation[id]) {
+            gSecondCheatValidation[id] = true;
+            return PLUGIN_HANDLED;
+        }
+    } else if (equali(command, "postCheck")) {
+        if (gFirstCheatValidation[id] && !gSecondCheatValidation[id]) {
+            gCheatNumDetections[id]++;
+            gFirstCheatValidation[id] = false;
+            gSecondCheatValidation[id] = false;
+            new name[32], authID[32];
+            get_user_name(id, name, charsmax(name));
+            get_user_authid(id, authID, charsmax(authID));
+            log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+
+            if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
+                log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                gCheatNumDetections[id] = 0;
+            }
+        }
+        return PLUGIN_HANDLED;
+    }
+    return PLUGIN_CONTINUE;
 }
 
 public HamPlayerSpawnPre(id) {
@@ -441,6 +496,16 @@ public FovCheckReturn(id, const cvar[], const value[]) {
     }
 }
 
+public OpenGFCommandRun() {
+    client_cmd(0, "preCheck;bhop off;postCheck");
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "AGFixCommandRun", TASK_AGFIXCHECKER);
+}
+
+public AGFixCommandRun() {
+    client_cmd(0, "preCheck;agfix_bh;postCheck");
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+}
+
 public FwSetModel(entid, model[]) {
     if (!get_pcvar_num(gCvarDestroyableSatchel) || !pev_valid(entid) || !equal(model, "models/w_satchel.mdl"))
         return FMRES_IGNORED;
@@ -507,4 +572,10 @@ public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
 
 public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
     set_pcvar_string(gCvarBlockGhostmine, new_value);
+}
+
+public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
+    remove_task(TASK_OPENGFCHECKER);
+    remove_task(TASK_AGFIXCHECKER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
 }
