@@ -23,6 +23,7 @@
     - Wallhack Blocker
     - Ghostmine Blocker
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
+    - Take screenshots at map end and occasionally when a player dies
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -92,6 +93,7 @@ new gGhostMineBlockState;
 new bool:gIsAlive[MAX_PLAYERS + 1];
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][32];
+new gDeathScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
@@ -231,6 +233,8 @@ public plugin_init() {
 
     register_message(SVC_INTERMISSION, "FwMsgIntermission");
 
+    register_event("DeathMsg", "EventDeathMsg", "ad");
+
     register_forward(FM_SetModel, "FwSetModel");
     register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChangedPre", 0);
     register_forward(FM_StartFrame, "FwStartFrame");
@@ -346,6 +350,7 @@ public FwMsgCountdown(id, dest, ent) {
         if (!hl_get_user_spectator(id)) {
             client_cmd(id, "stop; record %s", strDemo);
             client_print(id, print_chat, "%l", "DEMO_RECORDING", strDemo);
+            gDeathScreenshotTaken[id] = 0;
         }
     }
 }
@@ -393,8 +398,32 @@ public FwMsgIntermission(id) {
 
 public TaskPreIntermission() {
     // Show vEngine
-    set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0, 0.2);
+    set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
     show_dhudmessage(0, "LLHL Mode vEngine^n----------------------^nServer fps: %.1f^nGhostmine Blocker: %s", gActualServerFPS, !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
+    client_cmd(0, "wait;wait;snapshot");
+}
+
+public EventDeathMsg() {
+    new id = read_data(2);
+    if (!gDeathScreenshotTaken[id] && random_num(63, 72) == 69) {
+        if (gGameState == GAME_RUNNING) {
+            TakeDeathScreenshot(id);
+            gDeathScreenshotTaken[id] = 1;
+        }
+    }
+}
+
+public TakeDeathScreenshot(id) {
+    if (is_user_connected(id)) {
+        new formatted[32], name[32], authID[32];
+        new timestamp = get_systime();
+        get_user_name(id, name, charsmax(name));
+        get_user_authid(id, authID, charsmax(authID));
+        format_time(formatted, charsmax(formatted), "%d%m%Y | %H%M%S", timestamp);
+        set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 0.5, 0.0);
+        show_dhudmessage(id, "%s^n%s (%s) Screeenshot has been taken", formatted, name, authID);
+        client_cmd(id, "wait;wait;snapshot");
+    }
 }
 
 public CmdUnstuck(id) {
