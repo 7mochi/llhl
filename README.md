@@ -15,6 +15,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Wallhack Blocker
 - Ghostmine Blocker
 - Simple OpenGF32 and AGFix detection (Through cheat commands)
+- Take screenshots at map end and occasionally when a player dies
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
