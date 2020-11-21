@@ -1,7 +1,7 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.1-beta
-    Date: 19/11/20
+    Version: 1.0-stable
+    Date: 20/11/20
     Author: FlyingCat
 
     # Information:
@@ -60,7 +60,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LHLL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.1-beta"
+#define VERSION         "1.0-stable"
 #define AUTHOR          "FlyingCat"
 
 #pragma semicolon 1
