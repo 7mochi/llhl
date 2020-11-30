@@ -291,13 +291,16 @@ public client_command(id) {
             gCheatNumDetections[id]++;
             gFirstCheatValidation[id] = false;
             gSecondCheatValidation[id] = false;
-            new name[32], authID[32];
+            new name[32], authID[32], formatted[32], fileName[32];
+            new timestamp = get_systime();
+            format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+            formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
             get_user_name(id, name, charsmax(name));
             get_user_authid(id, authID, charsmax(authID));
-            log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
                 gCheatNumDetections[id] = 0;
             }
         }
