@@ -23,6 +23,7 @@
     - Ghostmine Blocker
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
     - Take screenshots at map end and occasionally when a player dies
+    - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -164,6 +165,11 @@ public plugin_init() {
         }
         pause("ad");
         return;
+    }
+
+    // Only ReHLDS
+    if (cvar_exists("sv_rcon_condebug")) {
+        register_concmd("agpause", "CmdAgpauseRehldsHook");
     }
     
     register_dictionary("llhl.txt");
@@ -596,6 +602,20 @@ public FwStartFrame() {
         gServerFPS = tempFps;
         tempFps = 0.0;
     }
+}
+
+public CmdAgpauseRehldsHook(id) {
+    if (get_playersnum() == 1 && gGameState == GAME_IDLE) {
+        new name[32], authID[32], formatted[32], fileName[32];
+        new timestamp = get_systime();
+        format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+        formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
+        get_user_name(id, name, charsmax(name));
+        get_user_authid(id, authID, charsmax(authID));
+        log_to_file(fileName, "[%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit", PLUGIN_ACRONYM, name, authID);
+        return FMRES_SUPERCEDE;
+    }
+    return FMRES_IGNORED;
 }
 
 public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
