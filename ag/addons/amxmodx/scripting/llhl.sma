@@ -1,7 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
     Version: 1.0.1-stable
-    Date: 28/11/20
     Author: FlyingCat
 
     # Information:
