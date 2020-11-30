@@ -172,6 +172,7 @@ public plugin_init() {
     // Only ReHLDS
     if (cvar_exists("sv_rcon_condebug")) {
         register_concmd("agpause", "CmdAgpauseRehldsHook");
+        server_print("[%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug.", PLUGIN_ACRONYM);
     }
     
     register_dictionary("llhl.txt");
