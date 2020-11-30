@@ -4,7 +4,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 
 ## Features
 - FPS Limiter (Default value is 144)
-- FOV Limiter (Minimum value is 85)
+- FOV Limiter (Minimum value is 85, disabled by default)
 - Records a demo automatically when a match is started (With agstart)
 - /unstuck command (10 seconds cooldown)
 - Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6
@@ -21,6 +21,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
 - sv_ag_fpslimit_max_detections "2"
+- sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"
 - sv_ag_unstuck_cooldown "10.0"

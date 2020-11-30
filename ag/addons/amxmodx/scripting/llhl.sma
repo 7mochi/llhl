@@ -10,7 +10,7 @@
 
     # Features:
     - FPS Limiter (Default value is 144)
-    - FOV Limiter (Minimum value is 85)
+    - FOV Limiter (Minimum value is 85, disabled by default)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
@@ -28,6 +28,7 @@
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
     - sv_ag_fpslimit_max_detections "2"
+    - sv_ag_min_default_fov_enabled "0"
     - sv_ag_min_default_fov "85"
     - sv_ag_cvar_check_interval "1.5"
     - sv_ag_unstuck_cooldown "10.0"
@@ -99,6 +100,7 @@ new gDeathScreenshotTaken[MAX_PLAYERS + 1];
 new gCvarAgStartMinPlayers;
 new gCvarMaxFps;
 new gCvarMaxDetections;
+new gCvarMinFovEnabled;
 new gCvarMinFov;
 new gCvarCheckInterval;
 new gCvarUnstuckCooldown;
@@ -180,7 +182,8 @@ public plugin_init() {
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
 
-    // Mininum Default Fov Allowed
+    // Mininum Default Fov Allowed (Disabled by default)
+    gCvarMinFovEnabled = create_cvar("sv_ag_min_default_fov_enabled", "0");
     gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
 
     // CVAR Checker Interval (FPS and Fov)
@@ -498,7 +501,9 @@ public CvarCheckRun() {
             CheckHLTVDelay(players[i]);
         } else if (!hl_get_user_spectator(players[i])) {
             query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
-            query_client_cvar(players[i], "default_fov", "FovCheckReturn");
+            if (get_pcvar_num(gCvarMinFovEnabled)) {
+                query_client_cvar(players[i], "default_fov", "FovCheckReturn");
+            }
         }
     }
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
