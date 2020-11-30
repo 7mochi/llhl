@@ -171,7 +171,7 @@ public plugin_init() {
 
     // Only ReHLDS
     if (cvar_exists("sv_rcon_condebug")) {
-        register_concmd("agpause", "CmdAgpauseRehldsHook");
+        register_clcmd("agpause", "CmdAgpauseRehldsHook");
         server_print("[%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug.", PLUGIN_ACRONYM);
     }
     
@@ -619,9 +619,9 @@ public CmdAgpauseRehldsHook(id) {
         get_user_name(id, name, charsmax(name));
         get_user_authid(id, authID, charsmax(authID));
         log_to_file(fileName, "[%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit", PLUGIN_ACRONYM, name, authID);
-        return FMRES_SUPERCEDE;
+        return PLUGIN_HANDLED;
     }
-    return FMRES_IGNORED;
+    return PLUGIN_CONTINUE;
 }
 
 public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
