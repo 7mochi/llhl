@@ -16,6 +16,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Ghostmine Blocker
 - Simple OpenGF32 and AGFix detection (Through cheat commands)
 - Take screenshots at map end and occasionally when a player dies
+- Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
