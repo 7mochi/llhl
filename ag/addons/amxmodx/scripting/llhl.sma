@@ -519,6 +519,7 @@ public FovCheckReturn(id, const cvar[], const value[]) {
     } else if (equali(cvar, "default_fov") && str_to_num(value) < min(85, get_pcvar_num(gCvarMinFov))) {
         static name[MAX_NAME_LENGTH];
         get_user_name(id, name, charsmax(name));
+        console_cmd(id, "default_fov %d", 90);
         server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINFOV_KICK", get_pcvar_num(gCvarMinFov));
         log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
         client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
