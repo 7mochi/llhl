@@ -164,6 +164,9 @@ public plugin_init() {
             gGhostMineBlockState = GMB_BLOCKED;
             set_cvar_num("gm_block_on", 0);
             server_print("[%s] GhostMine blocker has been deactivated", PLUGIN_ACRONYM);
+            // Try to load the default motd
+            server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
+            server_exec();
         }
         pause("ad");
         return;
@@ -258,6 +261,10 @@ public plugin_init() {
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
 
     hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
+
+    // Load LLHL Motd
+    server_cmd("motdfile motd_llhl.txt", PLUGIN_GAMEMODE);
+    server_exec();
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
