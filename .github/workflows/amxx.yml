@@ -163,6 +163,7 @@ jobs:
         liblist+='\ngamedll_linux "addons/metamod/dlls/metamod.so"'
         liblist+='\ngamedll_osx "dlls/hl.dylib"'
         liblist+='\nsecure "1"'
+        liblist+='\ncrcclientdll "1"'
 
         # Create liblist.gam file
         echo -e $liblist > llhl-dev-linux/ag/liblist.gam

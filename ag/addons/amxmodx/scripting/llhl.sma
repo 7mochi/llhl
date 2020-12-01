@@ -1,7 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.0-stable
-    Date: 20/11/20
+    Version: 1.0.1-stable
     Author: FlyingCat
 
     # Information:
@@ -11,7 +10,7 @@
 
     # Features:
     - FPS Limiter (Default value is 144)
-    - FOV Limiter (Minimum value is 85)
+    - FOV Limiter (Minimum value is 85, disabled by default)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
@@ -24,10 +23,12 @@
     - Ghostmine Blocker
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
     - Take screenshots at map end and occasionally when a player dies
+    - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
     - sv_ag_fpslimit_max_detections "2"
+    - sv_ag_min_default_fov_enabled "0"
     - sv_ag_min_default_fov "85"
     - sv_ag_cvar_check_interval "1.5"
     - sv_ag_unstuck_cooldown "10.0"
@@ -60,7 +61,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LHLL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.0-stable"
+#define VERSION         "1.0.1-stable"
 #define AUTHOR          "FlyingCat"
 
 #pragma semicolon 1
@@ -99,6 +100,7 @@ new gDeathScreenshotTaken[MAX_PLAYERS + 1];
 new gCvarAgStartMinPlayers;
 new gCvarMaxFps;
 new gCvarMaxDetections;
+new gCvarMinFovEnabled;
 new gCvarMinFov;
 new gCvarCheckInterval;
 new gCvarUnstuckCooldown;
@@ -162,9 +164,18 @@ public plugin_init() {
             gGhostMineBlockState = GMB_BLOCKED;
             set_cvar_num("gm_block_on", 0);
             server_print("[%s] GhostMine blocker has been deactivated", PLUGIN_ACRONYM);
+            // Try to load the default motd
+            server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
+            server_exec();
         }
         pause("ad");
         return;
+    }
+
+    // Only ReHLDS
+    if (cvar_exists("sv_rcon_condebug")) {
+        register_clcmd("agpause", "CmdAgpauseRehldsHook");
+        server_print("[%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug.", PLUGIN_ACRONYM);
     }
     
     register_dictionary("llhl.txt");
@@ -175,7 +186,8 @@ public plugin_init() {
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
 
-    // Mininum Default Fov Allowed
+    // Mininum Default Fov Allowed (Disabled by default)
+    gCvarMinFovEnabled = create_cvar("sv_ag_min_default_fov_enabled", "0");
     gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
 
     // CVAR Checker Interval (FPS and Fov)
@@ -249,6 +261,10 @@ public plugin_init() {
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
 
     hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
+
+    // Load LLHL Motd
+    server_cmd("motdfile motd_llhl.txt", PLUGIN_GAMEMODE);
+    server_exec();
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
@@ -291,13 +307,16 @@ public client_command(id) {
             gCheatNumDetections[id]++;
             gFirstCheatValidation[id] = false;
             gSecondCheatValidation[id] = false;
-            new name[32], authID[32];
+            new name[32], authID[32], formatted[32], fileName[32];
+            new timestamp = get_systime();
+            format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+            formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
             get_user_name(id, name, charsmax(name));
             get_user_authid(id, authID, charsmax(authID));
-            log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file("llhl_detections.log", "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
                 gCheatNumDetections[id] = 0;
             }
         }
@@ -490,7 +509,9 @@ public CvarCheckRun() {
             CheckHLTVDelay(players[i]);
         } else if (!hl_get_user_spectator(players[i])) {
             query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
-            query_client_cvar(players[i], "default_fov", "FovCheckReturn");
+            if (get_pcvar_num(gCvarMinFovEnabled)) {
+                query_client_cvar(players[i], "default_fov", "FovCheckReturn");
+            }
         }
     }
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
@@ -519,6 +540,7 @@ public FovCheckReturn(id, const cvar[], const value[]) {
     } else if (equali(cvar, "default_fov") && str_to_num(value) < min(85, get_pcvar_num(gCvarMinFov))) {
         static name[MAX_NAME_LENGTH];
         get_user_name(id, name, charsmax(name));
+        console_cmd(id, "default_fov %d", 90);
         server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINFOV_KICK", get_pcvar_num(gCvarMinFov));
         log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
         client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
@@ -593,6 +615,20 @@ public FwStartFrame() {
         gServerFPS = tempFps;
         tempFps = 0.0;
     }
+}
+
+public CmdAgpauseRehldsHook(id) {
+    if (get_playersnum() == 1 && gGameState == GAME_IDLE) {
+        new name[32], authID[32], formatted[32], fileName[32];
+        new timestamp = get_systime();
+        format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+        formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
+        get_user_name(id, name, charsmax(name));
+        get_user_authid(id, authID, charsmax(authID));
+        log_to_file(fileName, "[%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit", PLUGIN_ACRONYM, name, authID);
+        return PLUGIN_HANDLED;
+    }
+    return PLUGIN_CONTINUE;
 }
 
 public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {

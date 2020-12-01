@@ -1,10 +1,10 @@
-# LLHL 1.0-stable
+# LLHL 1.0.1-stable
 This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
 Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 
 ## Features
 - FPS Limiter (Default value is 144)
-- FOV Limiter (Minimum value is 85)
+- FOV Limiter (Minimum value is 85, disabled by default)
 - Records a demo automatically when a match is started (With agstart)
 - /unstuck command (10 seconds cooldown)
 - Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6
@@ -16,10 +16,12 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Ghostmine Blocker
 - Simple OpenGF32 and AGFix detection (Through cheat commands)
 - Take screenshots at map end and occasionally when a player dies
+- Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
 - sv_ag_fpslimit_max_detections "2"
+- sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"
 - sv_ag_unstuck_cooldown "10.0"
