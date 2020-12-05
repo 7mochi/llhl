@@ -49,6 +49,7 @@
     - Arkshine: Unstuck command
     - naz: Useful codes for hook messages from AG engine
     - BulliT: For developing AG Mod and sharing the source code
+    - Dcarlox: Grammar corrections in the README
 
     Contact: alonso.caychop@tutamail.com or Suisei#9999 (Discord)
 */
