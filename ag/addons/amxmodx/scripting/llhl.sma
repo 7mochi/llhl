@@ -6,7 +6,7 @@
     # Information:
     This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my LLHL gamemode that 
     was developed for rtxa's agmodx.
-    Unlike my gamemode that I made for agmodx, this one only supports protocol 48
+    Unlike my gamemode for agmodx, this one only supports protocol 48.
 
     # Features:
     - FPS Limiter (Default value is 144)
