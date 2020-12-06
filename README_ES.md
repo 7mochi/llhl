@@ -1,22 +1,22 @@
-# LLHL 1.0.1 estable
-Este plugin es una adaptación para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
+# LLHL 1.1-stable
+Este plugin es una adaptaciï¿½n para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
 A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 48.
 
-## Características
+## Caracterï¿½sticas
 - Limitador de FPS (el valor por defecto es de 144).
-- Limitador de FOV (el valor mínimo es de 85, por defecto está desactivado).
+- Limitador de FOV (el valor mï¿½nimo es de 85, por defecto estï¿½ desactivado).
 - Se graba una demo automaticamente cuando se inicia una partida (con agstart).
 - Comando /unstuck implementado (El tiempo de espera es de 10 segundos para volverlo a usar).
-- Verificación de archivos de sonido, son los mismos que son checkeados en el EHLL gamemode - AG6.6.
-- Posibilidad de destruir las satchels de otros jugadores (Opcional, por defecto está desactivado).
+- Verificaciï¿½n de archivos de sonido, son los mismos que son checkeados en el EHLL gamemode - AG6.6.
+- Posibilidad de destruir las satchels de otros jugadores (Opcional, por defecto estï¿½ desactivado).
 - No se permiten cambios de nombre y model cuando hay una partida en curso (Opcional, ambos activados por defecto).
 - Nuevo modo de espera al finalizar un mapa.
-- Se fuerza al HLTV conectado a tener un cierto valor de delay como mínimo (Valor mínimo por defecto es 30).
+- Se fuerza al HLTV conectado a tener un cierto valor de delay como mï¿½nimo (Valor mï¿½nimo por defecto es 30).
 - Bloqueador de wallhack.
 - Bloqueador de ghostmines.
-- Detección simple de OpenGF32 y AGFix (Mediante comandos cheat).
+- Detecciï¿½n simple de OpenGF32 y AGFix (Mediante comandos cheat).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
-- Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
+- Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando estï¿½ pausado) solo cuando no hay una partida en curso.
 
 ## Nuevas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -37,20 +37,20 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 - sv_ag_cheat_cmd_max_detections "5"
 
 ## Requerimientos
-- Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
-- Metamod 1.21.37p o más reciente; recomiendo usar [esta versión de metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluido y listo para usar en versiones de desarrollo).
-- Tener [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) instalado o una versión más reciente (incluido y listo para usar en versiones de desarrollo).
+- ï¿½ltima version de HLDS (build 8308) o ReHLDS 3.6 o mï¿½s nueva (Advertencia: la versiï¿½n mï¿½s reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
+- Metamod 1.21.37p o mï¿½s reciente; recomiendo usar [esta versiï¿½n de metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluido y listo para usar en versiones de desarrollo).
+- Tener [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) instalado o una versiï¿½n mï¿½s reciente (incluido y listo para usar en versiones de desarrollo).
 
 ## Descargas (Estables)
-- Paquete full: Además de tener todo lo necesario para el correcto funcionamiento del LLHL gamemode, se incluyen nuevos mapas con sus respectivos archivos adicionales (Locs, wads, sprites, sounds, etc).
+- Paquete full: Ademï¿½s de tener todo lo necesario para el correcto funcionamiento del LLHL gamemode, se incluyen nuevos mapas con sus respectivos archivos adicionales (Locs, wads, sprites, sounds, etc).
 - Paquete lite: Solo contiene lo necesario para el adecuado funcionamiento del LLHL gamemode (Metamod y AMXX).
 
-Descargar la [última versión](https://github.com/FlyingCat-X/llhl/releases/).
+Descargar la [ï¿½ltima versiï¿½n](https://github.com/FlyingCat-X/llhl/releases/).
 
 ## Descargas (versiones de desarrollo)
 - Se pueden descargar de [Github Actions](https://github.com/FlyingCat-X/llhl/actions). Click en cualquiera de los commits que desees probar y descarga el artifact correspondiente (Windows o linux). Los artifacts tienen todo lo que se necesita para correr el LLHL (Plugin, archivo .cfg del gamemode, sonidos a verificar, amxmodx, metamod, etc).
 
-## Instalación (La manera fácil)
+## Instalaciï¿½n (La manera fï¿½cil)
 - Tener instalado Half-Life con Adrenaline Gamer listo para usar.
 - Descarga cualquiera de los paquetes (full o lite).
 - Extrae el contenido dentro de la carpeta de tu servidor (fuera de la carpeta ag) y confirma el reemplazo de archivos si es que se te pregunta.
@@ -60,5 +60,5 @@ Descargar la [última versión](https://github.com/FlyingCat-X/llhl/releases/).
 - Th3-822: Limitador de FPS y bloqueador de cambios de nombre y model.
 - Alka: FPS del servidor.
 - Arkshine: Comando unstuck.
-- naz: Códigos útiles para hookear los mensajes del motor de AG.
-- BulliT: Por desarrollar el AG mod y compartir el código fuente.
+- naz: Cï¿½digos ï¿½tiles para hookear los mensajes del motor de AG.
+- BulliT: Por desarrollar el AG mod y compartir el cï¿½digo fuente.
