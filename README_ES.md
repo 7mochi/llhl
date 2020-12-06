@@ -1,4 +1,5 @@
 # LLHL 1.1-stable
+### [Versión en Inglés]() | [Versión en Español]()
 Este plugin es una adaptaci�n para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
 A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 48.
 
