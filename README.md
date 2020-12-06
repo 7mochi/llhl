@@ -1,6 +1,6 @@
 # LLHL 1.0.1-stable
 This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
-Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
+Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
 ## Features
 - FPS Limiter (Default value is 144)
@@ -38,12 +38,12 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - sv_ag_cheat_cmd_max_detections "5"
 
 ## Requirements
-- Last HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
+- Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
 - Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds)
-- [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds)
+- Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds)
 
 ## Download (Stable)
-- Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, contains new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
+- Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
 - Lite releases: Only contain what is necessary for the correct functioning of the LLHL gamemode. (Metamod and AMXX)
 
 Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
