@@ -62,3 +62,4 @@ Descargar la [�ltima versi�n](https://github.com/FlyingCat-X/llhl/releases/)
 - Arkshine: Comando unstuck.
 - naz: C�digos �tiles para hookear los mensajes del motor de AG.
 - BulliT: Por desarrollar el AG mod y compartir el c�digo fuente.
+- Dcarlox: Correcciones gramaticales y traducción al español.
