@@ -2,18 +2,18 @@ Bienvenido al modo de juego LLHL v1.1-stable
 Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life (LLHL)
 
 -- Nuevas caracteristicas --
-# Limitador de FPS (El valor por defecto es 144)
-# Bloqueo de valores de 'default_fov' bajos (El valor por defecto es 85, caracteristica desactivada por defecto)
+# Limitador de FPS
+# Bloqueo de valores de 'default_fov' bajos (Caracteristica desactivada por defecto)
 # Graba demos automaticamente cuando se inicia una partida (Con agstart)
 # Nuevo comando: /unstuck (10 segundos de enfriamiento)
 # Verificacion de sonidos
 # Destruir los satchels de otros players (Caracteristica desactivada por defecto)
-# Bloqueo de cambios de name y model cuando una partida esta en progreso (Opcionales, ambas caracteristicas activadas por defecto)
+# Bloqueo de cambios de name y model cuando una partida esta en progreso
 # Nuevo modo de intermision
 # Permitidos mas de 1 HLTV
 # Forzar a los HLTV a tener una cantidad de delay como minimo (El valor como minimo es 30)
 # Bloqueador de Wallhack
-# Bloqueador de Ghostmine (Opcional, caracteristica activada por defecto)
+# Bloqueador de Ghostmine
 # Simple deteccion de los cheats OpenGF32 y AGFix
 # Captura de pantallas al terminar el mapa y ocasionalmente cuando un jugador muere
 
