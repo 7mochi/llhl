@@ -3,20 +3,20 @@ This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemo
 Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
 ## Features
-- FPS Limiter (Default value is 144)
-- FOV Limiter (Minimum value is 85, disabled by default)
-- Records a demo automatically when a match is started (With agstart)
-- /unstuck command (10 seconds cooldown)
-- Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6
-- Be able to destroy other players satchels (Optional, disabled by default)
-- Block nickname and model changes when a game is in progress (Optional, both enabled by default)
-- New intermission mode
-- More than 1 HLTV allowed
-- Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
-- Wallhack Blocker
-- Ghostmine Blocker
-- Simple OpenGF32 and AGFix detection (Through cheat commands)
-- Take screenshots at map end and occasionally when a player dies
+- FPS Limiter (Default value is 144).
+- FOV Limiter (Minimum value is 85, disabled by default).
+- Records a demo automatically when a match is started (With agstart).
+- /unstuck command (10 seconds cooldown).
+- Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6.
+- Be able to destroy other players satchels (Optional, disabled by default).
+- Block nickname and model changes when a game is in progress (Optional, both enabled by default).
+- New intermission mode.
+- More than 1 HLTV allowed.
+- Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30).
+- Wallhack Blocker.
+- Ghostmine Blocker.
+- Simple OpenGF32 and AGFix detection (Through cheat commands).
+- Take screenshots at map end and occasionally when a player dies.
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 
 ## New cvars
@@ -39,8 +39,8 @@ Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
 ## Requirements
 - Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
-- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds)
-- Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds)
+- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds).
+- Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds).
 
 ## Download (Stable)
 - Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
@@ -58,9 +58,9 @@ Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
 - Turn your server on and enjoy.
 
 ## Thanks to
-- Th3-822: FPS Limiter and blocking name and model changes
-- Alka: Server FPS
-- Arkshine: Unstuck command
-- naz: Useful codes for hook messages from AG engine
-- BulliT: For developing AG Mod and sharing the source code
-- Dcarlox: Grammar corrections in the README
+- Th3-822: FPS Limiter and blocking name and model changes.
+- Alka: Server FPS.
+- Arkshine: Unstuck command.
+- naz: Useful codes for hook messages from AG engine.
+- BulliT: For developing AG Mod and sharing the source code.
+- Dcarlox: Grammar corrections and Spanish translation.
