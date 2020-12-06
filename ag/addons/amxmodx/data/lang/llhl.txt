@@ -14,6 +14,10 @@ UNSTUCK_PLAYER_DEAD = You can't use this command while you're dead.
 BLOCK_NAMECHANGE_MSG = You can't change your name while a match is in progress.
 BLOCK_MODELCHANGE_MSG = You can't change your model while a match is in progress.
 MINDELAY_HLTV_KICK = Delay of your HLTV is very low (Min: %.1f)
+LLHL_INITIALIZING = [%s] Initializing plugin
+LLHL_CANT_RUN = [%s] The '%s' plugin can only be run in the '%s' gamemode on AG 6.6 or its Mini version for HL
+LLHL_GM_BLOCK_DEACTIVATED = [%s] GhostMine blocker has been deactivated
+LLHL_REHLDS_DETECTED = [%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -31,3 +35,7 @@ UNSTUCK_PLAYER_DEAD = No puedes usar este comando mientras estas muerto.
 BLOCK_NAMECHANGE_MSG = No puedes cambiar tu nombre mientras hay una partida en curso.
 BLOCK_MODELCHANGE_MSG = No puedes cambiarte de model mientras hay una partida en curso.
 MINDELAY_HLTV_KICK = El retraso de tu HLTV es muy bajo (Minimo: %.1f)
+LLHL_INITIALIZING = [%s] Inicializando el plugin
+LLHL_CANT_RUN = [%s] El plugin '%s' solo puede ser ejecutado en el modo de juego '%s' en AG 6.6 o su version Mini para HL
+LLHL_GM_BLOCK_DEACTIVATED = [%s] El bloqueador de GhostMine ha sido desactivado
+LLHL_REHLDS_DETECTED = [%s] ReHLDS detectado, las pausas se bloquearan cuando no haya partidas en curso para evitar el abuso de un bug

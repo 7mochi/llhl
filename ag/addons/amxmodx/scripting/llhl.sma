@@ -147,7 +147,10 @@ new const gConsistencySoundFiles[][] = {
 };
 
 public plugin_init() {
-    server_print("[%s] Initializing plugin", PLUGIN_ACRONYM);
+    register_dictionary("llhl.txt");
+
+    server_print("%L", LANG_SERVER, "LLHL_INITIALIZING", PLUGIN_ACRONYM);
+
     register_plugin(PLUGIN, VERSION, AUTHOR);
 
     new gamemode[32];
@@ -161,12 +164,12 @@ public plugin_init() {
     }
 
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
-        server_print("[%s] The '%s' plugin can only be run in the '%s' gamemode on AG 6.6 or its Mini version for HL", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
+        server_print("%L", LANG_SERVER, "LLHL_CANT_RUN", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
         // If GhostMineBlock is loaded and the gamemode isn't LLHL, it'll be deactivated
         if (gGhostMineBlockState == GMB_LOADED) {
             gGhostMineBlockState = GMB_BLOCKED;
             set_cvar_num("gm_block_on", 0);
-            server_print("[%s] GhostMine blocker has been deactivated", PLUGIN_ACRONYM);
+            server_print("%L", LANG_SERVER, "LLHL_GM_BLOCK_DEACTIVATED", PLUGIN_ACRONYM);
             // Try to load the default motd
             server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
             server_exec();
@@ -178,10 +181,8 @@ public plugin_init() {
     // Only ReHLDS
     if (cvar_exists("sv_rcon_condebug")) {
         register_clcmd("agpause", "CmdAgpauseRehldsHook");
-        server_print("[%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug.", PLUGIN_ACRONYM);
+        server_print("%L", LANG_SERVER, "LLHL_REHLDS_DETECTED", PLUGIN_ACRONYM);
     }
-    
-    register_dictionary("llhl.txt");
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
 
