@@ -18,6 +18,7 @@
     - Be able to destroy other players satchels (Optional, disabled by default)
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
+    - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
     - Wallhack Blocker
     - Ghostmine Blocker
@@ -111,6 +112,7 @@ new gCvarDestroyableSatchel;
 new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
+new gCvarNumHLTVAllowed;
 new gCvarMinHLTVDelay;
 new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
@@ -209,7 +211,8 @@ public plugin_init() {
     // Block model change (Only spectators) log in match
     gCvarBlockModelChangeInMatch = create_cvar("sv_ag_block_modelchange_inmatch", "1");
     
-    // Minimum Delay Value (HLTV)
+    // HLTV
+    gCvarNumHLTVAllowed = create_cvar("sv_ag_num_hltv_allowed", "2");
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
     // Simple OpenGF32 and AGFix Detection
@@ -225,6 +228,11 @@ public plugin_init() {
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
     server_exec();
+
+    // Num. HLTV Allowed
+    set_cvar_num("sv_proxies", get_pcvar_num(gCvarNumHLTVAllowed));
+    hook_cvar_change(gCvarNumHLTVAllowed, "CvarHLTVAllowedHook");
+    hook_cvar_change(get_cvar_pointer("sv_proxies"), "CvarSVProxiesHook");
 
     if (cvar_exists("sv_ag_block_ghostmine")) {
         // Reload GhostMineBlock original cvar
@@ -630,6 +638,14 @@ public CmdAgpauseRehldsHook(id) {
         return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
+}
+
+public CvarHLTVAllowedHook(pcvar, const old_value[], const new_value[]) {
+    set_cvar_string("sv_proxies", new_value);
+}
+
+public CvarSVProxiesHook(pcvar, const old_value[], const new_value[]) {
+    set_pcvar_string(gCvarNumHLTVAllowed, new_value);
 }
 
 public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {

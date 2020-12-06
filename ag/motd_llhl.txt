@@ -10,7 +10,8 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 # Destruir los satchels de otros players (Caracteristica desactivada por defecto)
 # Bloqueo de cambios de name y model cuando una partida esta en progreso (Opcionales, ambas caracteristicas activadas por defecto)
 # Nuevo modo de intermision
-# Forzar al HLTV a tener una cantidad de delay como minimo (El valor como minimo es 30)
+# Permitidos mas de 1 HLTV
+# Forzar a los HLTV a tener una cantidad de delay como minimo (El valor como minimo es 30)
 # Bloqueador de Wallhack
 # Bloqueador de Ghostmine (Opcional, caracteristica activada por defecto)
 # Simple deteccion de los cheats OpenGF32 y AGFix

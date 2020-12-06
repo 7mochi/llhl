@@ -11,6 +11,7 @@ Unlike my gamemode that I made for agmodx, this one only supports Protocol 48.
 - Be able to destroy other players satchels (Optional, disabled by default)
 - Block nickname and model changes when a game is in progress (Optional, both enabled by default)
 - New intermission mode
+- More than 1 HLTV allowed
 - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
 - Wallhack Blocker
 - Ghostmine Blocker
