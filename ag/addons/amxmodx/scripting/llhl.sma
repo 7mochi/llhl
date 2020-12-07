@@ -1,12 +1,12 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.0.1-stable
+    Version: 1.1-stable
     Author: FlyingCat
 
     # Information:
     This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my LLHL gamemode that 
     was developed for rtxa's agmodx.
-    Unlike my gamemode that I made for agmodx, this one only supports protocol 48
+    Unlike my gamemode for agmodx, this one only supports protocol 48.
 
     # Features:
     - FPS Limiter (Default value is 144)
@@ -18,6 +18,7 @@
     - Be able to destroy other players satchels (Optional, disabled by default)
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
+    - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
     - Wallhack Blocker
     - Ghostmine Blocker
@@ -49,6 +50,7 @@
     - Arkshine: Unstuck command
     - naz: Useful codes for hook messages from AG engine
     - BulliT: For developing AG Mod and sharing the source code
+    - Dcarlox: Grammar corrections in the README
 
     Contact: alonso.caychop@tutamail.com or Suisei#9999 (Discord)
 */
@@ -61,7 +63,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LHLL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.0.1-stable"
+#define VERSION         "1.1-stable"
 #define AUTHOR          "FlyingCat"
 
 #pragma semicolon 1
@@ -110,6 +112,7 @@ new gCvarDestroyableSatchel;
 new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
+new gCvarNumHLTVAllowed;
 new gCvarMinHLTVDelay;
 new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
@@ -144,7 +147,10 @@ new const gConsistencySoundFiles[][] = {
 };
 
 public plugin_init() {
-    server_print("[%s] Initializing plugin", PLUGIN_ACRONYM);
+    register_dictionary("llhl.txt");
+
+    server_print("%L", LANG_SERVER, "LLHL_INITIALIZING", PLUGIN_ACRONYM);
+
     register_plugin(PLUGIN, VERSION, AUTHOR);
 
     new gamemode[32];
@@ -158,12 +164,12 @@ public plugin_init() {
     }
 
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
-        server_print("[%s] The '%s' plugin can only be run in the '%s' gamemode on AG 6.6 or its Mini version for HL", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
+        server_print("%L", LANG_SERVER, "LLHL_CANT_RUN", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
         // If GhostMineBlock is loaded and the gamemode isn't LLHL, it'll be deactivated
         if (gGhostMineBlockState == GMB_LOADED) {
             gGhostMineBlockState = GMB_BLOCKED;
             set_cvar_num("gm_block_on", 0);
-            server_print("[%s] GhostMine blocker has been deactivated", PLUGIN_ACRONYM);
+            server_print("%L", LANG_SERVER, "LLHL_GM_BLOCK_DEACTIVATED", PLUGIN_ACRONYM);
             // Try to load the default motd
             server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
             server_exec();
@@ -175,10 +181,8 @@ public plugin_init() {
     // Only ReHLDS
     if (cvar_exists("sv_rcon_condebug")) {
         register_clcmd("agpause", "CmdAgpauseRehldsHook");
-        server_print("[%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug.", PLUGIN_ACRONYM);
+        server_print("%L", LANG_SERVER, "LLHL_REHLDS_DETECTED", PLUGIN_ACRONYM);
     }
-    
-    register_dictionary("llhl.txt");
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
 
@@ -208,7 +212,8 @@ public plugin_init() {
     // Block model change (Only spectators) log in match
     gCvarBlockModelChangeInMatch = create_cvar("sv_ag_block_modelchange_inmatch", "1");
     
-    // Minimum Delay Value (HLTV)
+    // HLTV
+    gCvarNumHLTVAllowed = create_cvar("sv_ag_num_hltv_allowed", "2");
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
     // Simple OpenGF32 and AGFix Detection
@@ -224,6 +229,11 @@ public plugin_init() {
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
     server_exec();
+
+    // Num. HLTV Allowed
+    set_cvar_num("sv_proxies", get_pcvar_num(gCvarNumHLTVAllowed));
+    hook_cvar_change(gCvarNumHLTVAllowed, "CvarHLTVAllowedHook");
+    hook_cvar_change(get_cvar_pointer("sv_proxies"), "CvarSVProxiesHook");
 
     if (cvar_exists("sv_ag_block_ghostmine")) {
         // Reload GhostMineBlock original cvar
@@ -629,6 +639,14 @@ public CmdAgpauseRehldsHook(id) {
         return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
+}
+
+public CvarHLTVAllowedHook(pcvar, const old_value[], const new_value[]) {
+    set_cvar_string("sv_proxies", new_value);
+}
+
+public CvarSVProxiesHook(pcvar, const old_value[], const new_value[]) {
+    set_pcvar_string(gCvarNumHLTVAllowed, new_value);
 }
 
 public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
