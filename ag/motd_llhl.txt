@@ -1,34 +1,35 @@
-Bienvenido al modo de juego LLHL v1.0.1-stable
+Bienvenido al modo de juego LLHL v1.1-stable
 Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life (LLHL)
 
 -- Nuevas caracteristicas --
-# Limitador de FPS (El valor por defecto es 144)
-# Bloqueo de valores de 'default_fov' bajos (El valor por defecto es 85, caracteristica desactivada por defecto)
+# Limitador de FPS
+# Limitador de default_fov (El minimo es 85, desactivado por defecto)
 # Graba demos automaticamente cuando se inicia una partida (Con agstart)
-# Nuevo comando: /unstuck (10 segundos de enfriamiento)
+# Nuevo comando: /unstuck (Tiempo de espera de 10 segundos para volverlo a usar)
 # Verificacion de sonidos
-# Destruir los satchels de otros players (Caracteristica desactivada por defecto)
-# Bloqueo de cambios de name y model cuando una partida esta en progreso (Opcionales, ambas caracteristicas activadas por defecto)
-# Nuevo modo de intermision
-# Forzar al HLTV a tener una cantidad de delay como minimo (El valor como minimo es 30)
+# Posibilidad de destruir las satchels de otros players (Desactivado por defecto)
+# No se permiten cambios de nombre y model cuando hay una partida en curso
+# Nuevo modo de espera al terminar un mapa
+# Permitidos mas de 1 HLTV
+# Forzar a los HLTV a tener una cantidad de delay como minimo (Dicho valor es de 30)
 # Bloqueador de Wallhack
-# Bloqueador de Ghostmine (Opcional, caracteristica activada por defecto)
+# Bloqueador de Ghostmine
 # Simple deteccion de los cheats OpenGF32 y AGFix
-# Captura de pantallas al terminar el mapa y ocasionalmente cuando un jugador muere
+# Se toman screenshots al terminar el mapa y ocasionalmente cuando un jugador muere
 
 -- Configuracion del modo de juego --
 # Forzado de respawn activado
 # RPG Fix activado
 # Gauss Fix activado
-# Daño de la egon reducido en un 35%
-# Daño de la crowbar aumentado en un 30%
-# Daño de la hornetgun aumentado en un 30%
+# Daño de egon reducido en un 35%
+# Daño de crowbar aumentado en un 30%
+# Daño de hornetgun aumentado en un 30%
 
-Ten guardado todas tus capturas de pantalla y demos generadas con este modo de juego.
+Conserva todas tus capturas de pantalla y demos generadas con este modo de juego.
 Un administrador podria pedirte que las subas.
 
 -- Informacion del modo de juego --
-# Version: 1.0.1-stable
+# Version: 1.1-stable
 # Autor: FlyingCat (Discord: Suisei#9999)
 # Repositorio: https://git.io/jkttq
 # Descarga: https://github.com/FlyingCat-X/llhl/releases/latest

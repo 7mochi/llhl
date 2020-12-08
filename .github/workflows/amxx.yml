@@ -33,6 +33,9 @@ jobs:
         # Saving the current location to cd later
         previousDir=$(pwd)
 
+        # Clone llhl resources repo
+        git clone https://github.com/FlyingCat-X/llhl-resources.git
+
         # Creating llhl release folder structure (Windows and linux)
         os=("llhl-dev-linux" "llhl-dev-windows")
         for i in "${os[@]}"
@@ -47,6 +50,9 @@ jobs:
         # Copy amxmodx addons folder (Windows and linux)
         cp -a addons/* llhl-dev-linux/ag/addons
         cp -a amxx-windows/addons/* llhl-dev-windows/ag/addons
+
+        # Prepare for gRIP use
+        cp llhl-resources/amxx-related/gRIP/include/*.inc ag/addons/amxmodx/scripting/include
 
         # In case the repository has an include folder, we copy the dependencies
         if [ -d ag/addons/amxmodx/scripting/include ]; then
@@ -98,9 +104,6 @@ jobs:
           done
         done
 
-        # Clone llhl resources repo
-        git clone https://github.com/FlyingCat-X/llhl-resources.git
-
         # Copy resources (Maps, locs, wads, etc)
         for systems in "${os[@]}"
         do
@@ -135,6 +138,12 @@ jobs:
         # Copy GhostMineBlock to metamod plugins folder
         cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.so llhl-dev-linux/ag/addons/metamod/dlls
         cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.dll llhl-dev-windows/ag/addons/metamod/dlls
+
+        # Copy gRIP Module to amxmodx modules folder
+        cp llhl-resources/amxx-related/gRIP/module/*.so llhl-dev-linux/ag/addons/amxmodx/modules
+        cp llhl-resources/amxx-related/gRIP/module/*.dll llhl-dev-windows/ag/addons/amxmodx/plugins
+        cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-linux/ag/addons/amxmodx/configs
+        cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-windows/ag/addons/amxmodx/configs
 
         # Add amxmodx to metamod plugins
         metamodPluginsLinux='linux addons/metamod/dlls/whblocker_mm_i386.so'
