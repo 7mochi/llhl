@@ -63,3 +63,4 @@ Baixe a [última versão](https://github.com/FlyingCat-X/llhl/releases/).
 - naz: Códigos úteis para hookear as mensagens do motor AG.
 - BulliT: Para desenvolver o mod AG e compartilhar o código-fonte.
 - Dcarlox: Correções gramaticais e tradução para o espanhol.
+- leynieR: Tradução portuguesa.
