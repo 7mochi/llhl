@@ -18,6 +18,12 @@ LLHL_INITIALIZING = [%s] Initializing plugin
 LLHL_CANT_RUN = [%s] The '%s' plugin can only be run in the '%s' gamemode on AG 6.6 or its Mini version for HL
 LLHL_GM_BLOCK_DEACTIVATED = [%s] GhostMine blocker has been deactivated
 LLHL_REHLDS_DETECTED = [%s] ReHLDS detected, pauses will be blocked when there are no games in progress to avoid abusing a bug
+LLHL_CHECK_GH_FAILED = [%s] Couldn't connect to Github API. Connection failed.
+LLHL_CHECK_GH_PARSE_ERROR = [%s] An error occurred while parsing JSON.
+LLHL_CHECK_GH_NO_UPDATE = [%s] No updates available.
+LLHL_CHECK_GH_HIGHER_VER = [%s] You have a higher than official version of LLHL. You may be using a dev build.
+LLHL_CHECK_GH_NEW_UPDATE = [%s] There is a new update available. Download it from: https://github.com/FlyingCat-X/llhl/releases/latest
+LLHL_CHECK_GH_RETRYING = [%s] Retrying within %.1f seconds. Attempts: %i/%i
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -39,6 +45,12 @@ LLHL_INITIALIZING = [%s] Inicializando el plugin
 LLHL_CANT_RUN = [%s] El plugin '%s' solo puede ser ejecutado en el modo de juego '%s' en AG 6.6 o su version Mini para HL
 LLHL_GM_BLOCK_DEACTIVATED = [%s] El bloqueador de GhostMine ha sido desactivado
 LLHL_REHLDS_DETECTED = [%s] ReHLDS detectado, las pausas se bloquearan cuando no haya partidas en curso para evitar el abuso de un bug
+LLHL_CHECK_GH_FAILED = [%s] No se pudo conectar a la API de Github. Conexión fallida.
+LLHL_CHECK_GH_PARSE_ERROR = [%s] Ocurrio un error al parsear el JSON.
+LLHL_CHECK_GH_NO_UPDATE = [%s] No hay actualizaciones disponibles.
+LLHL_CHECK_GH_HIGHER_VER = [%s] Tienes una versión más alta que la oficial del LLHL. Puede que estés usando una dev build.
+LLHL_CHECK_GH_NEW_UPDATE = [%s] Hay una nueva actualización disponible. Descárguela de: https://github.com/FlyingCat-X/llhl/releases/latest
+LLHL_CHECK_GH_RETRYING = [%s] Reintentando dentro de %.1f segundos. Intentos: %i/%i
 
 [pt]
 CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
@@ -60,3 +72,9 @@ LLHL_INITIALIZING = [%s] Inicializando o plugin
 LLHL_CANT_RUN = [%s] O plugin '%s' só pode ser executado no modo de jogo '%s' en AG 6.6 ou em sua versão Mini para HL
 LLHL_GM_BLOCK_DEACTIVATED = [%s] O bloqueador GhostMine foi desativado
 LLHL_REHLDS_DETECTED = [%s] ReHLDS detectado, as pausas serão bloqueadas quando não houver jogos em andamento para evitar o abuso de um bug
+LLHL_CHECK_GH_FAILED = [%s] Não foi possível conectar à API do Github. A conexão falhou.
+LLHL_CHECK_GH_PARSE_ERROR = [%s] Ocorreu um erro ao analisar o JSON.
+LLHL_CHECK_GH_NO_UPDATE = [%s] Não á atualização disponível.
+LLHL_CHECK_GH_HIGHER_VER = [%s] Tem uma versão superior ao LLHL oficial. Pode ser que está usando uma dev build.
+LLHL_CHECK_GH_NEW_UPDATE = [%s] Há uma nova atualização disponível. Baixe de: https://github.com/FlyingCat-X/llhl/releases/latest
+LLHL_CHECK_GH_RETRYING = [%s] Tentando novamente em %.1f segundos. Tentativas: %i/%i
