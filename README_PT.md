@@ -17,6 +17,7 @@ Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo
 - Detecção simples de OpenGF32 e AGFix (Atraves do comandos do cheat)
 - Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre.
 - Evite o abuso de um bug ReHLDS (o servidor desaparece da lista da mundial quando e pausado)  apenas quando não há uma match em andamento.
+- Verifica automaticamente a existência de novas actualizações
 
 ## Novas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -35,6 +36,9 @@ Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo
 - sv_ag_block_ghostmine "1"
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
+- sv_ag_check_updates "1"
+- sv_ag_check_updates_retrys "3"
+- sv_ag_check_updates_retry_delay "2.0"
 
 ## Requisitos
 - Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).

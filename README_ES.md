@@ -18,6 +18,7 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 - Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
+- Verifica si hay nuevas actualizaciones automaticamente.
 
 ## Nuevas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -36,6 +37,9 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 - sv_ag_block_ghostmine "1"
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
+- sv_ag_check_updates "1"
+- sv_ag_check_updates_retrys "3"
+- sv_ag_check_updates_retry_delay "2.0"
 
 ## Requerimientos
 - Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
