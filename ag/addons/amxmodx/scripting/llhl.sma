@@ -25,6 +25,7 @@
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
+    - Checks for new updates automatically.
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -43,6 +44,9 @@
     - sv_ag_block_ghostmine "1"
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
+    - sv_ag_check_updates "1"
+    - sv_ag_check_updates_retrys "3"
+    - sv_ag_check_updates_retry_delay "2.0"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -51,6 +55,7 @@
     - naz: Useful codes for hook messages from AG engine
     - BulliT: For developing AG Mod and sharing the source code
     - Dcarlox: Grammar corrections in the README
+    - leynieR: Portuguese Translation.
 
     Contact: alonso.caychop@tutamail.com or Suisei#9999 (Discord)
 */
@@ -58,15 +63,22 @@
 #include <amxmodx>
 #include <engine>
 #include <fakemeta>
+#include <grip>
 #include <hlstocks>
+#include <regex>
 
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LHLL"
 #define PLUGIN_GAMEMODE "llhl"
 #define VERSION         "1.1-stable"
 #define AUTHOR          "FlyingCat"
+#define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 
 #pragma semicolon 1
+
+#define INCOMING_BUFFER_LENGTH  1024
+#define JSON_MESSAGE_LENGTH     256
+#define VERSION_ARRAY_SIZE      16
 
 #define GetPlayerHullSize(%1)  ((pev(%1, pev_flags) & FL_DUCKING) ? HULL_HEAD : HULL_HUMAN)
 #define __is_user_alive(%1) (gIsAlive[%1])
@@ -117,6 +129,9 @@ new gCvarMinHLTVDelay;
 new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
+new gCvarCheckUpdates;
+new gCvarCheckUpdatesRetrys;
+new gCvarCheckUpdatesRetryDelay;
 
 new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
 new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
@@ -125,6 +140,11 @@ new gCheatNumDetections[MAX_PLAYERS + 1];
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
 static Float:gActualServerFPS;
+
+new GripRequestOptions:gGripIncomingHeader;
+new GripRequestCancellation:gGripIncomingHandler;
+
+new gCheckUpdatesNumRetrys;
 
 new const gConsistencySoundFiles[][] = {
     "ambience/pulsemachine.wav",
@@ -226,6 +246,11 @@ public plugin_init() {
         gCvarBlockGhostmine = create_cvar("sv_ag_block_ghostmine", "1");
     }
 
+    // Check updates from Github Repo
+    gCvarCheckUpdates = create_cvar("sv_ag_check_updates", "1");
+    gCvarCheckUpdatesRetrys = create_cvar("sv_ag_check_updates_retrys", "3");
+    gCvarCheckUpdatesRetryDelay = create_cvar("sv_ag_check_updates_retry_delay", "2.0");
+
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
     server_exec();
@@ -275,6 +300,18 @@ public plugin_init() {
     // Load LLHL Motd
     server_cmd("motdfile motd_llhl.txt", PLUGIN_GAMEMODE);
     server_exec();
+
+    if (get_pcvar_num(gCvarCheckUpdates)) {
+        gGripIncomingHeader = grip_create_default_options();
+        gCheckUpdatesNumRetrys = 0;
+        ConnectGithubAPI();
+    }
+}
+
+public plugin_end() {
+    if (grip_is_request_active(gGripIncomingHandler)) {
+        grip_cancel_request(gGripIncomingHandler);
+    }
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
@@ -661,4 +698,99 @@ public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
     remove_task(TASK_OPENGFCHECKER);
     remove_task(TASK_AGFIXCHECKER);
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+}
+
+public ConnectGithubAPI() {
+    gGripIncomingHandler = grip_request(GH_API_URL, Empty_GripBody, GripRequestTypeGet, "GetLatestVersion", gGripIncomingHeader);
+}
+
+public GetLatestVersion() {
+    if (grip_get_response_state() != GripResponseStateSuccessful) {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_FAILED", PLUGIN_ACRONYM);
+        RetryConnection();
+        return;
+    }
+
+    new responseBody[INCOMING_BUFFER_LENGTH], jsonError[JSON_MESSAGE_LENGTH], GripJSONValue:json;
+    grip_get_response_body_string(responseBody, charsmax(responseBody));
+    json = grip_json_parse_string(responseBody, jsonError, charsmax(jsonError));
+
+    if (strlen(jsonError) > 0) {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_PARSE_ERROR", PLUGIN_ACRONYM);
+        RetryConnection();
+        return;
+    }
+
+    new repoLatestVersion[32];
+    new GripJSONValue:responseValue = grip_json_array_get_value(json, 0);
+    grip_json_object_get_string(responseValue, "name", repoLatestVersion, charsmax(repoLatestVersion));
+
+    new ret, error[128];
+    new pluginVersion[32], repoVersion[32];
+    new Regex:regex_handle;
+
+    regex_handle = regex_match(repoLatestVersion, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
+
+    if (regex_handle > REGEX_NO_MATCH) {
+        regex_substr(regex_handle, 1, repoVersion, charsmax(repoVersion));
+    }
+    regex_free(regex_handle);
+
+    regex_handle = regex_match(VERSION, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
+
+    if (regex_handle > REGEX_NO_MATCH) {
+        regex_substr(regex_handle, 1, pluginVersion, charsmax(pluginVersion));
+    }
+    regex_free(regex_handle);
+
+    // Check for updates
+    switch (CompareVersion(pluginVersion, repoVersion)) {
+        case 0: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
+        case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
+        case -1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
+    }
+}
+
+public RetryConnection() {
+    gCheckUpdatesNumRetrys++;
+    if (gCheckUpdatesNumRetrys <= get_pcvar_num(gCvarCheckUpdatesRetrys)) {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarCheckUpdatesRetryDelay), gCheckUpdatesNumRetrys, get_pcvar_num(gCvarCheckUpdatesRetrys));
+        set_task(get_pcvar_float(gCvarCheckUpdatesRetryDelay), "ConnectGithubAPI");
+    }
+}
+
+/* 
+ * Compare two versions
+ * 
+ * @return      Returns -1 if the first value is less than the second value.
+ *              Returns 1 if the first value is greater than the second value.
+ *              Returns 0 if the first value is equal to the second value.
+ * 
+ */
+stock CompareVersion(value1[], value2[]) {
+    static outputValue1[VERSION_ARRAY_SIZE][128], outputValue2[VERSION_ARRAY_SIZE][128];
+
+    SplitString(outputValue1, sizeof(outputValue1), charsmax(outputValue1), value1, '.');
+    SplitString(outputValue2, sizeof(outputValue2), charsmax(outputValue2), value2, '.');
+    
+    for (new i = 0; i < VERSION_ARRAY_SIZE; i++) {
+        new val1 = i < sizeof(outputValue1) ? str_to_num(outputValue1[i]) : 0;
+        new val2 = i < sizeof(outputValue2) ? str_to_num(outputValue2[i]) : 0;
+        
+        if (val1 < val2) {
+            return -1;
+        }
+        if (val1 > val2) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+stock SplitString(output[][], nMax, nSize, input[], delimiter) {
+    new nIdx = 0, l = strlen(input);
+    new nLen = (1 + copyc(output[nIdx], nSize, input, delimiter));
+    while((nLen < l) && (++nIdx < nMax))
+        nLen += (1 + copyc(output[nIdx], nSize, input[nLen], delimiter));
+    return nIdx;
 }
