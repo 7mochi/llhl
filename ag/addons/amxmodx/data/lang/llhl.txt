@@ -24,6 +24,9 @@ LLHL_CHECK_GH_NO_UPDATE = [%s] No updates available.
 LLHL_CHECK_GH_HIGHER_VER = [%s] You have a higher than official version of LLHL. You may be using a dev build.
 LLHL_CHECK_GH_NEW_UPDATE = [%s] There is a new update available. Download it from: https://github.com/FlyingCat-X/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Retrying within %.1f seconds. Attempts: %i/%i
+LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. | Remaining attemps: %i/%i
+LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts
+LLHL_REHLDS_XPLOIT = [%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -51,6 +54,9 @@ LLHL_CHECK_GH_NO_UPDATE = [%s] No hay actualizaciones disponibles.
 LLHL_CHECK_GH_HIGHER_VER = [%s] Tienes una versión más alta que la oficial del LLHL. Puede que estés usando una dev build.
 LLHL_CHECK_GH_NEW_UPDATE = [%s] Hay una nueva actualización disponible. Descárguela de: https://github.com/FlyingCat-X/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Reintentando dentro de %.1f segundos. Intentos: %i/%i
+LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] A %s (%s) se le ha detectado un posible uso de OpenGF32/AGFix. | Intentos restantes: %i/%i
+LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] A %s (%s) se le ha detectado OpenGF32/AGFix despues de %i intentos
+LLHL_REHLDS_XPLOIT = [%s] %s (%s) trato de pausar el servidor cuando no habia nadie alrededor. Possible exploit de bug del ReHLDS
 
 [pt]
 CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
@@ -78,3 +84,6 @@ LLHL_CHECK_GH_NO_UPDATE = [%s] Não á atualização disponível.
 LLHL_CHECK_GH_HIGHER_VER = [%s] Tem uma versão superior ao LLHL oficial. Pode ser que está usando uma dev build.
 LLHL_CHECK_GH_NEW_UPDATE = [%s] Há uma nova atualização disponível. Baixe de: https://github.com/FlyingCat-X/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Tentando novamente em %.1f segundos. Tentativas: %i/%i
+LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] %s (%s) foi detectada uma possível utilização do OpenGF32/AGFix. | Tentativas restantes: %i/%i
+LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) foi detectado OpenGF32/AGFix após %i tentativas
+LLHL_REHLDS_XPLOIT = [%s] %s (%s) tentou fazer uma pausa no servidor quando mais ninguém estava por perto. Possível ReHLDS Bug Exploit
