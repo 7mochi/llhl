@@ -363,10 +363,10 @@ public client_command(id) {
             formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
             get_user_name(id, name, charsmax(name));
             get_user_authid(id, authID, charsmax(authID));
-            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. | Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+            log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
                 gCheatNumDetections[id] = 0;
             }
         }
@@ -670,7 +670,7 @@ public CmdAgpauseRehldsHook(id) {
         formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
         get_user_name(id, name, charsmax(name));
         get_user_authid(id, authID, charsmax(authID));
-        log_to_file(fileName, "[%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit", PLUGIN_ACRONYM, name, authID);
+        log_to_file(fileName, "%L", LANG_SERVER, "LLHL_REHLDS_XPLOIT", PLUGIN_ACRONYM, name, authID);
         return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
