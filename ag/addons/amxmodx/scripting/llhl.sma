@@ -99,8 +99,7 @@
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE,
-    TASK_OPENGFCHECKER,
-    TASK_AGFIXCHECKER
+    TASK_CHEATCHECKER
 };
 
 new gGameState;
@@ -164,6 +163,11 @@ new const gConsistencySoundFiles[][] = {
     "weapons/egon_off1.wav",
     "weapons/egon_run3.wav",
     "weapons/egon_windup2.wav"
+};
+
+new const gCheatsCommands[][] = {
+    "aimbot", "bhop", "fullbright", "nosky", "xhair", "wh", // OpenGF
+    "agfix_rec", "agfix_flash", "agfix_ff0", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
 };
 
 public plugin_init() {
@@ -292,8 +296,7 @@ public plugin_init() {
 
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
 
-    // Start by executing OpenGF32 commands
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 
     hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
 
@@ -344,7 +347,7 @@ public client_command(id) {
         gFirstCheatValidation[id] = true;
         gSecondCheatValidation[id] = false;
         return PLUGIN_HANDLED;
-    } else if (equali(command, "bhop") || (equali(command, "agfix_bh"))) {
+    } else if (IsCheatCommand(command)) {
         if (gFirstCheatValidation[id]) {
             gSecondCheatValidation[id] = true;
             return PLUGIN_HANDLED;
@@ -360,7 +363,7 @@ public client_command(id) {
             formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
             get_user_name(id, name, charsmax(name));
             get_user_authid(id, authID, charsmax(authID));
-            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. | Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
                 log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
@@ -594,14 +597,9 @@ public FovCheckReturn(id, const cvar[], const value[]) {
     }
 }
 
-public OpenGFCommandRun() {
-    client_cmd(0, "preCheck;bhop off;postCheck");
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "AGFixCommandRun", TASK_AGFIXCHECKER);
-}
-
-public AGFixCommandRun() {
-    client_cmd(0, "preCheck;agfix_bh;postCheck");
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+public CheatCommandRun() {
+    client_cmd(0, "preCheck;%s;postCheck", gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
 public FwSetModel(entid, model[]) {
@@ -695,9 +693,8 @@ public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
 }
 
 public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
-    remove_task(TASK_OPENGFCHECKER);
-    remove_task(TASK_AGFIXCHECKER);
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+    remove_task(TASK_CHEATCHECKER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
 public ConnectGithubAPI() {
@@ -793,4 +790,13 @@ stock SplitString(output[][], nMax, nSize, input[], delimiter) {
     while((nLen < l) && (++nIdx < nMax))
         nLen += (1 + copyc(output[nIdx], nSize, input[nLen], delimiter));
     return nIdx;
+}
+
+public IsCheatCommand(value[]) {
+    for (new i = 0; i < sizeof(gCheatsCommands); i++) {
+        if (equali(value, gCheatsCommands[i])) {
+            return true;
+        }
+    }
+    return false;
 }
