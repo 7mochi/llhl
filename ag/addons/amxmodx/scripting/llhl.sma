@@ -1,6 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.1-stable
+    Version: 1.1.1-stable
     Author: FlyingCat
 
     # Information:
@@ -70,7 +70,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LHLL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.1-stable"
+#define VERSION         "1.1.1-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 
@@ -99,8 +99,7 @@
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE,
-    TASK_OPENGFCHECKER,
-    TASK_AGFIXCHECKER
+    TASK_CHEATCHECKER
 };
 
 new gGameState;
@@ -136,6 +135,7 @@ new gCvarCheckUpdatesRetryDelay;
 new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
 new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
 new gCheatNumDetections[MAX_PLAYERS + 1];
+new gCommandSended[16];
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -164,6 +164,11 @@ new const gConsistencySoundFiles[][] = {
     "weapons/egon_off1.wav",
     "weapons/egon_run3.wav",
     "weapons/egon_windup2.wav"
+};
+
+new const gCheatsCommands[][] = {
+    "aimbot", "bhop", "fullbright", "nosky", "xhair", "wh", // OpenGF
+    "agfix_rec", "agfix_flash", "agfix_ff0", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
 };
 
 public plugin_init() {
@@ -292,8 +297,7 @@ public plugin_init() {
 
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
 
-    // Start by executing OpenGF32 commands
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 
     hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
 
@@ -344,7 +348,7 @@ public client_command(id) {
         gFirstCheatValidation[id] = true;
         gSecondCheatValidation[id] = false;
         return PLUGIN_HANDLED;
-    } else if (equali(command, "bhop") || (equali(command, "agfix_bh"))) {
+    } else if (IsCheatCommand(command)) {
         if (gFirstCheatValidation[id]) {
             gSecondCheatValidation[id] = true;
             return PLUGIN_HANDLED;
@@ -360,10 +364,10 @@ public client_command(id) {
             formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
             get_user_name(id, name, charsmax(name));
             get_user_authid(id, authID, charsmax(authID));
-            log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Remaining attemps: %i/%i", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+            log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCommandSended, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file(fileName, "[%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
                 gCheatNumDetections[id] = 0;
             }
         }
@@ -594,14 +598,10 @@ public FovCheckReturn(id, const cvar[], const value[]) {
     }
 }
 
-public OpenGFCommandRun() {
-    client_cmd(0, "preCheck;bhop off;postCheck");
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "AGFixCommandRun", TASK_AGFIXCHECKER);
-}
-
-public AGFixCommandRun() {
-    client_cmd(0, "preCheck;agfix_bh;postCheck");
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+public CheatCommandRun() {
+    copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
+    client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
 public FwSetModel(entid, model[]) {
@@ -672,7 +672,7 @@ public CmdAgpauseRehldsHook(id) {
         formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
         get_user_name(id, name, charsmax(name));
         get_user_authid(id, authID, charsmax(authID));
-        log_to_file(fileName, "[%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit", PLUGIN_ACRONYM, name, authID);
+        log_to_file(fileName, "%L", LANG_SERVER, "LLHL_REHLDS_XPLOIT", PLUGIN_ACRONYM, name, authID);
         return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
@@ -695,9 +695,8 @@ public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
 }
 
 public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
-    remove_task(TASK_OPENGFCHECKER);
-    remove_task(TASK_AGFIXCHECKER);
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "OpenGFCommandRun", TASK_OPENGFCHECKER);
+    remove_task(TASK_CHEATCHECKER);
+    set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
 public ConnectGithubAPI() {
@@ -793,4 +792,13 @@ stock SplitString(output[][], nMax, nSize, input[], delimiter) {
     while((nLen < l) && (++nIdx < nMax))
         nLen += (1 + copyc(output[nIdx], nSize, input[nLen], delimiter));
     return nIdx;
+}
+
+public IsCheatCommand(value[]) {
+    for (new i = 0; i < sizeof(gCheatsCommands); i++) {
+        if (equali(value, gCheatsCommands[i])) {
+            return true;
+        }
+    }
+    return false;
 }
