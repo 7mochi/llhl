@@ -108,6 +108,7 @@ new bool:gIsAlive[MAX_PLAYERS + 1];
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][32];
 new gDeathScreenshotTaken[MAX_PLAYERS + 1];
+new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
@@ -168,7 +169,7 @@ new const gConsistencySoundFiles[][] = {
 
 new const gCheatsCommands[][] = {
     "aimbot", "bhop", "fullbright", "nosky", "xhair", "wh", // OpenGF
-    "agfix_rec", "agfix_flash", "agfix_ff0", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
+    "agfix_rec", "agfix_flash", "agfix_ff0 1", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
 };
 
 public plugin_init() {
@@ -368,6 +369,12 @@ public client_command(id) {
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
                 log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                if (!gDetectionScreenshotTaken[id] && random_num(63, 72) == 69) {
+                    if (gGameState == GAME_RUNNING) {
+                        TakeScreenshot(id);
+                        gDetectionScreenshotTaken[id] = 1;
+                    }
+                }
                 gCheatNumDetections[id] = 0;
             }
         }
@@ -421,6 +428,7 @@ public FwMsgCountdown(id, dest, ent) {
             client_cmd(id, "stop; record %s", strDemo);
             client_print(id, print_chat, "%l", "DEMO_RECORDING", strDemo);
             gDeathScreenshotTaken[id] = 0;
+            gDetectionScreenshotTaken[id] = 0;
         }
     }
 }
@@ -477,13 +485,13 @@ public EventDeathMsg() {
     new id = read_data(2);
     if (!gDeathScreenshotTaken[id] && random_num(63, 72) == 69) {
         if (gGameState == GAME_RUNNING) {
-            TakeDeathScreenshot(id);
+            TakeScreenshot(id);
             gDeathScreenshotTaken[id] = 1;
         }
     }
 }
 
-public TakeDeathScreenshot(id) {
+public TakeScreenshot(id) {
     if (is_user_connected(id)) {
         new formatted[32], name[32], authID[32];
         new timestamp = get_systime();
