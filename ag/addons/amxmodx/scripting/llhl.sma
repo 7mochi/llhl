@@ -169,7 +169,7 @@ new const gConsistencySoundFiles[][] = {
 
 new const gCheatsCommands[][] = {
     "aimbot", "bhop", "fullbright", "nosky", "xhair", "wh", // OpenGF
-    "agfix_rec", "agfix_flash", "agfix_ff0 1", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
+    "agfix_rec", "agfix_flash", "agfix_ff0", "agfix_bh", "agfix_smoke", "agfix_nospread", "agfix_speed" // AGFix
 };
 
 public plugin_init() {
