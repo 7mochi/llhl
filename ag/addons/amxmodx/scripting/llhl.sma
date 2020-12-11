@@ -369,7 +369,7 @@ public client_command(id) {
 
             if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
                 log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
-                if (!gDetectionScreenshotTaken[id] && random_num(68, 72) == 69) {
+                if (!gDetectionScreenshotTaken[id] && random_num(69, 70) == 69) {
                     if (gGameState == GAME_RUNNING) {
                         TakeScreenshot(id);
                         gDetectionScreenshotTaken[id] = 1;
