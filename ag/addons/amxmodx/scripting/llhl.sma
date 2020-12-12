@@ -68,7 +68,7 @@
 #include <regex>
 
 #define PLUGIN          "Liga Latinoamericana de Half Life"
-#define PLUGIN_ACRONYM  "LHLL"
+#define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
 #define VERSION         "1.1.1-stable"
 #define AUTHOR          "FlyingCat"
