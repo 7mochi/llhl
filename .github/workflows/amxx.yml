@@ -17,7 +17,7 @@ jobs:
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx-linux.tar.gz
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
         mkdir amxx-windows amxx-linux
-        tar -xzf amxx-linux.tar.gz amxx-linux
+        tar -xzf amxx-linux.tar.gz -C amxx-linux
         unzip amxx-windows.zip -d amxx-windows
 
     - name: Download Metamod v1.21p39 by Solokiller
@@ -82,7 +82,7 @@ jobs:
 
         # Copy compiled plugins to windows artifact
         cp -a llhl-dev-linux/ag/addons/amxmodx/plugins/*.amxx llhl-dev-windows/ag/addons/amxmodx/plugins
-        
+
     - name: Copy the rest of the files
       run: |
         os=("agmodx-dev-linux" "agmodx-dev-windows")
