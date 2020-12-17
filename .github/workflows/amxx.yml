@@ -6,49 +6,47 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v1
-    - name: Download latest amxmodx 1.9 (Linux)
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Download latest AMX Mod X 1.9
       run: |
-        wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx.tar.gz
-        tar -xzf amxx.tar.gz
-    - name: Download latest amxmodx 1.9 (Windows)
-      run: |
+        wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx-linux.tar.gz
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
-        mkdir amxx-windows
+        mkdir amxx-windows amxx-linux
+        tar -xzf amxx-linux.tar.gz amxx-linux
         unzip amxx-windows.zip -d amxx-windows
-    - name: Download Metamod v1.21p39 (Solokiller)
+
+    - name: Download Metamod v1.21p39 by Solokiller
       run: |
         wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast-Linux.zip" -O metamod.zip
         wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast.zip" -O metamod-win.zip
         unzip metamod.zip
         unzip metamod-win.zip -d metamod
-    - name: Give amxxpc the required permissions
-      run: chmod +x addons/amxmodx/scripting/amxxpc
-    - name: Compile LLHL plugin
+
+    - name: Create LLHL folder structure for Windows and Linux
       run: |
-        # Saving the current location to cd later
-        previousDir=$(pwd)
-
-        # Clone llhl resources repo
-        git clone https://github.com/FlyingCat-X/llhl-resources.git
-
-        # Creating llhl release folder structure (Windows and linux)
         os=("llhl-dev-linux" "llhl-dev-windows")
         for i in "${os[@]}"
         do
           mkdir $i && cd $i && mkdir ag && cd ag
           mkdir addons gamemodes gfx locs maps models sound sprites
 
-          # Returning to the location where we were before
-          cd $previousDir
+          # Return to the initial location
+          cd $GITHUB_WORKSPACE
         done
-
+    
+    - name: Clone LLHL Resources Repository
+      run: |
+        git clone https://github.com/FlyingCat-X/llhl-resources.git
+    
+    - name: Copy neccesary files for compiling LLHL
+      run: |
         # Copy amxmodx addons folder (Windows and linux)
-        cp -a addons/* llhl-dev-linux/ag/addons
+        cp -a amxx-linux/addons/* llhl-dev-linux/ag/addons
         cp -a amxx-windows/addons/* llhl-dev-windows/ag/addons
 
         # Prepare for gRIP use
@@ -57,33 +55,37 @@ jobs:
         # In case the repository has an include folder, we copy the dependencies
         if [ -d ag/addons/amxmodx/scripting/include ]; then
           echo "Copying non-standard dependencies..."
-          cp -a ag/addons/amxmodx/scripting/include/*.inc addons/amxmodx/scripting/include
+          cp -a ag/addons/amxmodx/scripting/include/*.inc amxx-linux/addons/amxmodx/scripting/include
         fi
 
         # Add missing native is_user_authorized (amxmodx.inc)
-        sed 's/native is_user_hltv(index);/& \nnative is_user_authorized(index);\n/' addons/amxmodx/scripting/include/amxmodx.inc -i
+        sed 's/native is_user_hltv(index);/& \nnative is_user_authorized(index);\n/' amxx-linux/addons/amxmodx/scripting/include/amxmodx.inc -i
 
+    - name: Compile LLHL plugin
+      run: |
         # Move to the folder where the compiler is located
-        cd addons/amxmodx/scripting
+        cd amxx-linux/addons/amxmodx/scripting
+
+        # Give amxxpc the required permissions
+        chmod +x amxxpc
 
         # Compile all plugins inside scripting folder
-        for file in $previousDir/ag/addons/amxmodx/scripting/*.sma
+        for file in $GITHUB_WORKSPACE/ag/addons/amxmodx/scripting/*.sma
         do
           smafile="`echo $file | sed -e 's/\.sma$/\.amxx/'`"
           echo -e "\nCompiling $(basename $file)..." 
-          ./amxxpc $file -o$previousDir/llhl-dev-linux/ag/addons/amxmodx/plugins/$(basename "$smafile")
+          ./amxxpc $file -o$GITHUB_WORKSPACE/llhl-dev-linux/ag/addons/amxmodx/plugins/$(basename "$smafile")
         done
 
-        # Returning again to the location where we were before
-        cd $previousDir
+        # Returning to the initial location
+        cd $GITHUB_WORKSPACE
 
         # Copy compiled plugins to windows artifact
         cp -a llhl-dev-linux/ag/addons/amxmodx/plugins/*.amxx llhl-dev-windows/ag/addons/amxmodx/plugins
-
-        # Remove scripting folder
-        rm -r llhl-dev-linux/ag/addons/amxmodx/scripting
-        rm -r llhl-dev-windows/ag/addons/amxmodx/scripting
-
+        
+    - name: Copy the rest of the files
+      run: |
+        os=("agmodx-dev-linux" "agmodx-dev-windows")
         for systems in "${os[@]}"
         do
           # Copy llhl plugins list and multilanguage files
@@ -91,7 +93,7 @@ jobs:
           cp ag/addons/amxmodx/configs/plugins-llhl.ini $systems/ag/addons/amxmodx/configs
 
           # Copy the rest of the directories and files from llhl repo
-          toCopy=("gamemodes" "sound" "startup_server.cfg")
+          toCopy=("gamemodes" "sound" "motd_llhl.txt" "startup_server.cfg")
           for tc in "${toCopy[@]}"
           do
             # Directory
@@ -141,7 +143,7 @@ jobs:
 
         # Copy gRIP Module to amxmodx modules folder
         cp llhl-resources/amxx-related/gRIP/module/*.so llhl-dev-linux/ag/addons/amxmodx/modules
-        cp llhl-resources/amxx-related/gRIP/module/*.dll llhl-dev-windows/ag/addons/amxmodx/plugins
+        cp llhl-resources/amxx-related/gRIP/module/*.dll llhl-dev-windows/ag/addons/amxmodx/modules
         cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-linux/ag/addons/amxmodx/configs
         cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-windows/ag/addons/amxmodx/configs
 
@@ -177,12 +179,18 @@ jobs:
         # Create liblist.gam file
         echo -e $liblist > llhl-dev-linux/ag/liblist.gam
         echo -e $liblist > llhl-dev-windows/ag/liblist.gam
-    - name: Upload llhl-dev artifacts for Linux
+
+        # Remove unnecessary folders
+        rm -r llhl-dev-linux/ag/addons/amxmodx/scripting
+        rm -r llhl-dev-windows/ag/addons/amxmodx/scripting
+
+    - name: Upload llhl-dev package for Linux
       uses: actions/upload-artifact@master
       with:
         name: llhl-dev-linux
         path: llhl-dev-linux
-    - name: Upload llhl-dev artifacts for Windows
+
+    - name: Upload llhl-dev package for Windows
       uses: actions/upload-artifact@master
       with:
         name: llhl-dev-windows
