@@ -45,6 +45,7 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 - Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
 - Metamod 1.21.37p o más reciente; recomiendo usar [esta versión de metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluido y listo para usar en versiones de desarrollo).
 - Tener [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) instalado o una versión más reciente (incluido y listo para usar en versiones de desarrollo).
+- Módulo AMXX: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Descargas (Estables)
 - Paquete full: Además de tener todo lo necesario para el correcto funcionamiento del LLHL gamemode, se incluyen nuevos mapas con sus respectivos archivos adicionales (Locs, wads, sprites, sounds, etc).

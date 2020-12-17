@@ -46,6 +46,7 @@ Unlike my gamemode for agmodx, this one only supports Protocol 48.
 - Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
 - Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds).
 - Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds).
+- AMXX Module: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Download (Stable)
 - Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).

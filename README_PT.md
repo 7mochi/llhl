@@ -44,6 +44,7 @@ Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo
 - Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).
 - Metamod 1.21.37p ou mais recente; recomendo usar [esta versão do metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluído e pronto para uso em versões de desenvolvimento).
 - Ter AMXX 1.9 instalado a versão mais recente (incluído e pronto para uso em versões de desenvolvimento).
+- Módulo AMXX: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Downloads (Estável)
 - Pacote completo: Além de ter todo o necessário para o correto funcionamento do LLHL gamemode, novos mapas são incluídos com seus respectivos arquivos adicionais (Locs, wads, sprites, sounds, etc).
