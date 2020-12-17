@@ -70,3 +70,4 @@ Descargar la [Última versión](https://github.com/FlyingCat-X/llhl/releases/).
 - BulliT: Por desarrollar el AG mod y compartir el código fuente.
 - Dcarlox: Correcciones gramaticales y traducción al español.
 - leynieR: Traducción al Portugués.
+- xeroblood: Metodo SplitString().

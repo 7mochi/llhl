@@ -71,3 +71,4 @@ Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
 - BulliT: For developing AG Mod and sharing the source code.
 - Dcarlox: Grammar corrections and Spanish translation.
 - leynieR: Portuguese Translation.
+- xeroblood: SplitString() method.
