@@ -85,7 +85,7 @@ jobs:
 
     - name: Copy the rest of the files
       run: |
-        os=("agmodx-dev-linux" "agmodx-dev-windows")
+        os=("llhl-dev-linux" "llhl-dev-windows")
         for systems in "${os[@]}"
         do
           # Copy llhl plugins list and multilanguage files
