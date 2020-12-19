@@ -2,6 +2,9 @@
 ### [Versión en Inglés](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versión en Español](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versión en Portugués](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md)
 Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo de jogo LLHL](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que foi desenvolvido para rtxa agmodx. A diferença do meu modo de jogo para agmodx, este suporta apenas o Portocolo 48.
 
+# Considerações importantes
+Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em contato comigo por qualquer meio (Facebook, Whatsapp, Discord, etc) certifique-se de que o erro esteja relacionado ao plugin LLHL. Si tiver algum problema associado a o plugin tente ser o mais detalhado possível e forneça logs e maneiras de resolver esse erro. Não darei suporte / ajuda se o problema estiver relacionado a outros plugins como dproto ou reunion por exemplo.
+
 ## Características
 - Limitador de FPS (o valor por padrão e de 144).
 - Limitador de FOV (o valor mínimo é 85, por padrão está desabilitado).

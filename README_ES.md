@@ -3,6 +3,9 @@
 Este plugin es una adaptación para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
 A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 48.
 
+# Consideraciones importantes
+Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme por cualquier medio (Facebook, Whatsapp, Discord, etc) asegurate de que el error es relacionado al plugin LLHL. Si tienes algún problema asociado al plugin trata de ser lo mas detallado posible y brindarme logs y maneras de como llegar a que salga dicho error. No daré soporte/ayuda si el problema es relacionado a otros plugins como dproto o reunion por ejemplo.
+
 ## Características
 - Limitador de FPS (el valor por defecto es de 144).
 - Limitador de FOV (el valor mínimo es de 85, por defecto está desactivado).
