@@ -3,6 +3,9 @@
 This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
 Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
+# Important notes
+If you have any problem in your server, before opening an issue or contacting me by any means (Facebook, Whatsapp, Discord, etc.) make sure that the error is related to the LLHL plugin. If you have any problem associated to the plugin try to be as detailed as possible and provide me with logs and ways to get to the error. I won’t give you support if the problem is related to other plugins e.g. dproto or reunion.
+
 ## Features
 - FPS Limiter (Default value is 144).
 - FOV Limiter (Minimum value is 85, disabled by default).
@@ -46,6 +49,7 @@ Unlike my gamemode for agmodx, this one only supports Protocol 48.
 - Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
 - Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds).
 - Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds).
+- AMXX Module: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Download (Stable)
 - Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
@@ -70,3 +74,4 @@ Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
 - BulliT: For developing AG Mod and sharing the source code.
 - Dcarlox: Grammar corrections and Spanish translation.
 - leynieR: Portuguese Translation.
+- xeroblood: SplitString() method.

@@ -3,6 +3,9 @@
 Este plugin es una adaptación para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
 A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 48.
 
+# Consideraciones importantes
+Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme por cualquier medio (Facebook, Whatsapp, Discord, etc) asegurate de que el error es relacionado al plugin LLHL. Si tienes algún problema asociado al plugin trata de ser lo mas detallado posible y brindarme logs y maneras de como llegar a que salga dicho error. No daré soporte/ayuda si el problema es relacionado a otros plugins como dproto o reunion por ejemplo.
+
 ## Características
 - Limitador de FPS (el valor por defecto es de 144).
 - Limitador de FOV (el valor mínimo es de 85, por defecto está desactivado).
@@ -45,6 +48,7 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 - Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
 - Metamod 1.21.37p o más reciente; recomiendo usar [esta versión de metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluido y listo para usar en versiones de desarrollo).
 - Tener [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) instalado o una versión más reciente (incluido y listo para usar en versiones de desarrollo).
+- Módulo AMXX: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Descargas (Estables)
 - Paquete full: Además de tener todo lo necesario para el correcto funcionamiento del LLHL gamemode, se incluyen nuevos mapas con sus respectivos archivos adicionales (Locs, wads, sprites, sounds, etc).
@@ -69,3 +73,4 @@ Descargar la [Última versión](https://github.com/FlyingCat-X/llhl/releases/).
 - BulliT: Por desarrollar el AG mod y compartir el código fuente.
 - Dcarlox: Correcciones gramaticales y traducción al español.
 - leynieR: Traducción al Portugués.
+- xeroblood: Metodo SplitString().

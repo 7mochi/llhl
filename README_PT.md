@@ -2,6 +2,9 @@
 ### [Versión en Inglés](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versión en Español](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versión en Portugués](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md)
 Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo de jogo LLHL](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que foi desenvolvido para rtxa agmodx. A diferença do meu modo de jogo para agmodx, este suporta apenas o Portocolo 48.
 
+# Considerações importantes
+Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em contato comigo por qualquer meio (Facebook, Whatsapp, Discord, etc) certifique-se de que o erro esteja relacionado ao plugin LLHL. Si tiver algum problema associado a o plugin tente ser o mais detalhado possível e forneça logs e maneiras de resolver esse erro. Não darei suporte / ajuda se o problema estiver relacionado a outros plugins como dproto ou reunion por exemplo.
+
 ## Características
 - Limitador de FPS (o valor por padrão e de 144).
 - Limitador de FOV (o valor mínimo é 85, por padrão está desabilitado).
@@ -44,6 +47,7 @@ Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo
 - Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).
 - Metamod 1.21.37p ou mais recente; recomendo usar [esta versão do metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluído e pronto para uso em versões de desenvolvimento).
 - Ter AMXX 1.9 instalado a versão mais recente (incluído e pronto para uso em versões de desenvolvimento).
+- Módulo AMXX: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
 
 ## Downloads (Estável)
 - Pacote completo: Além de ter todo o necessário para o correto funcionamento do LLHL gamemode, novos mapas são incluídos com seus respectivos arquivos adicionais (Locs, wads, sprites, sounds, etc).
@@ -68,3 +72,4 @@ Baixe a [última versão](https://github.com/FlyingCat-X/llhl/releases/).
 - BulliT: Para desenvolver o mod AG e compartilhar o código-fonte.
 - Dcarlox: Correções gramaticais e tradução para o espanhol.
 - leynieR: Tradução portuguesa.
+- xeroblood: Metodo SplitString().
