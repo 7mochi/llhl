@@ -138,6 +138,8 @@ new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
 new gCheatNumDetections[MAX_PLAYERS + 1];
 new gCommandSended[16];
 
+new gSHA1Hash[64];
+
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
 static Float:gActualServerFPS;
@@ -274,6 +276,11 @@ public plugin_init() {
     }
 
     register_clcmd("say /unstuck", "CmdUnstuck");
+
+    hash_file("addons/amxmodx/plugins/llhl.amxx", Hash_Sha1, gSHA1Hash, charsmax(gSHA1Hash));
+
+    register_clcmd("hash", "CmdSHA1Hash");
+    register_clcmd("say /hash", "CmdSHA1Hash");
     
     RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPre", 0);
     RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
@@ -550,6 +557,11 @@ UnStuckPlayer(const id) {
         distance += get_pcvar_num(gCvarUnstuckStartDistance);
     }
     return 0;
+}
+
+public CmdSHA1Hash(id) {
+    client_print(id, print_chat, "%s v%s SHA1: %s", PLUGIN_ACRONYM, VERSION, gSHA1Hash);
+    return PLUGIN_HANDLED;
 }
 
 public CheckHLTVDelay(id) {
