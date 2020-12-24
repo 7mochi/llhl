@@ -16,7 +16,6 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - No se permiten cambios de nombre y model cuando hay una partida en curso (Opcional, ambos activados por defecto).
 - Nuevo modo de espera al finalizar un mapa.
 - Se fuerza al HLTV conectado a tener un cierto valor de delay como mínimo (Valor mínimo por defecto es 30).
-- Bloqueador de wallhack.
 - Bloqueador de ghostmines.
 - Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.

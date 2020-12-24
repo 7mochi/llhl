@@ -17,7 +17,6 @@ If you have any problem in your server, before opening an issue or contacting me
 - New intermission mode.
 - More than 1 HLTV allowed.
 - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30).
-- Wallhack Blocker.
 - Ghostmine Blocker.
 - Simple OpenGF32 and AGFix detection (Through cheat commands).
 - Take screenshots at map end and occasionally when a player dies.

@@ -129,14 +129,6 @@ jobs:
         cp metamod/*.so llhl-dev-linux/ag/addons/metamod/dlls
         cp metamod/*.dll llhl-dev-windows/ag/addons/metamod/dlls
 
-        # Copy WHBlocker to metamod plugins folder
-        cp llhl-resources/metamod-plugins/whblocker-1.5.697/*.so llhl-dev-linux/ag/addons/metamod/dlls
-        cp llhl-resources/metamod-plugins/whblocker-1.5.697/*.dll llhl-dev-windows/ag/addons/metamod/dlls
-        
-        # Copy WHBlocker CFG File (Windows and Linux)
-        cp llhl-resources/metamod-plugins/whblocker-1.5.697/config.ini llhl-dev-linux/ag/addons/metamod/dlls
-        cp llhl-resources/metamod-plugins/whblocker-1.5.697/config.ini llhl-dev-windows/ag/addons/metamod/dlls
-
         # Copy GhostMineBlock to metamod plugins folder
         cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.so llhl-dev-linux/ag/addons/metamod/dlls
         cp llhl-resources/metamod-plugins/ghostmineblock-1.5/*.dll llhl-dev-windows/ag/addons/metamod/dlls
@@ -148,11 +140,9 @@ jobs:
         cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-windows/ag/addons/amxmodx/configs
 
         # Add amxmodx to metamod plugins
-        metamodPluginsLinux='linux addons/metamod/dlls/whblocker_mm_i386.so'
         metamodPluginsLinux+='\nlinux addons/metamod/dlls/gm_block_mm_i386.so'
         metamodPluginsLinux+='\nlinux addons/amxmodx/dlls/amxmodx_mm_i386.so'
 
-        metamodPluginsWin='win32 addons/metamod/dlls/whblocker_mm.dll'
         metamodPluginsWin+='\nwin32 addons/metamod/dlls/gm_block_mm.dll'
         metamodPluginsWin+='\nwin32 addons/amxmodx/dlls/amxmodx_mm.dll'
 
