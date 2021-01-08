@@ -21,7 +21,8 @@ If you have any problem in your server, before opening an issue or contacting me
 - Simple OpenGF32 and AGFix detection (Through cheat commands).
 - Take screenshots at map end and occasionally when a player dies.
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
-- Checks for new updates automatically
+- Changing model during a match subtract 1 from the score. (Optional, enabled by default).
+- Checks for new updates automatically.
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -40,6 +41,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_block_ghostmine "1"
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
+- sv_ag_change_model_penalization "1"
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
