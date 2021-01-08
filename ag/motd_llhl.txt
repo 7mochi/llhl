@@ -3,15 +3,15 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 
 -- Nuevas caracteristicas --
 # Limitador de FPS
-# Limitador de default_fov (El minimo es 85, desactivado por defecto)
-# Graba demos automaticamente cuando se inicia una partida (Con agstart)
-# Nuevo comando: /unstuck (Tiempo de espera de 10 segundos para volverlo a usar)
+# Limitador de default_fov
+# Graba demos automaticamente cuando se inicia una partida
+# Nuevo comando: /unstuck
 # Verificacion de sonidos
-# Posibilidad de destruir las satchels de otros players (Desactivado por defecto)
+# Posibilidad de destruir las satchels de otros players
 # No se permiten cambios de nombre y model cuando hay una partida en curso
 # Nuevo modo de espera al terminar un mapa
 # Permitidos mas de 1 HLTV
-# Forzar a los HLTV a tener una cantidad de delay como minimo (Dicho valor es de 30)
+# Forzar a los HLTV a tener una cantidad de delay como minimo
 # Bloqueador de Wallhack
 # Bloqueador de Ghostmine
 # Simple deteccion de los cheats OpenGF32 y AGFix
