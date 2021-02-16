@@ -1,6 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.1.1-stable
+    Version: 1.2-stable
     Author: FlyingCat
 
     # Information:
@@ -20,11 +20,11 @@
     - New intermission mode
     - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
-    - Wallhack Blocker
     - Ghostmine Blocker
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
+    - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
     - Checks for new updates automatically.
 
     # New cvars:
@@ -44,6 +44,7 @@
     - sv_ag_block_ghostmine "1"
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
+    - sv_ag_change_model_penalization "1"
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
@@ -57,7 +58,7 @@
     - Dcarlox: Grammar corrections in the README
     - leynieR: Portuguese Translation.
 
-    Contact: alonso.caychop@tutamail.com or Suisei#9999 (Discord)
+    Contact: alonso.caychop@tutamail.com or Suisei#1966 (Discord)
 */
 
 #include <amxmodx>
@@ -70,7 +71,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.1.1-stable"
+#define VERSION         "1.2-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 
@@ -129,6 +130,7 @@ new gCvarMinHLTVDelay;
 new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
+new gCvarChangeModelPenalization;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
@@ -137,6 +139,8 @@ new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
 new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
 new gCheatNumDetections[MAX_PLAYERS + 1];
 new gCommandSended[16];
+
+new gSHA1Hash[64];
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 new Float:gServerFPS;
@@ -246,6 +250,9 @@ public plugin_init() {
     gCvarCheatCmdCheckInterval = create_cvar("sv_ag_cheat_cmd_check_interval", "5.0");
     gCvarCheatCmdMaxDetections = create_cvar("sv_ag_cheat_cmd_max_detections", "5");
 
+    // Score penalization
+    gCvarChangeModelPenalization = create_cvar("sv_ag_change_model_penalization", "1");
+
     gGameState = GAME_IDLE;
 
     if (gGhostMineBlockState == GMB_LOADED) {
@@ -274,6 +281,11 @@ public plugin_init() {
     }
 
     register_clcmd("say /unstuck", "CmdUnstuck");
+
+    hash_file("addons/amxmodx/plugins/llhl.amxx", Hash_Sha1, gSHA1Hash, charsmax(gSHA1Hash));
+
+    register_clcmd("hash", "CmdSHA1Hash");
+    register_clcmd("say /hash", "CmdSHA1Hash");
     
     RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPre", 0);
     RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
@@ -552,6 +564,11 @@ UnStuckPlayer(const id) {
     return 0;
 }
 
+public CmdSHA1Hash(id) {
+    client_print(id, print_chat, "%s v%s SHA1: %s", PLUGIN_ACRONYM, VERSION, gSHA1Hash);
+    return PLUGIN_HANDLED;
+}
+
 public CheckHLTVDelay(id) {
     static hltvDelay[32];
     get_user_info(id, "hdelay", hltvDelay, charsmax(hltvDelay));
@@ -630,19 +647,28 @@ public FwSetModel(entid, model[]) {
 
 public FwClientUserInfoChangedPre(id, info) {
     static cvarRunning;
-    if ((cvarRunning || (cvarRunning = get_cvar_pointer("sv_ag_match_running"))) && get_pcvar_num(cvarRunning) && gGameState == GAME_RUNNING && is_user_connected(id) && hl_get_user_spectator(id)) {
+    if ((cvarRunning || (cvarRunning = get_cvar_pointer("sv_ag_match_running"))) && get_pcvar_num(cvarRunning) && gGameState == GAME_RUNNING && is_user_connected(id)) {
         new changed, oldValue[32], newValue[32];
-        if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue)) {
+        new bool:isPlayerSpec = hl_get_user_spectator(id);
+
+        if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue) && isPlayerSpec) {
             engfunc(EngFunc_SetClientKeyValue, id, info, "name", oldValue);
             client_print(id, print_chat, "%l", "BLOCK_NAMECHANGE_MSG");
             changed = true;
         }
 
         if (get_pcvar_num(gCvarBlockModelChangeInMatch) && copy(oldValue, charsmax(oldValue), gOldPlayerModel[id]) && engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue))) {
-            if (!equal(oldValue, newValue)) {
-                engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
-                client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
-                changed = true;
+           if (!equal(oldValue, newValue)) {
+                if (isPlayerSpec) {
+                    engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
+                    client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
+                    changed = true;
+                } else {
+                    if (get_pcvar_num(gCvarChangeModelPenalization)) {
+                        ExecuteHam(Ham_AddPoints, id, -1, true);
+                    }
+                    engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+                }
             }
         } else {
             engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
