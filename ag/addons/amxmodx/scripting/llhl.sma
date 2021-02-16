@@ -58,7 +58,7 @@
     - Dcarlox: Grammar corrections in the README
     - leynieR: Portuguese Translation.
 
-    Contact: alonso.caychop@tutamail.com or Suisei#9999 (Discord)
+    Contact: alonso.caychop@tutamail.com or Suisei#1966 (Discord)
 */
 
 #include <amxmodx>

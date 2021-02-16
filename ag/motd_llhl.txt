@@ -31,6 +31,6 @@ Un administrador podria pedirte que las subas.
 
 -- Informacion del modo de juego --
 # Version: 1.2-stable
-# Autor: FlyingCat (Discord: Suisei#9999)
+# Autor: FlyingCat (Discord: Suisei#1966)
 # Repositorio: https://git.io/jkttq
 # Descarga: https://github.com/FlyingCat-X/llhl/releases/latest
