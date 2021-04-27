@@ -20,12 +20,10 @@ jobs:
         tar -xzf amxx-linux.tar.gz -C amxx-linux
         unzip amxx-windows.zip -d amxx-windows
 
-    - name: Download Metamod v1.21p39 by Solokiller
+    - name: Download Metamod v1.21.1-am
       run: |
-        wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast-Linux.zip" -O metamod.zip
-        wget "https://github.com/Solokiller/Metamod-P-CMake/releases/download/v1.21p39/Metamod-P-opt-fast.zip" -O metamod-win.zip
-        unzip metamod.zip
-        unzip metamod-win.zip -d metamod
+        wget "https://www.amxmodx.org/release/metamod-1.21.1-am.zip" -O metamod.zip
+        unzip -j metamod.zip -x '*.dylib' -d metamod
 
     - name: Create LLHL folder structure for Windows and Linux
       run: |
