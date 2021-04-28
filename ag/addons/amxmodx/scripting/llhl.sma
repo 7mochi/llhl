@@ -71,7 +71,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.2.1-stable"
+#define VERSION         "1.2-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 
