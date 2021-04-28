@@ -143,7 +143,6 @@ new gCommandSended[16];
 new gSHA1Hash[64];
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
-new Float:gServerFPS;
 static Float:gActualServerFPS;
 
 new GripRequestOptions:gGripIncomingHeader;
@@ -477,7 +476,7 @@ public FwMsgVote(id) {
 }
 
 public FwMsgIntermission(id) {
-    gActualServerFPS = gServerFPS;
+    gActualServerFPS = get_global_float(GL_frametime);
     client_cmd(0, "stop;wait;wait;+showscores");
     set_task(0.1, "TaskPreIntermission", TASK_SHOWVENGINE);
     message_begin(0, SVC_FINALE);
@@ -489,7 +488,7 @@ public FwMsgIntermission(id) {
 public TaskPreIntermission() {
     // Show vEngine
     set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
-    show_dhudmessage(0, "%s v%s^n----------------------^nMax Player FPS Allowed: %i^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarMaxFps), get_pcvar_num(gCvarNumHLTVAllowed), gActualServerFPS, !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
+    show_dhudmessage(0, "%s v%s^n----------------------^nMax Player FPS Allowed: %i^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarMaxFps), get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
     client_cmd(0, "wait;wait;snapshot");
 }
 
@@ -681,21 +680,6 @@ public FwClientUserInfoChangedPre(id, info) {
         engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
     }
     return FMRES_IGNORED;
-}
-
-public FwStartFrame() {
-    static Float:gametime, Float:framesPer = 0.0;
-    static Float:tempFps;
-    
-    gametime = get_gametime();
-    
-    if(framesPer >= gametime) {
-        tempFps += 1.0;
-    } else {
-        framesPer = framesPer + 1.0;
-        gServerFPS = tempFps;
-        tempFps = 0.0;
-    }
 }
 
 public CmdAgpauseRehldsHook(id) {

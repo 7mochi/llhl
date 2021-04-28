@@ -68,8 +68,7 @@ Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
 - Turn your server on and enjoy.
 
 ## Thanks to
-- Th3-822: FPS Limiter and blocking name and model changes.
-- Alka: Server FPS.
+- Th3-822: FPS Limiter, Server FPS and blocking name and model changes.
 - Arkshine: Unstuck command.
 - naz: Useful codes for hook messages from AG engine.
 - BulliT: For developing AG Mod and sharing the source code.
