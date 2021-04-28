@@ -67,8 +67,7 @@ Descargar la [Última versión](https://github.com/FlyingCat-X/llhl/releases/).
 - Enciende tu servidor y disfruta.
 
 ## Agradecimientos
-- Th3-822: Limitador de FPS y bloqueador de cambios de nombre y model.
-- Alka: FPS del servidor.
+- Th3-822: Limitador de FPS, FPS del Servidor y bloqueador de cambios de nombre y model.
 - Arkshine: Comando unstuck.
 - naz: Códigos útiles para hookear los mensajes del motor de AG.
 - BulliT: Por desarrollar el AG mod y compartir el código fuente.
