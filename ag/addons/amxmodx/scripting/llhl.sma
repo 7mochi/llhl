@@ -987,7 +987,6 @@ public DownloadLLHLFiles() {
     } else {
         formatex(downloadURL, charsmax(downloadURL), "https://raw.githubusercontent.com/FlyingCat-X/llhl/%s-stable/ag/%s", gRepoVersion, pathInHashfile);
     }
-    server_print("URL: %s", downloadURL);
 
     static file[1];
     file[0] = fopen(fullPath, "wt");
