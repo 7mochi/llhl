@@ -125,6 +125,7 @@ new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
+new gCvarPassword;
 new gCvarMaxFps;
 new gCvarMaxDetections;
 new gCvarMinFovEnabled;
@@ -167,6 +168,7 @@ new Array:gListPaths;
 
 new gCheckUpdatesNumRetrys;
 new gRepoVersion[32];
+new gSvPasswordPreUpdate[64];
 
 new gDownloadRetries;
 new gDownloadCounter;
@@ -235,6 +237,8 @@ public plugin_init() {
     }
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
+
+    gCvarPassword = get_cvar_pointer("sv_password");
 
     // FPS Limiter
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
@@ -795,7 +799,14 @@ public GetLatestVersion() {
         case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
         case -1: {
             server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
-            DownloadHashfile();
+            
+            // Only download as long as there is no player on the server or no match in progress.
+            if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
+                // Lock the server with password while updating the plugin
+                get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
+                set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
+                DownloadHashfile();
+            }
         }
     }
 }
@@ -864,8 +875,11 @@ public IsCheatCommand(value[]) {
 public DownloadHashfile() {
     new hashfileWithPath[64]; // File with path where the hashfile will be stored temporarily
 
-    if (!dir_exists(UPDATER_DIR))
+    if (!dir_exists(UPDATER_DIR)) {
         mkdir(UPDATER_DIR);
+    } else {
+        CleanUpdaterFolder();
+    }
     
     // It would look like this: llhl-updater-temp/hashfile.sha1
     formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME);
@@ -1092,6 +1106,7 @@ public CleanUpdaterFolder() {
     rmdir(UPDATER_DIR);
 
     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
 }
 
 stock GetFileExtension(const filepath[], file[], max) {
