@@ -20,7 +20,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre.
 - Evite o abuso de um bug ReHLDS (o servidor desaparece da lista da mundial quando e pausado)  apenas quando não há uma match em andamento.
 - A mudança de model durante uma partida subtrai 1 da pontuação. (Opcional, por padrão está activado).
-- Verifica automaticamente a existência de novas actualizações.
+- Verifica se há novas actualizações e vai baixar automaticamente.
 
 ## Novas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -43,6 +43,8 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_update_dl_max_retries "3"
+- sv_ag_update_dl_retry_delay "3"
 
 ## Requisitos
 - Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).

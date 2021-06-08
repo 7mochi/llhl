@@ -22,7 +22,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - Take screenshots at map end and occasionally when a player dies.
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
-- Checks for new updates automatically.
+- Check for new updates and it will download them automatically.
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -45,6 +45,8 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_update_dl_max_retries "3"
+- sv_ag_update_dl_retry_delay "3"
 
 ## Requirements
 - Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
