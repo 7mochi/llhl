@@ -1,4 +1,4 @@
-Bienvenido al modo de juego LLHL v1.2.1-stable
+Bienvenido al modo de juego LLHL v2.0-stable
 Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life (LLHL)
 
 -- Nuevas caracteristicas --
@@ -30,7 +30,7 @@ Conserva todas tus capturas de pantalla y demos generadas con este modo de juego
 Un administrador podria pedirte que las subas.
 
 -- Informacion del modo de juego --
-# Version: 1.2.1-stable
+# Version: 2.0-stable
 # Autor: FlyingCat (Discord: Suisei#1966)
 # Repositorio: https://git.io/jkttq
 # Descarga: https://github.com/FlyingCat-X/llhl/releases/latest
