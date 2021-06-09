@@ -1063,7 +1063,6 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
         if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadLLHLFiles");
-            return;
         } else {
             CleanUpdaterFolder();
         }
