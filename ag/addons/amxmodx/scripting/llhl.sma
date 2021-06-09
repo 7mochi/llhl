@@ -1062,6 +1062,7 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
         if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadLLHLFiles");
+            return;
         } else {
             CleanUpdaterFolder();
         }
@@ -1080,6 +1081,9 @@ public MoveLLHLFiles() {
 
     if (dir_exists(UPDATER_DIR)) {
         CleanUpdaterFolder();
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+        set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
+        set_task(0.5, "RestartServer");
     }
 }
 
@@ -1103,10 +1107,6 @@ public CleanUpdaterFolder() {
 
     rmdir(UPDATER_DIR + "/update");
     rmdir(UPDATER_DIR);
-
-    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
-    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
-    set_task(0.5, "RestartServer");
 }
 
 public RestartServer(){
