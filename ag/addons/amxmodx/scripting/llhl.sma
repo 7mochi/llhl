@@ -1111,7 +1111,6 @@ public CleanUpdaterFolder() {
 
 public RestartServer(){
     server_cmd("restart");
-    server_exec();
 }
 
 stock GetFileExtension(const filepath[], file[], max) {
