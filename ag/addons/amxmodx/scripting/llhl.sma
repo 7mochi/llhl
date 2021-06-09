@@ -799,7 +799,7 @@ public GetLatestVersion() {
         case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
         case -1: {
             server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
-            
+            log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
             // Only download as long as there is no player on the server or no match in progress.
             if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
                 // Lock the server with password while updating the plugin
@@ -887,13 +887,17 @@ public DownloadHashfile() {
     static hashfile[1];
     hashfile[0] = fopen(hashfileWithPath, "wt");
 
-    if (!hashfile[0])
+    if (!hashfile[0]) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, hashfileWithPath);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, hashfileWithPath);
+    }
     
     new CURL:curl = curl_easy_init();
 
-    if (!curl)
+    if (!curl) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+    }
     
     new latestTagURL[128];
     formatex(latestTagURL, charsmax(latestTagURL), "https://github.com/FlyingCat-X/llhl/releases/download/%s-stable/hashfile.sha1", gRepoVersion);
@@ -911,6 +915,7 @@ public DownloadHashfile() {
 
     curl_easy_perform(curl, "CallbackHashfile", hashfile, sizeof(hashfile));
     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, HASH_NAME);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, HASH_NAME);
 }
 
 public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
@@ -919,13 +924,16 @@ public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
 
     if (code == CURLE_OK) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOAD_FINISHED", PLUGIN_ACRONYM);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOAD_FINISHED", PLUGIN_ACRONYM);
         gDownloadRetries = 0;
         ParseHashFile();
     } else {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         gDownloadRetries++;
         if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
             CleanUpdaterFolder();
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadHashfile");
         } else {
@@ -992,13 +1000,17 @@ public DownloadLLHLFiles() {
     static file[1];
     file[0] = fopen(fullPath, "wt");
 
-    if (!file[0])
+    if (!file[0]) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, fullPath);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, fullPath);
+    }
     
     new CURL:curl = curl_easy_init();
 
-    if (!curl)
+    if (!curl) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+    }
     
     // cURL Static Options
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
@@ -1017,6 +1029,7 @@ public DownloadLLHLFiles() {
 
     curl_easy_perform(curl, "CallbackLLHLFile", llhlFile, LLHLFile);
     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, pathless);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, pathless);
 }
 
 public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
@@ -1040,21 +1053,25 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
             gDownloadRetries = 0;
             gDownloadCounter++;
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_FINISHED", PLUGIN_ACRONYM, gDownloadCounter, ArraySize(gListPaths));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_FINISHED", PLUGIN_ACRONYM, gDownloadCounter, ArraySize(gListPaths));
 
             // If all the files haven't yet been downloaded, we continue with the next one in the queue
             if (ArraySize(gListPaths) != gDownloadCounter) {
                 DownloadLLHLFiles();
             } else {
                 server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
                 MoveLLHLFiles();
             }
         } else {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM);
             delete_file(fullPath);
             needToRetry = true;
         }
     } else {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         needToRetry = true;
     }
 
@@ -1062,6 +1079,7 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
         gDownloadRetries++;
         if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadLLHLFiles");
         } else {
             CleanUpdaterFolder();
@@ -1082,6 +1100,7 @@ public MoveLLHLFiles() {
     if (dir_exists(UPDATER_DIR)) {
         CleanUpdaterFolder();
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
         set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
         set_task(0.5, "RestartServer");
     }
@@ -1089,6 +1108,7 @@ public MoveLLHLFiles() {
 
 public CleanUpdaterFolder() {
     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CLEAN_UPDATER_DIR", PLUGIN_ACRONYM);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CLEAN_UPDATER_DIR", PLUGIN_ACRONYM);
 
     new hashfileWithPath[64];
     formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME);
