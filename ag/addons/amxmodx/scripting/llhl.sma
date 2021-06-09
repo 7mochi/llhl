@@ -937,6 +937,8 @@ public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
             CleanUpdaterFolder();
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadHashfile");
         } else {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
             CleanUpdaterFolder();
         }
     }
@@ -1082,6 +1084,8 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
             log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
             set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadLLHLFiles");
         } else {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
             CleanUpdaterFolder();
         }
     }
