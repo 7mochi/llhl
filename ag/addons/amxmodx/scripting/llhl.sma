@@ -1066,8 +1066,8 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
                 MoveLLHLFiles();
             }
         } else {
-            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM);
-            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM);
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM, fullPath);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM, fullPath);
             delete_file(fullPath);
             needToRetry = true;
         }
