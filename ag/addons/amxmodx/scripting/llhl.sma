@@ -1000,7 +1000,7 @@ public DownloadLLHLFiles() {
     }
 
     new file[1];
-    file[0] = fopen(fullPath, "wt");
+    file[0] = fopen(fullPath, "wb");
 
     if (!file[0]) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, fullPath);
