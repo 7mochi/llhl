@@ -1067,6 +1067,7 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
 
                 if (dir_exists(UPDATER_DIR)) {
                     CleanUpdaterFolder();
+                    DeleteOgFiles();
                     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
                     log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
                     set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
@@ -1109,6 +1110,16 @@ public MoveLLHLFiles() {
         formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
         rename_file(pathInHashfile, ogFilePath, 1);
         rename_file(fullPath, pathInHashfile, 1); // Move the files to the appropriate folder
+    }
+}
+
+public DeleteOgFiles() {
+    for (new i = 0; i < ArraySize(gListPaths); i++) {
+        new pathInHashfile[256], ogFilePath[256];
+        ArrayGetString(gListPaths, i, pathInHashfile, charsmax(pathInHashfile));
+        
+        formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
+        delete_file(ogFilePath);
     }
 }
 
