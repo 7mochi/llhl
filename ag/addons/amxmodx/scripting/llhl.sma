@@ -884,7 +884,7 @@ public DownloadHashfile() {
     // It would look like this: llhl-updater-temp/hashfile.sha1
     formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME);
 
-    static hashfile[1];
+    new hashfile[1];
     hashfile[0] = fopen(hashfileWithPath, "wt");
 
     if (!hashfile[0]) {
@@ -999,7 +999,7 @@ public DownloadLLHLFiles() {
         formatex(downloadURL, charsmax(downloadURL), "https://raw.githubusercontent.com/FlyingCat-X/llhl/%s-stable/ag/%s", gRepoVersion, pathInHashfile);
     }
 
-    static file[1];
+    new file[1];
     file[0] = fopen(fullPath, "wt");
 
     if (!file[0]) {
@@ -1035,7 +1035,7 @@ public DownloadLLHLFiles() {
 }
 
 public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
-    static data[1];
+    new data[1];
     new fullPath[256];
     data[0] = llhlFile[LLHLFile_Data];
     copy(fullPath, charsmax(fullPath), llhlFile[LLHLFile_FullPath]);
