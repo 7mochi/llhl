@@ -1137,7 +1137,9 @@ public CleanUpdaterFolder() {
 
     if (handleTempDir) {
         do {
-            delete_file(tempLLHLFile);
+            new fullPathToDelete[256];
+            formatex(fullPathToDelete, charsmax(fullPathToDelete), "%s/update/%s", UPDATER_DIR, tempLLHLFile);
+            delete_file(fullPathToDelete);
         } while (next_file(handleTempDir, tempLLHLFile, charsmax(tempLLHLFile)));
         close_dir(handleTempDir);
     }
