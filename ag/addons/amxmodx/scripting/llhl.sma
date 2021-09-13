@@ -1101,11 +1101,13 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
 
 public MoveLLHLFiles() {
     for (new i = 0; i < ArraySize(gListPaths); i++) {
-        new pathInHashfile[256], fullPath[256], pathless[128];
+        new pathInHashfile[256], fullPath[256], ogFilePath[256], pathless[128];
         ArrayGetString(gListPaths, i, pathInHashfile, charsmax(pathInHashfile));
 
         remove_filepath(pathInHashfile, pathless, charsmax(pathless));
         formatex(fullPath, charsmax(fullPath), "%s/update/%s", UPDATER_DIR, pathless);
+        formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
+        rename_file(pathInHashfile, ogFilePath, 1);
         rename_file(fullPath, pathInHashfile, 1); // Move the files to the appropriate folder
     }
 }
