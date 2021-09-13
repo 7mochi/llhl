@@ -1064,6 +1064,14 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
                 server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
                 log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
                 MoveLLHLFiles();
+
+                if (dir_exists(UPDATER_DIR)) {
+                    CleanUpdaterFolder();
+                    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+                    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+                    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
+                    set_task(0.5, "RestartServer");
+                }
             }
         } else {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM, fullPath);
@@ -1099,14 +1107,6 @@ public MoveLLHLFiles() {
         remove_filepath(pathInHashfile, pathless, charsmax(pathless));
         formatex(fullPath, charsmax(fullPath), "%s/update/%s", UPDATER_DIR, pathless);
         rename_file(fullPath, pathInHashfile, 1); // Move the files to the appropriate folder
-    }
-
-    if (dir_exists(UPDATER_DIR)) {
-        CleanUpdaterFolder();
-        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
-        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
-        set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
-        set_task(0.5, "RestartServer");
     }
 }
 
