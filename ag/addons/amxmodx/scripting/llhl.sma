@@ -48,8 +48,8 @@
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
-    - sv_ag_update_dl_max_retries "3"
-    - sv_ag_update_dl_retry_delay "3"
+    - sv_ag_autoupdate_dl_max_retries "3"
+    - sv_ag_autoupdate_dl_retry_delay "3"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -147,8 +147,8 @@ new gCvarChangeModelPenalization;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
-new gCvarUpdateDlMaxRetries;
-new gCvarUpdateDlRetryDelay;
+new gCvarAutoUpdateDlMaxRetries;
+new gCvarAutoUpdateDlRetryDelay;
 
 new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
 new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
@@ -289,8 +289,8 @@ public plugin_init() {
     gCvarCheckUpdatesRetryDelay = create_cvar("sv_ag_check_updates_retry_delay", "2.0");
 
     // Download updates from Github Repo
-    gCvarUpdateDlMaxRetries = create_cvar("sv_ag_update_dl_max_retries", "3");
-    gCvarUpdateDlRetryDelay = create_cvar("sv_ag_update_dl_retry_delay", "3");
+    gCvarAutoUpdateDlMaxRetries = create_cvar("sv_ag_autoupdate_dl_max_retries", "3");
+    gCvarAutoUpdateDlRetryDelay = create_cvar("sv_ag_autoupdate_dl_retry_delay", "3");
 
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
@@ -931,11 +931,11 @@ public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
         server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         gDownloadRetries++;
-        if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
-            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
-            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
+        if (gDownloadRetries <= get_pcvar_num(gCvarAutoUpdateDlMaxRetries)) {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
             CleanUpdaterFolder();
-            set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadHashfile");
+            set_task(get_pcvar_float(gCvarAutoUpdateDlRetryDelay), "DownloadHashfile");
         } else {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
             log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
@@ -1088,10 +1088,10 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
 
     if (needToRetry) {
         gDownloadRetries++;
-        if (gDownloadRetries <= get_pcvar_num(gCvarUpdateDlMaxRetries)) {
-            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
-            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarUpdateDlMaxRetries));
-            set_task(get_pcvar_float(gCvarUpdateDlRetryDelay), "DownloadLLHLFiles");
+        if (gDownloadRetries <= get_pcvar_num(gCvarAutoUpdateDlMaxRetries)) {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            set_task(get_pcvar_float(gCvarAutoUpdateDlRetryDelay), "DownloadLLHLFiles");
         } else {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
             log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);

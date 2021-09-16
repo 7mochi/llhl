@@ -44,8 +44,8 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
-- sv_ag_update_dl_max_retries "3"
-- sv_ag_update_dl_retry_delay "3"
+- sv_ag_autoupdate_dl_max_retries "3"
+- sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requerimientos
 - Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).
