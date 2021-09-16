@@ -1,6 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 1.2.1-stable
+    Version: 2.0-stable
     Author: FlyingCat
 
     # Information:
@@ -25,7 +25,7 @@
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
-    - Checks for new updates automatically.
+    - Check for new updates and it will download them automatically.
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -48,6 +48,9 @@
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
+    - sv_ag_autoupdate "1"
+    - sv_ag_autoupdate_dl_max_retries "3"
+    - sv_ag_autoupdate_dl_retry_delay "3"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -62,6 +65,8 @@
 */
 
 #include <amxmodx>
+#include <amxmisc>
+#include <curl>
 #include <engine>
 #include <fakemeta>
 #include <grip>
@@ -71,11 +76,14 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "1.2.1-stable"
+#define VERSION         "2.0-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
+#define UPDATER_DIR     "llhl-updater-temp"
+#define HASH_NAME       "hashfile.sha1"
 
 #pragma semicolon 1
+#pragma dynamic 163840
 
 #define INCOMING_BUFFER_LENGTH  1024
 #define JSON_MESSAGE_LENGTH     256
@@ -103,6 +111,11 @@ enum (+=103) {
     TASK_CHEATCHECKER
 };
 
+enum _:LLHLFile {
+    LLHLFile_Data,
+    LLHLFile_FullPath[256]
+}
+
 new gGameState;
 new gGhostMineBlockState;
 new bool:gIsAlive[MAX_PLAYERS + 1];
@@ -113,6 +126,7 @@ new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
+new gCvarPassword;
 new gCvarMaxFps;
 new gCvarMaxDetections;
 new gCvarMinFovEnabled;
@@ -134,6 +148,9 @@ new gCvarChangeModelPenalization;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
+new gCvarAutoupdate;
+new gCvarAutoUpdateDlMaxRetries;
+new gCvarAutoUpdateDlRetryDelay;
 
 new bool:gFirstCheatValidation[MAX_PLAYERS + 1];
 new bool:gSecondCheatValidation[MAX_PLAYERS + 1];
@@ -148,7 +165,15 @@ static Float:gActualServerFPS;
 new GripRequestOptions:gGripIncomingHeader;
 new GripRequestCancellation:gGripIncomingHandler;
 
+new Array:gListHashes;
+new Array:gListPaths;
+
 new gCheckUpdatesNumRetrys;
+new gRepoVersion[32];
+new gSvPasswordPreUpdate[64];
+
+new gDownloadRetries;
+new gDownloadCounter;
 
 new const gConsistencySoundFiles[][] = {
     "ambience/pulsemachine.wav",
@@ -215,6 +240,8 @@ public plugin_init() {
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
 
+    gCvarPassword = get_cvar_pointer("sv_password");
+
     // FPS Limiter
     gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
     gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
@@ -262,6 +289,11 @@ public plugin_init() {
     gCvarCheckUpdates = create_cvar("sv_ag_check_updates", "1");
     gCvarCheckUpdatesRetrys = create_cvar("sv_ag_check_updates_retrys", "3");
     gCvarCheckUpdatesRetryDelay = create_cvar("sv_ag_check_updates_retry_delay", "2.0");
+
+    // Download updates from Github Repo
+    gCvarAutoupdate = create_cvar("sv_ag_autoupdate", "1");
+    gCvarAutoUpdateDlMaxRetries = create_cvar("sv_ag_autoupdate_dl_max_retries", "3");
+    gCvarAutoUpdateDlRetryDelay = create_cvar("sv_ag_autoupdate_dl_retry_delay", "3");
 
     // Just to be sure that the values haven't been replaced when creating the cvars
     server_cmd("exec gamemodes/%s.cfg", PLUGIN_GAMEMODE);
@@ -316,6 +348,10 @@ public plugin_init() {
     // Load LLHL Motd
     server_cmd("motdfile motd_llhl.txt", PLUGIN_GAMEMODE);
     server_exec();
+
+    // Array to save hashes and paths from updates (hashfile.sha1)
+    gListHashes = ArrayCreate(128);
+    gListPaths = ArrayCreate(128);
 
     if (get_pcvar_num(gCvarCheckUpdates)) {
         gGripIncomingHeader = grip_create_default_options();
@@ -743,13 +779,13 @@ public GetLatestVersion() {
     grip_json_object_get_string(responseValue, "name", repoLatestVersion, charsmax(repoLatestVersion));
 
     new ret, error[128];
-    new pluginVersion[32], repoVersion[32];
+    new pluginVersion[32];
     new Regex:regex_handle;
 
     regex_handle = regex_match(repoLatestVersion, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
 
     if (regex_handle > REGEX_NO_MATCH) {
-        regex_substr(regex_handle, 1, repoVersion, charsmax(repoVersion));
+        regex_substr(regex_handle, 1, gRepoVersion, charsmax(gRepoVersion));
     }
     regex_free(regex_handle);
 
@@ -761,10 +797,25 @@ public GetLatestVersion() {
     regex_free(regex_handle);
 
     // Check for updates
-    switch (CompareVersion(pluginVersion, repoVersion)) {
+    switch (CompareVersion(pluginVersion, gRepoVersion)) {
         case 0: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
         case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
-        case -1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
+        case -1: {
+            if (get_pcvar_num(gCvarAutoupdate)) {
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                // Only download as long as there is no player on the server or no match in progress.
+                if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
+                    // Lock the server with password while updating the plugin
+                    get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
+                    set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
+                    DownloadHashfile();
+                }
+            } else {
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
+            }
+        }
     }
 }
 
@@ -819,4 +870,305 @@ public IsCheatCommand(value[]) {
         }
     }
     return false;
+}
+
+/**
+  *  A hashfile with this structure will be downloaded: (SHA1 of the file and Path of the file within the repo)
+  *
+  *  5f5a8447cf65155f79194a07681e26aeb6996e1f  motd_llhl.txt
+  *  0118092da3db08e077c8bb75e7f49a974bbafae4  startup_server.cfg
+  *  a79b45454597c4bd38423570aa9fb1bbd6230884  gamemodes/llhl.cfg
+  *  61ed989cd0cdea013c68cf9aa670a530c30df71e  addons/amxmodx/configs/plugins-llhl.ini
+  */
+public DownloadHashfile() {
+    new hashfileWithPath[64]; // File with path where the hashfile will be stored temporarily
+
+    if (!dir_exists(UPDATER_DIR)) {
+        mkdir(UPDATER_DIR);
+    } else {
+        CleanUpdaterFolder();
+    }
+    
+    // It would look like this: llhl-updater-temp/hashfile.sha1
+    formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME);
+
+    new hashfile[1];
+    hashfile[0] = fopen(hashfileWithPath, "wt");
+
+    if (!hashfile[0]) {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, hashfileWithPath);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, hashfileWithPath);
+    }
+    
+    new CURL:curl = curl_easy_init();
+
+    if (!curl) {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+    }
+    
+    new latestTagURL[128];
+    formatex(latestTagURL, charsmax(latestTagURL), "https://github.com/FlyingCat-X/llhl/releases/download/%s-stable/hashfile.sha1", gRepoVersion);
+    
+    // cURL Static Options
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 8192);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1); // Follow Github Redirect
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_URL, latestTagURL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, hashfile[0]);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, "write");
+
+    curl_easy_perform(curl, "CallbackHashfile", hashfile, sizeof(hashfile));
+    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, HASH_NAME);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, HASH_NAME);
+}
+
+public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
+    fclose(data[0]);
+    curl_easy_cleanup(curl);
+
+    if (code == CURLE_OK) {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOAD_FINISHED", PLUGIN_ACRONYM);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOAD_FINISHED", PLUGIN_ACRONYM);
+        gDownloadRetries = 0;
+        ParseHashFile();
+    } else {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        gDownloadRetries++;
+        if (gDownloadRetries <= get_pcvar_num(gCvarAutoUpdateDlMaxRetries)) {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            CleanUpdaterFolder();
+            set_task(get_pcvar_float(gCvarAutoUpdateDlRetryDelay), "DownloadHashfile");
+        } else {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            CleanUpdaterFolder();
+        }
+    }
+}
+
+public ParseHashFile() {
+    new hashfileWithPath[64];
+    formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME); // llhl-updater-temp/hashfile.sha1
+
+    if (file_exists(hashfileWithPath)) {
+        new lineData[256];
+        new hashfile = fopen(hashfileWithPath, "rt");
+
+        if (!hashfile) return;
+
+        while (!feof(hashfile)) {
+            new hash[128], path[128];
+            fgets(hashfile, lineData, charsmax(lineData));
+            replace(lineData, charsmax(lineData), "^n", ""); // Remove line break
+
+            parse(lineData, hash, charsmax(hash), path, charsmax(path));
+
+            if (lineData[0]) {
+                ArrayPushString(gListHashes, hash);
+                ArrayPushString(gListPaths, path);
+            }
+        }
+        fclose(hashfile);
+    }
+    PrepareDownload();
+}
+
+public PrepareDownload() {
+    if (!dir_exists(UPDATER_DIR + "/update")) {
+        mkdir(UPDATER_DIR + "/update");
+        DownloadLLHLFiles();
+    }
+}
+
+/**
+  * Compiled binaries of the plugin aren't in the repo so they'll be uploaded in each release:
+  * - URL to download files that are in the repo: https://raw.githubusercontent.com/FlyingCat-X/llhl/<LATEST_BRANCH>/<PATH_FROM_HASHFILE>
+  * - URL to download files that aren't in the repo (*.amxx): https://github.com/FlyingCat-X/llhl/releases/download/<LATEST_BRANCH>/<FILENAME>
+  * 
+  * Downloaded files will be temporarily stored inside 'llhl-updater-temp/update' and then moved to the appropriate folder.
+  */
+public DownloadLLHLFiles() {
+    new pathInHashfile[256], fullPath[256], pathless[128], fileExtension[32], downloadURL[256];
+    ArrayGetString(gListPaths, gDownloadCounter, pathInHashfile, charsmax(pathInHashfile));
+
+    remove_filepath(pathInHashfile, pathless, charsmax(pathless));
+    formatex(fullPath, charsmax(fullPath), "%s/update/%s", UPDATER_DIR, pathless);
+    GetFileExtension(pathless, fileExtension, charsmax(fileExtension));
+
+    if (equali(fileExtension, "amxx")) {
+        formatex(downloadURL, charsmax(downloadURL), "https://github.com/FlyingCat-X/llhl/releases/download/%s-stable/%s", gRepoVersion, pathless);
+    } else {
+        formatex(downloadURL, charsmax(downloadURL), "https://raw.githubusercontent.com/FlyingCat-X/llhl/%s-stable/ag/%s", gRepoVersion, pathInHashfile);
+    }
+
+    new file[1];
+    file[0] = fopen(fullPath, "wb");
+
+    if (!file[0]) {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, fullPath);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CANT_OPEN_FILE", PLUGIN_ACRONYM, fullPath);
+    }
+    
+    new CURL:curl = curl_easy_init();
+
+    if (!curl) {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+    }
+    
+    // cURL Static Options
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 8192);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1); // Follow Github Redirect
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_URL, downloadURL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file[0]);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, "write");
+
+    new llhlFile[LLHLFile];
+    llhlFile[LLHLFile_Data] = file[0];
+    llhlFile[LLHLFile_FullPath] = fullPath;
+
+    curl_easy_perform(curl, "CallbackLLHLFile", llhlFile, LLHLFile);
+    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, pathless);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_DOWNLOADING_FILE", PLUGIN_ACRONYM, pathless);
+}
+
+public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
+    new data[1];
+    new fullPath[256];
+    data[0] = llhlFile[LLHLFile_Data];
+    copy(fullPath, charsmax(fullPath), llhlFile[LLHLFile_FullPath]);
+
+    fclose(data[0]);
+    curl_easy_cleanup(curl);
+
+    new llhlFileHash[64], hashInFile[64];
+    new bool:needToRetry = false;
+
+    if (code == CURLE_OK) {
+        // Check hash
+        hash_file(fullPath, Hash_Sha1, llhlFileHash, charsmax(llhlFileHash));
+        ArrayGetString(gListHashes, gDownloadCounter, hashInFile, charsmax(hashInFile));
+
+        if (equali(llhlFileHash, hashInFile)) {
+            gDownloadRetries = 0;
+            gDownloadCounter++;
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_FINISHED", PLUGIN_ACRONYM, gDownloadCounter, ArraySize(gListPaths));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_FINISHED", PLUGIN_ACRONYM, gDownloadCounter, ArraySize(gListPaths));
+
+            // If all the files haven't yet been downloaded, we continue with the next one in the queue
+            if (ArraySize(gListPaths) != gDownloadCounter) {
+                DownloadLLHLFiles();
+            } else {
+                server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLALLF_FINISHED", PLUGIN_ACRONYM);
+                MoveLLHLFiles();
+
+                if (dir_exists(UPDATER_DIR)) {
+                    CleanUpdaterFolder();
+                    DeleteOgFiles();
+                    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+                    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
+                    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
+                    set_task(0.5, "RestartServer");
+                }
+            }
+        } else {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM, fullPath);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_LLHLFILE_HASH_ERR", PLUGIN_ACRONYM, fullPath);
+            delete_file(fullPath);
+            needToRetry = true;
+        }
+    } else {
+        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        needToRetry = true;
+    }
+
+    if (needToRetry) {
+        gDownloadRetries++;
+        if (gDownloadRetries <= get_pcvar_num(gCvarAutoUpdateDlMaxRetries)) {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
+            set_task(get_pcvar_float(gCvarAutoUpdateDlRetryDelay), "DownloadLLHLFiles");
+        } else {
+            server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_FAILED", PLUGIN_ACRONYM);
+            CleanUpdaterFolder();
+        }
+    }
+}
+
+public MoveLLHLFiles() {
+    for (new i = 0; i < ArraySize(gListPaths); i++) {
+        new pathInHashfile[256], fullPath[256], ogFilePath[256], pathless[128];
+        ArrayGetString(gListPaths, i, pathInHashfile, charsmax(pathInHashfile));
+
+        remove_filepath(pathInHashfile, pathless, charsmax(pathless));
+        formatex(fullPath, charsmax(fullPath), "%s/update/%s", UPDATER_DIR, pathless);
+        formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
+        rename_file(pathInHashfile, ogFilePath, 1);
+        rename_file(fullPath, pathInHashfile, 1); // Move the files to the appropriate folder
+    }
+}
+
+public DeleteOgFiles() {
+    for (new i = 0; i < ArraySize(gListPaths); i++) {
+        new pathInHashfile[256], ogFilePath[256];
+        ArrayGetString(gListPaths, i, pathInHashfile, charsmax(pathInHashfile));
+        
+        formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
+        delete_file(ogFilePath);
+    }
+}
+
+public CleanUpdaterFolder() {
+    server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CLEAN_UPDATER_DIR", PLUGIN_ACRONYM);
+    log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CLEAN_UPDATER_DIR", PLUGIN_ACRONYM);
+
+    new hashfileWithPath[64];
+    formatex(hashfileWithPath, charsmax(hashfileWithPath), "%s/%s", UPDATER_DIR, HASH_NAME);
+
+    delete_file(hashfileWithPath);
+
+    new tempLLHLFile[64];
+    new handleTempDir = open_dir(UPDATER_DIR + "/update", tempLLHLFile, charsmax(tempLLHLFile));
+
+    if (handleTempDir) {
+        do {
+            new fullPathToDelete[256];
+            formatex(fullPathToDelete, charsmax(fullPathToDelete), "%s/update/%s", UPDATER_DIR, tempLLHLFile);
+            delete_file(fullPathToDelete);
+        } while (next_file(handleTempDir, tempLLHLFile, charsmax(tempLLHLFile)));
+        close_dir(handleTempDir);
+    }
+
+    rmdir(UPDATER_DIR + "/update");
+    rmdir(UPDATER_DIR);
+}
+
+public RestartServer(){
+    server_cmd("restart");
+}
+
+stock GetFileExtension(const filepath[], file[], max) {
+	new len = strlen(filepath);
+	while ((--len >= 0) && (filepath[len] != '/') && (filepath[len] != '.')) { }
+	copy(file, max, filepath[len + 1]);
+	return;
+}
+
+public write(data[], size, nmemb, file) {
+	new actual_size = size * nmemb;
+	fwrite_blocks(file, data, actual_size, BLOCK_CHAR);
+	return actual_size;
 }

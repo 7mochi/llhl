@@ -50,6 +50,9 @@ jobs:
         # Prepare for gRIP use
         cp llhl-resources/amxx-related/gRIP/include/*.inc ag/addons/amxmodx/scripting/include
 
+        # Prepare for cURL use
+        cp llhl-resources/amxx-related/curl-1.1.1/include/*.inc ag/addons/amxmodx/scripting/include
+
         # In case the repository has an include folder, we copy the dependencies
         if [ -d ag/addons/amxmodx/scripting/include ]; then
           echo "Copying non-standard dependencies..."
@@ -136,6 +139,10 @@ jobs:
         cp llhl-resources/amxx-related/gRIP/module/*.dll llhl-dev-windows/ag/addons/amxmodx/modules
         cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-linux/ag/addons/amxmodx/configs
         cp llhl-resources/amxx-related/gRIP/configs/*.ini llhl-dev-windows/ag/addons/amxmodx/configs
+
+        # Copy cURL Module to amxmodx modules folder
+        cp llhl-resources/amxx-related/curl-1.1.1/module/*.so llhl-dev-linux/ag/addons/amxmodx/modules
+        cp llhl-resources/amxx-related/curl-1.1.1/module/*.dll llhl-dev-windows/ag/addons/amxmodx/modules
 
         # Add amxmodx to metamod plugins
         metamodPluginsLinux+='\nlinux addons/metamod/dlls/gm_block_mm_i386.so'
