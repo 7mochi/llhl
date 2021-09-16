@@ -873,7 +873,7 @@ public IsCheatCommand(value[]) {
 }
 
 /**
-  *  A hashfile with this structure will be downloaded: : (SHA1 of the file and Path of the file within the repo)
+  *  A hashfile with this structure will be downloaded: (SHA1 of the file and Path of the file within the repo)
   *
   *  5f5a8447cf65155f79194a07681e26aeb6996e1f  motd_llhl.txt
   *  0118092da3db08e077c8bb75e7f49a974bbafae4  startup_server.cfg
