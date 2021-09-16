@@ -45,6 +45,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_autoupdate "1"
 - sv_ag_autoupdate_dl_max_retries "3"
 - sv_ag_autoupdate_dl_retry_delay "3"
 

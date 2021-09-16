@@ -48,6 +48,7 @@
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
+    - sv_ag_autoupdate "1"
     - sv_ag_autoupdate_dl_max_retries "3"
     - sv_ag_autoupdate_dl_retry_delay "3"
 
@@ -147,6 +148,7 @@ new gCvarChangeModelPenalization;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
+new gCvarAutoupdate;
 new gCvarAutoUpdateDlMaxRetries;
 new gCvarAutoUpdateDlRetryDelay;
 
@@ -289,6 +291,7 @@ public plugin_init() {
     gCvarCheckUpdatesRetryDelay = create_cvar("sv_ag_check_updates_retry_delay", "2.0");
 
     // Download updates from Github Repo
+    gCvarAutoupdate = create_cvar("sv_ag_autoupdate", "1");
     gCvarAutoUpdateDlMaxRetries = create_cvar("sv_ag_autoupdate_dl_max_retries", "3");
     gCvarAutoUpdateDlRetryDelay = create_cvar("sv_ag_autoupdate_dl_retry_delay", "3");
 
@@ -798,14 +801,19 @@ public GetLatestVersion() {
         case 0: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
         case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
         case -1: {
-            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
-            log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE", PLUGIN_ACRONYM);
-            // Only download as long as there is no player on the server or no match in progress.
-            if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
-                // Lock the server with password while updating the plugin
-                get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
-                set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
-                DownloadHashfile();
+            if (get_pcvar_num(gCvarAutoupdate)) {
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                // Only download as long as there is no player on the server or no match in progress.
+                if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
+                    // Lock the server with password while updating the plugin
+                    get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
+                    set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
+                    DownloadHashfile();
+                }
+            } else {
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
+                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
             }
         }
     }
