@@ -21,6 +21,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
+- Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
 - Verifica si hay nuevas actualizaciones y las descargará automáticamente.
 
 ## Nuevas cvars
@@ -41,6 +42,8 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"
+- sv_ag_block_family_sharing "0"
+- sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
