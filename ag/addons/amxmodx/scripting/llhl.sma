@@ -25,6 +25,7 @@
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
+    - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Check for new updates and it will download them automatically.
 
     # New cvars:
@@ -45,6 +46,7 @@
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
+    - sv_ag_block_family_sharing "0"
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
@@ -79,6 +81,7 @@
 #define VERSION         "2.0-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
+#define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/IsPlayingSharedGame/v1/?key=%s&steamid=%s&appid_playing=70"
 #define UPDATER_DIR     "llhl-updater-temp"
 #define HASH_NAME       "hashfile.sha1"
 
@@ -104,6 +107,8 @@
 #define GMB_NOTLOADED   0
 #define GMB_LOADED      1 // Reserved for future use
 #define GMB_BLOCKED     2 // Reserved for future use
+
+#define GAME_APPID      70
 
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
@@ -145,6 +150,7 @@ new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
+new gCvarBlockFamilySharing;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
@@ -162,8 +168,10 @@ new gSHA1Hash[64];
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 static Float:gActualServerFPS;
 
-new GripRequestOptions:gGripIncomingHeader;
-new GripRequestCancellation:gGripIncomingHandler;
+new GripRequestOptions:gGripUpdateIncomingHeader;
+new GripRequestCancellation:gGripUpdateIncomingHandler;
+new GripRequestOptions:gGripFamilyIncomingHeader;
+new GripRequestCancellation:gGripFamilyIncomingHandler;
 
 new Array:gListHashes;
 new Array:gListPaths;
@@ -279,6 +287,9 @@ public plugin_init() {
     // Score penalization
     gCvarChangeModelPenalization = create_cvar("sv_ag_change_model_penalization", "1");
 
+    // Block access to players who enter with a shared HL/AG via family sharing
+    gCvarBlockFamilySharing = create_cvar("sv_ag_block_family_sharing", "0");
+
     gGameState = GAME_IDLE;
 
     if (gGhostMineBlockState == GMB_LOADED) {
@@ -354,15 +365,22 @@ public plugin_init() {
     gListPaths = ArrayCreate(128);
 
     if (get_pcvar_num(gCvarCheckUpdates)) {
-        gGripIncomingHeader = grip_create_default_options();
+        gGripUpdateIncomingHeader = grip_create_default_options();
         gCheckUpdatesNumRetrys = 0;
         ConnectGithubAPI();
+    }
+
+    if (get_pcvar_num(gCvarBlockFamilySharing)) {
+        gGripFamilyIncomingHeader = grip_create_default_options();
     }
 }
 
 public plugin_end() {
-    if (grip_is_request_active(gGripIncomingHandler)) {
-        grip_cancel_request(gGripIncomingHandler);
+    if (grip_is_request_active(gGripUpdateIncomingHandler)) {
+        grip_cancel_request(gGripUpdateIncomingHandler);
+    }
+    if (grip_is_request_active(gGripFamilyIncomingHandler)) {
+        grip_cancel_request(gGripFamilyIncomingHandler);
     }
 }
 
@@ -387,6 +405,12 @@ public client_connect(id) {
 
 public client_disconnected(id) {
     gIsAlive[id] = false;
+}
+
+public client_authorized(id) {
+    if (get_pcvar_num(gCvarBlockFamilySharing)) {
+        ConnectSteamAPI(id);
+    }
 }
 
 public client_command(id) {
@@ -754,7 +778,15 @@ public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
 }
 
 public ConnectGithubAPI() {
-    gGripIncomingHandler = grip_request(GH_API_URL, Empty_GripBody, GripRequestTypeGet, "GetLatestVersion", gGripIncomingHeader);
+    gGripUpdateIncomingHandler = grip_request(GH_API_URL, Empty_GripBody, GripRequestTypeGet, "GetLatestVersion", gGripUpdateIncomingHeader);
+}
+
+public ConnectSteamAPI(id) {
+    new url[250], steam64ID[32];
+    get_user_info(id, "*sid", steam64ID, charsmax(steam64ID));
+        
+    formatex(url, charsmax(url), STEAM_API_URL, "PUT_YOUR_API_KEY_HERE", steam64ID);
+    gGripFamilyIncomingHandler = grip_request(url, Empty_GripBody, GripRequestTypeGet, "GetFamilySharingStatus", gGripFamilyIncomingHeader, id);
 }
 
 public GetLatestVersion() {
@@ -817,6 +849,37 @@ public GetLatestVersion() {
             }
         }
     }
+}
+
+public GetFamilySharingStatus(id) {
+    if (grip_get_response_state() != GripResponseStateSuccessful) {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_STEAM_FAILED", PLUGIN_ACRONYM);
+        return;
+    }
+
+    new responseBody[INCOMING_BUFFER_LENGTH], jsonError[JSON_MESSAGE_LENGTH], GripJSONValue:json;
+    grip_get_response_body_string(responseBody, charsmax(responseBody));
+    json = grip_json_parse_string(responseBody, jsonError, charsmax(jsonError));
+
+    if (strlen(jsonError) > 0) {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_STEAM_PARSE_ERROR", PLUGIN_ACRONYM);
+        return;
+    }
+
+    new lenderSteam64ID[32];
+    new GripJSONValue:responseValue = grip_json_object_get_value(json, "response");
+    grip_json_object_get_string(responseValue, "lender_steamid", lenderSteam64ID, charsmax(lenderSteam64ID));
+
+    if (!equal(lenderSteam64ID, "0")) {
+        new name[64], authID[32];
+        get_user_name(id, name, charsmax(name));
+        get_user_authid(id, authID, charsmax(authID));
+
+        log_amx("%L", LANG_SERVER, "LLHL_CHECK_FAMILYSHARE_NOTICE", PLUGIN_ACRONYM, name, authID, lenderSteam64ID);
+        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "LLHL_CHECK_FAMILYSHARE_KICK");
+    }
+
+    grip_destroy_json_value(json);
 }
 
 public RetryConnection() {
