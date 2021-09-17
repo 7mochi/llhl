@@ -42,6 +42,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"
 - sv_ag_block_family_sharing "0"
+- sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"

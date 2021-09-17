@@ -47,6 +47,7 @@
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
     - sv_ag_block_family_sharing "0"
+    - sv_ag_steam_api_key ""
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
@@ -151,6 +152,7 @@ new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
 new gCvarBlockFamilySharing;
+new gCvarSteamAPIKey;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
@@ -289,6 +291,7 @@ public plugin_init() {
 
     // Block access to players who enter with a shared HL/AG via family sharing
     gCvarBlockFamilySharing = create_cvar("sv_ag_block_family_sharing", "0");
+    gCvarSteamAPIKey = create_cvar("sv_ag_steam_api_key", "");
 
     gGameState = GAME_IDLE;
 
@@ -782,11 +785,16 @@ public ConnectGithubAPI() {
 }
 
 public ConnectSteamAPI(id) {
-    new url[250], steam64ID[32];
+    new url[250], steam64ID[32], steamAPIKey[32];
     get_user_info(id, "*sid", steam64ID, charsmax(steam64ID));
-        
-    formatex(url, charsmax(url), STEAM_API_URL, "PUT_YOUR_API_KEY_HERE", steam64ID);
-    gGripFamilyIncomingHandler = grip_request(url, Empty_GripBody, GripRequestTypeGet, "GetFamilySharingStatus", gGripFamilyIncomingHeader, id);
+    get_pcvar_string(gCvarSteamAPIKey, steamAPIKey, charsmax(steamAPIKey));
+
+    if (equali(steamAPIKey, "")) {
+        server_print("%L", LANG_SERVER, "LLHL_STEAM_API_KEY_EMPTY", PLUGIN_ACRONYM);
+    } else {
+        formatex(url, charsmax(url), STEAM_API_URL, steamAPIKey, steam64ID);
+        gGripFamilyIncomingHandler = grip_request(url, Empty_GripBody, GripRequestTypeGet, "GetFamilySharingStatus", gGripFamilyIncomingHeader, id);
+    }
 }
 
 public GetLatestVersion() {

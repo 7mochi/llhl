@@ -16,7 +16,8 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 # Bloqueador de Ghostmine
 # Simple deteccion de los cheats OpenGF32 y AGFix
 # Se toman screenshots al terminar el mapa y ocasionalmente cuando un jugador muere
-# Cambiar de model durante una partida resta 1 de la puntuación.
+# Cambiar de model durante una partida resta 1 de la puntuación
+# Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar
 
 -- Configuracion del modo de juego --
 # Forzado de respawn activado
