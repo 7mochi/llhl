@@ -1,5 +1,5 @@
 # ![LLHL Banner](https://raw.githubusercontent.com/FlyingCat-X/llhl/master/LLHL_logo.png)
-### [English Version](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Spanish Version](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Portuguese Version](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Chinese Version (Pendiente)
+### [English Version](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Spanish Version](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Portuguese Version](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Chinese Version (Pending)
 This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
 Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
