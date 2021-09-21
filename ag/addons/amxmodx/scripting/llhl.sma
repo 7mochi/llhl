@@ -360,7 +360,16 @@ public plugin_init() {
     hook_cvar_change(gCvarCheatCmdCheckInterval, "CvarCheatCmdIntervalHook");
 
     // Load LLHL Motd
-    server_cmd("motdfile motd_llhl.txt", PLUGIN_GAMEMODE);
+    new serverLanguage[4];
+    get_cvar_string("amx_language", serverLanguage, charsmax(serverLanguage));
+
+    if (equali(serverLanguage, "es") || equali(serverLanguage, "en") || equali(serverLanguage, "pt")) {
+        new command[64];
+        formatex(command, charsmax(command), "motdfile motd_llhl_%s.txt", serverLanguage);
+        server_cmd(command, PLUGIN_GAMEMODE);
+    } else {
+        server_cmd("motdfile motd_llhl_en.txt", PLUGIN_GAMEMODE);
+    }
     server_exec();
 
     // Array to save hashes and paths from updates (hashfile.sha1)
