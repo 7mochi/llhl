@@ -47,6 +47,9 @@ jobs:
         cp -a amxx-linux/addons/* llhl-dev-linux/ag/addons
         cp -a amxx-windows/addons/* llhl-dev-windows/ag/addons
 
+        # Create include folder
+        cd ag/addons/amxmodx/scripting && mkdir include && cd $GITHUB_WORKSPACE
+
         # Prepare for gRIP use
         cp llhl-resources/amxx-related/gRIP/include/*.inc ag/addons/amxmodx/scripting/include
 
