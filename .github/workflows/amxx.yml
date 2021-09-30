@@ -53,6 +53,9 @@ jobs:
         # Prepare for cURL use
         cp llhl-resources/amxx-related/curl-1.1.1/include/*.inc ag/addons/amxmodx/scripting/include
 
+        # Move Half-Life Stocks
+        cp llhl-resources/amxx-related/half-life-stocks/include/*.inc ag/addons/amxmodx/scripting/include
+
         # In case the repository has an include folder, we copy the dependencies
         if [ -d ag/addons/amxmodx/scripting/include ]; then
           echo "Copying non-standard dependencies..."
