@@ -47,11 +47,17 @@ jobs:
         cp -a amxx-linux/addons/* llhl-dev-linux/ag/addons
         cp -a amxx-windows/addons/* llhl-dev-windows/ag/addons
 
+        # Create include folder
+        cd ag/addons/amxmodx/scripting && mkdir include && cd $GITHUB_WORKSPACE
+
         # Prepare for gRIP use
         cp llhl-resources/amxx-related/gRIP/include/*.inc ag/addons/amxmodx/scripting/include
 
         # Prepare for cURL use
         cp llhl-resources/amxx-related/curl-1.1.1/include/*.inc ag/addons/amxmodx/scripting/include
+
+        # Move Half-Life Stocks
+        cp llhl-resources/amxx-related/half-life-stocks/include/*.inc ag/addons/amxmodx/scripting/include
 
         # In case the repository has an include folder, we copy the dependencies
         if [ -d ag/addons/amxmodx/scripting/include ]; then
