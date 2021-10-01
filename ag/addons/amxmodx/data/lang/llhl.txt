@@ -192,4 +192,4 @@ LLHL_UPDATE_DL_FAILED = [%s] 插件更新失败.
 LLHL_SCD_POSSIBLE_DETECTION = [%s - 作弊检测] %s (%s) 已检测到可能使用了 OpenGF32/AGFix | 剩余检测次数: %i/%i
 LLHL_SCD_DETECTION = [%s - 作弊检测] %s (%s) 经过了%i次尝试后被检测到使用了 OpenGF32/AGFix
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) 尝试在没有人的时候暂停服务器, 可能是rehlds漏洞攻击.
-LLHL_IS_OUTDATED = [%s] This server uses an outdated version of the gamemode.
+LLHL_IS_OUTDATED = [%s] 此服务器正在使用旧的游戏模式.
