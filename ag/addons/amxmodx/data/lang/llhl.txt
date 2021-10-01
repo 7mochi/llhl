@@ -45,6 +45,7 @@ LLHL_UPDATE_DL_FAILED = [%s] Plugin update failed.
 LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] %s (%s) has been detected a possible use of OpenGF32/AGFix. Command Sent: %s | Remaining attemps: %i/%i
 LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) has been detected OpenGF32/AGFix after %i attempts
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit
+LLHL_IS_OUTDATED = [%s] This server uses an outdated version of the gamemode.
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -93,6 +94,7 @@ LLHL_UPDATE_DL_FAILED = [%s] La actualizacion del plugin ha fallado.
 LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] A %s (%s) se le ha detectado un posible uso de OpenGF32/AGFix. Comando enviado: %s | Intentos restantes: %i/%i
 LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] A %s (%s) se le ha detectado OpenGF32/AGFix despues de %i intentos
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) trato de pausar el servidor cuando no habia nadie alrededor. Possible exploit de bug del ReHLDS
+LLHL_IS_OUTDATED = [%s] Este servidor usa una version desactualizada del modo de juego.
 
 [pt]
 CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
@@ -141,6 +143,7 @@ LLHL_UPDATE_DL_FAILED = [%s] Actualização do plugin falhou.
 LLHL_SCD_POSSIBLE_DETECTION = [%s - Simple Cheat Detector] %s (%s) foi detectada uma possível utilização do OpenGF32/AGFix. Comando enviado: %s | Tentativas restantes: %i/%i
 LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) foi detectado OpenGF32/AGFix após %i tentativas
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) tentou fazer uma pausa no servidor quando mais ninguém estava por perto. Possível ReHLDS Bug Exploit
+LLHL_IS_OUTDATED = [%s] Este servidor utiliza uma versão desactualizada do modo de jogo.
 
 [cn]
 CVAR_PROTECTOR_KICK = 检测到参数限制器.
@@ -189,3 +192,4 @@ LLHL_UPDATE_DL_FAILED = [%s] 插件更新失败.
 LLHL_SCD_POSSIBLE_DETECTION = [%s - 作弊检测] %s (%s) 已检测到可能使用了 OpenGF32/AGFix | 剩余检测次数: %i/%i
 LLHL_SCD_DETECTION = [%s - 作弊检测] %s (%s) 经过了%i次尝试后被检测到使用了 OpenGF32/AGFix
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) 尝试在没有人的时候暂停服务器, 可能是rehlds漏洞攻击.
+LLHL_IS_OUTDATED = [%s] 此服务器正在使用旧的游戏模式.
