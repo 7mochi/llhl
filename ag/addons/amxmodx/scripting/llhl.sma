@@ -181,6 +181,7 @@ new Array:gListPaths;
 new gCheckUpdatesNumRetrys;
 new gRepoVersion[32];
 new gSvPasswordPreUpdate[64];
+new bool:gIsOutdated = false;
 
 new gDownloadRetries;
 new gDownloadCounter;
@@ -413,6 +414,12 @@ public client_connect(id) {
     gCheatNumDetections[id] = 0;
     gFirstCheatValidation[id] = false;
     gSecondCheatValidation[id] = false;
+}
+
+public client_putinserver(id) {
+    if (gIsOutdated && get_pcvar_num(gCvarCheckUpdates)) {
+        set_task(5.0, "ShowIsOutdated", id);
+    }
 }
 
 public client_disconnected(id) {
@@ -789,6 +796,10 @@ public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
+public ShowIsOutdated(id) {
+    client_print(id, print_chat, "%l", "LLHL_IS_OUTDATED", PLUGIN_ACRONYM);
+}
+
 public ConnectGithubAPI() {
     gGripUpdateIncomingHandler = grip_request(GH_API_URL, Empty_GripBody, GripRequestTypeGet, "GetLatestVersion", gGripUpdateIncomingHeader);
 }
@@ -847,8 +858,14 @@ public GetLatestVersion() {
 
     // Check for updates
     switch (CompareVersion(pluginVersion, gRepoVersion)) {
-        case 0: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
-        case 1: server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
+        case 0: {
+            gIsOutdated = false;
+            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
+        }
+        case 1: {
+            gIsOutdated = false;
+            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
+        }
         case -1: {
             if (get_pcvar_num(gCvarAutoupdate)) {
                 server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
@@ -861,6 +878,7 @@ public GetLatestVersion() {
                     DownloadHashfile();
                 }
             } else {
+                gIsOutdated = true;
                 server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
                 log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
             }
