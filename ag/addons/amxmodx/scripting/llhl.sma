@@ -333,15 +333,13 @@ public plugin_init() {
         hook_cvar_change(gCvarBlockGhostmine, "CvarGhostMineHook");
         hook_cvar_change(get_cvar_pointer("gm_block_on"), "MetaCvarGhostMineHook");
     }
-
-    if (get_pcvar_num(gCvarRandomSpawns)) {
-        gSpawnOrigins = ArrayCreate(3);
-        gSpawnAngles = ArrayCreate(3);
-
-        LoadSpawns();
-
-        RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
-    }
+    
+    gSpawnOrigins = ArrayCreate(3);
+    gSpawnAngles = ArrayCreate(3);
+    
+    LoadSpawns();
+    
+    RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
 
     register_clcmd("say /unstuck", "CmdUnstuck");
 
@@ -484,22 +482,24 @@ public client_command(id) {
 }
 
 public HamPlayerSpawnPost(id) {
-    if (is_user_alive(id)) {
-        new randomSpawn = random_mod(gSpawnsCounter), Float:vector[3];
-        entity_get_vector(id, EV_VEC_origin, vector);
-
-        ArrayGetArray(gSpawnOrigins, randomSpawn, vector);
-        if (IsSpawnValid(id, vector)) {
-            entity_set_origin(id, vector);
-
-            ArrayGetArray(gSpawnAngles, randomSpawn, vector);
-            entity_set_vector(id, EV_VEC_angles, vector);
-            entity_set_int(id, EV_INT_fixangle, 1);
-
-            return HAM_HANDLED;
+    if (get_pcvar_num(gCvarRandomSpawns)) {
+        if (is_user_alive(id)) {
+            new randomSpawn = random_mod(gSpawnsCounter), Float:vector[3];
+            entity_get_vector(id, EV_VEC_origin, vector);
+            
+            ArrayGetArray(gSpawnOrigins, randomSpawn, vector);
+            
+            if (IsSpawnValid(id, vector)) {
+                entity_set_origin(id, vector);
+                
+                ArrayGetArray(gSpawnAngles, randomSpawn, vector);
+                entity_set_vector(id, EV_VEC_angles, vector);
+                entity_set_int(id, EV_INT_fixangle, 1);
+                
+                return HAM_HANDLED;
+            }
         }
     }
-
     return HAM_IGNORED;
 }
 
