@@ -18,6 +18,7 @@ Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-L
 # Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre
 # A mudança de model durante uma partida subtrai 1 da pontuação
 # Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas
+# Spawns aleatórias
 
 -- Configurações do modo de jogo --
 # Respawn forçado activado
