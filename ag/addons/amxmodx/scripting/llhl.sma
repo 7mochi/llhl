@@ -26,6 +26,7 @@
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
+    - Random spawns (Optional, disabled by default)
     - Check for new updates and it will download them automatically.
 
     # New cvars:
@@ -47,6 +48,7 @@
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
     - sv_ag_block_family_sharing "0"
+    - sv_ag_random_spawns "0"
     - sv_ag_steam_api_key ""
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
@@ -73,6 +75,7 @@
 #include <engine>
 #include <fakemeta>
 #include <grip>
+#include <hamsandwich>
 #include <hlstocks>
 #include <regex>
 
@@ -94,7 +97,7 @@
 #define VERSION_ARRAY_SIZE      16
 
 #define GetPlayerHullSize(%1)  ((pev(%1, pev_flags) & FL_DUCKING) ? HULL_HEAD : HULL_HUMAN)
-#define __is_user_alive(%1) (gIsAlive[%1])
+#define random_mod(%1) (random_num(0, (100 * (%1)) - 1) % (%1))
 
 // Vote state
 #define AGVOTE_ACCEPTED 2
@@ -124,7 +127,6 @@ enum _:LLHLFile {
 
 new gGameState;
 new gGhostMineBlockState;
-new bool:gIsAlive[MAX_PLAYERS + 1];
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][32];
 new gDeathScreenshotTaken[MAX_PLAYERS + 1];
@@ -153,6 +155,7 @@ new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
 new gCvarBlockFamilySharing;
 new gCvarSteamAPIKey;
+new gCvarRandomSpawns;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
@@ -177,6 +180,9 @@ new GripRequestCancellation:gGripFamilyIncomingHandler;
 
 new Array:gListHashes;
 new Array:gListPaths;
+
+new Array:gSpawnOrigins, Array:gSpawnAngles;
+new gSpawnsCounter;
 
 new gCheckUpdatesNumRetrys;
 new gRepoVersion[32];
@@ -294,6 +300,8 @@ public plugin_init() {
     gCvarBlockFamilySharing = create_cvar("sv_ag_block_family_sharing", "0");
     gCvarSteamAPIKey = create_cvar("sv_ag_steam_api_key", "");
 
+    gCvarRandomSpawns = create_cvar("sv_ag_random_spawns", "0");
+
     gGameState = GAME_IDLE;
 
     if (gGhostMineBlockState == GMB_LOADED) {
@@ -325,6 +333,13 @@ public plugin_init() {
         hook_cvar_change(gCvarBlockGhostmine, "CvarGhostMineHook");
         hook_cvar_change(get_cvar_pointer("gm_block_on"), "MetaCvarGhostMineHook");
     }
+    
+    gSpawnOrigins = ArrayCreate(3);
+    gSpawnAngles = ArrayCreate(3);
+    
+    LoadSpawns();
+    
+    RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
 
     register_clcmd("say /unstuck", "CmdUnstuck");
 
@@ -332,10 +347,6 @@ public plugin_init() {
 
     register_clcmd("hash", "CmdSHA1Hash");
     register_clcmd("say /hash", "CmdSHA1Hash");
-    
-    RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPre", 0);
-    RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
-    RegisterHam(Ham_Killed, "player", "HamPlayerKilledPost", 1);
     
     // AG Messages
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
@@ -408,7 +419,6 @@ public inconsistent_file(id, const filename[], reason[64]) {
 }
 
 public client_connect(id) {
-    gIsAlive[id] = false;
     gNumDetections[id] = 0;
     gOldPlayerModel[id][0] = 0;
     gCheatNumDetections[id] = 0;
@@ -420,10 +430,8 @@ public client_putinserver(id) {
     if (gIsOutdated && get_pcvar_num(gCvarCheckUpdates)) {
         set_task(5.0, "ShowIsOutdated", id);
     }
-}
-
-public client_disconnected(id) {
-    gIsAlive[id] = false;
+    // Workaround for first spawn at join
+    HamPlayerSpawnPost(id);
 }
 
 public client_authorized(id) {
@@ -473,19 +481,30 @@ public client_command(id) {
     return PLUGIN_CONTINUE;
 }
 
-public HamPlayerSpawnPre(id) {
-    gIsAlive[id] = false;
-    return HAM_IGNORED;
-}
-
 public HamPlayerSpawnPost(id) {
-    gIsAlive[id] = bool:is_user_alive(id);
+    if (get_pcvar_num(gCvarRandomSpawns)) {
+        if (is_user_alive(id)) {
+            new randomSpawn = random_mod(gSpawnsCounter), Float:vector[3];
+            entity_get_vector(id, EV_VEC_origin, vector);
+            
+            ArrayGetArray(gSpawnOrigins, randomSpawn, vector);
+            
+            if (IsSpawnValid(id, vector)) {
+                entity_set_origin(id, vector);
+                
+                ArrayGetArray(gSpawnAngles, randomSpawn, vector);
+                entity_set_vector(id, EV_VEC_angles, vector);
+                entity_set_int(id, EV_INT_fixangle, 1);
+                
+                return HAM_HANDLED;
+            }
+        }
+    }
     return HAM_IGNORED;
 }
 
-public HamPlayerKilledPost(id) {
-    gIsAlive[id] = false;
-    return HAM_IGNORED;
+public IsSpawnValid(id, Float:origin[3]) {
+	return (trace_hull(origin, (get_user_flags(id) & FL_DUCKING ? HULL_HEAD : HULL_HUMAN), id, DONT_IGNORE_MONSTERS) & 2) ? 0 : 1;
 }
 
 // Called every second during the agstart countdown
@@ -1269,4 +1288,17 @@ public write(data[], size, nmemb, file) {
 	new actual_size = size * nmemb;
 	fwrite_blocks(file, data, actual_size, BLOCK_CHAR);
 	return actual_size;
+}
+
+public LoadSpawns() {
+    new entity = get_maxplayers(), Float:tempVector[3];
+    while ((entity = find_ent_by_class(entity, "info_player_deathmatch"))) {
+        entity_get_vector(entity, EV_VEC_origin, tempVector);
+        ArrayPushArray(gSpawnOrigins, tempVector);
+
+        entity_get_vector(entity, EV_VEC_angles, tempVector);
+        ArrayPushArray(gSpawnAngles, tempVector);
+
+        gSpawnsCounter++;
+    }
 }
