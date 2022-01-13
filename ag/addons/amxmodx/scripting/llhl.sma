@@ -300,7 +300,7 @@ public plugin_init() {
     gCvarBlockFamilySharing = create_cvar("sv_ag_block_family_sharing", "0");
     gCvarSteamAPIKey = create_cvar("sv_ag_steam_api_key", "");
 
-    gCvarRandomSpawns = create_cvar("sv_ag_random_spawns", "1");
+    gCvarRandomSpawns = create_cvar("sv_ag_random_spawns", "0");
 
     gGameState = GAME_IDLE;
 
