@@ -184,6 +184,8 @@ new Array:gListPaths;
 new Array:gSpawnOrigins, Array:gSpawnAngles;
 new gSpawnsCounter;
 
+new Array:gPlayersAllowed;
+
 new gCheckUpdatesNumRetrys;
 new gRepoVersion[32];
 new gSvPasswordPreUpdate[64];
@@ -347,6 +349,10 @@ public plugin_init() {
 
     register_clcmd("hash", "CmdSHA1Hash");
     register_clcmd("say /hash", "CmdSHA1Hash");
+
+    register_concmd("special_agstart", "SpecialAgstart", ADMIN_ALL);
+
+    gPlayersAllowed = ArrayCreate(64);
     
     // AG Messages
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
@@ -1301,4 +1307,64 @@ public LoadSpawns() {
 
         gSpawnsCounter++;
     }
+}
+
+public SpecialAgstart(id, level, cid) {
+    if (get_playersnum() >= get_pcvar_num(gCvarAgStartMinPlayers)) {
+        if (read_argc() < 2) {
+            return PLUGIN_HANDLED;
+        }
+
+        new authID[64];
+        new Regex:gAuthIDPattern;
+
+        gAuthIDPattern = regex_compile("STEAM_[01]:[01]:\d+");
+        for (new i = 1; i <= read_argc() - 1; i++) {
+            read_argv(i, authID, charsmax(authID));
+
+            // REGEX_NO_MATCH (Its value is 0) gives me tag mismatch for some reason
+            if (regex_match_c(authID, gAuthIDPattern) > 0 && find_player_ex(FindPlayer_MatchAuthId, authID)) {
+                ArrayPushString(gPlayersAllowed, authID);
+                server_print(authID);
+            }
+        }
+        regex_free(gAuthIDPattern);
+        
+        if (ArraySize(gPlayersAllowed) >= get_pcvar_num(gCvarAgStartMinPlayers)) {
+            server_cmd("agabort");
+
+            new tempAuthID[32];
+            for (new id = 1; id <= MaxClients; id++) {
+                get_user_authid(id, tempAuthID, charsmax(tempAuthID));
+                new player = ArrayFindString(gPlayersAllowed, tempAuthID);
+                if (player == -1) {
+                    client_cmd(id, "spectate");
+                }
+            }
+            
+            server_cmd("agstart");
+        } else {
+            if (IsUserServer(id)) {
+                server_print("%L", LANG_SERVER, "LLHL_SP_AGSTART_NOT_ENOUGH");
+            } else {
+                client_print(id, print_chat, "%l", "LLHL_SP_AGSTART_NOT_ENOUGH");
+            }
+        }
+    }
+    return PLUGIN_HANDLED;
+}
+
+public IsUserServer(id) {
+    if (is_dedicated_server()) {
+        if (!id) {
+            return true;
+        }
+    } else {
+        new ip[MAX_IP_LENGTH];
+        get_user_ip(id, ip, charsmax(ip), true);
+        if (equal(ip, "loopback")) {
+            return true;
+        }
+    }
+    return false;
 }
