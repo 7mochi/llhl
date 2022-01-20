@@ -22,6 +22,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - A mudança de model durante uma partida subtrai 1 da pontuação. (Opcional, por padrão está activado).
 - Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas.
 - Verifica se há novas actualizações e vai baixar automaticamente.
+- Comando llhl_match_manager implementado (Apenas para administradores)
 
 ## Novas cvars
 - sv_ag_fpslimit_max_fps "144"

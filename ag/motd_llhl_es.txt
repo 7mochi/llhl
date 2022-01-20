@@ -5,7 +5,7 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 # Limitador de FPS
 # Limitador de default_fov
 # Graba demos automaticamente cuando se inicia una partida
-# Nuevo comando: /unstuck
+# Nuevo comandos: /unstuck, llhl_match_manager (Solo para administradores)
 # Verificacion de sonidos
 # Posibilidad de destruir las satchels de otros players
 # No se permiten cambios de nombre y model cuando hay una partida en curso

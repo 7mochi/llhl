@@ -23,6 +23,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
 - Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
 - Verifica si hay nuevas actualizaciones y las descargará automáticamente.
+- Comando llhl_match_manager implementado (Solo para administradores)
 
 ## Nuevas cvars
 - sv_ag_fpslimit_max_fps "144"

@@ -47,6 +47,16 @@ LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) has been detected Open
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) tried to pause the server when no one else was around. Possible ReHLDS Bug Exploit
 LLHL_IS_OUTDATED = [%s] This server uses an outdated version of the gamemode.
 LLHL_SP_AGSTART_NOT_ENOUGH = [%s] Not enough players found to start a game.
+LLHL_MM_MENU_MAIN_TITLE = LLHL Match Manager | Main Menu
+LLHL_MM_ITEM_MAIN_2 = Select the match type: [%s]
+LLHL_MM_ITEM_MAIN_3 = Assign players: Blue [%i-%i] Red
+LLHL_MM_ITEM_MAIN_4 = Start match
+LLHL_MM_MENU_IN_USE = The menu is currently in use. Try again later.
+LLHL_MM_OPT_2_TITLE = Match type:
+LLHL_MM_OPT_3_TITLE = Assigning players:
+LLHL_MM_NO_MATCH_TYPE = No match type has been selected.
+LLHL_MM_MATCH_ALREADY_STARTED = A game is starting. Try again later.
+LLHL_MM_INVALID_PLAYER_COUNT = The number of players selected isn't correct.
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
@@ -97,6 +107,16 @@ LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] A %s (%s) se le ha detectado O
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) trato de pausar el servidor cuando no habia nadie alrededor. Possible exploit de bug del ReHLDS
 LLHL_IS_OUTDATED = [%s] Este servidor usa una version desactualizada del modo de juego.
 LLHL_SP_AGSTART_NOT_ENOUGH = [%s] No se encontro suficientes jugadores para iniciar una partida.
+LLHL_MM_MENU_MAIN_TITLE = LLHL Gestor de partidas | Menu principal
+LLHL_MM_ITEM_MAIN_2 = Seleccione el tipo de partida: [%s]
+LLHL_MM_ITEM_MAIN_3 = Asignar jugadores: Blue [%i-%i] Red
+LLHL_MM_ITEM_MAIN_4 = Iniciar partida
+LLHL_MM_MENU_IN_USE = El menú está siendo usado actualmente. Inténtalo nuevamente luego.
+LLHL_MM_OPT_2_TITLE = Tipo de partida:
+LLHL_MM_OPT_3_TITLE = Asignando jugadores:
+LLHL_MM_NO_MATCH_TYPE = No se ha seleccionado un tipo de partida.
+LLHL_MM_MATCH_ALREADY_STARTED = Una partida se está iniciando. Inténtalo nuevamente luego.
+LLHL_MM_INVALID_PLAYER_COUNT = La cantidad de jugadores seleccionados no es la correcta.
 
 [pt]
 CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
@@ -147,6 +167,16 @@ LLHL_SCD_DETECTION = [%s - Simple Cheat Detector] %s (%s) foi detectado OpenGF32
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) tentou fazer uma pausa no servidor quando mais ninguém estava por perto. Possível ReHLDS Bug Exploit
 LLHL_IS_OUTDATED = [%s] Este servidor utiliza uma versão desactualizada do modo de jogo.
 LLHL_SP_AGSTART_NOT_ENOUGH = [%s] Não foram encontrados jogadores suficientes para iniciar um jogo.
+LLHL_MM_MENU_MAIN_TITLE = LLHL Gestor de jogos | Menu principal
+LLHL_MM_ITEM_MAIN_2 = Seleccionar o tipo de jogo: [%s]
+LLHL_MM_ITEM_MAIN_3 = Designar jogadores: Blue [%i-%i] Red
+LLHL_MM_ITEM_MAIN_4 = Iniciar jogo
+LLHL_MM_MENU_IN_USE = O menu está actualmente em uso. Tente novamente mais tarde.
+LLHL_MM_OPT_2_TITLE = Tipo de jogo:
+LLHL_MM_OPT_3_TITLE = Designação de jogadores:
+LLHL_MM_NO_MATCH_TYPE = Não foi seleccionado nenhum tipo de jogo.
+LLHL_MM_MATCH_ALREADY_STARTED = Um jogo está a começar. Tente novamente mais tarde.
+LLHL_MM_INVALID_PLAYER_COUNT = O número de jogadores seleccionados não é o correcto.
 
 [cn]
 CVAR_PROTECTOR_KICK = 检测到参数限制器.
@@ -197,3 +227,13 @@ LLHL_SCD_DETECTION = [%s - 作弊检测] %s (%s) 经过了%i次尝试后被检�
 LLHL_REHLDS_XPLOIT = [%s] %s (%s) 尝试在没有人的时候暂停服务器, 可能是rehlds漏洞攻击.
 LLHL_IS_OUTDATED = [%s] 此服务器正在使用旧的游戏模式..
 LLHL_SP_AGSTART_NOT_ENOUGH = [%s] 没有找到足够的球员来开始游戏.
+LLHL_MM_MENU_MAIN_TITLE = LLHL 比赛经理  | 主菜单
+LLHL_MM_ITEM_MAIN_2 = 选择匹配类型: [%s]
+LLHL_MM_ITEM_MAIN_3 = 指派球员: Blue [%i-%i] Red
+LLHL_MM_ITEM_MAIN_4 = 开始比赛
+LLHL_MM_MENU_IN_USE = 此菜单当前正在使用中. 稍后再试.
+LLHL_MM_OPT_2_TITLE = 比赛类型:
+LLHL_MM_OPT_3_TITLE = 指派球员:
+LLHL_MM_NO_MATCH_TYPE = 未选择匹配类型.
+LLHL_MM_MATCH_ALREADY_STARTED = 一个游戏正在开始。稍后再试.
+LLHL_MM_INVALID_PLAYER_COUNT = 被选中的球员数量并不正确.
