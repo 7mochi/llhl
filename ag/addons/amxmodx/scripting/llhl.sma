@@ -28,6 +28,7 @@
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
     - Check for new updates and it will download them automatically.
+    - llhl_match_manager command (For administrators only)
 
     # New cvars:
     - sv_ag_fpslimit_max_fps "144"
@@ -112,6 +113,11 @@
 #define GMB_LOADED      1 // Reserved for future use
 #define GMB_BLOCKED     2 // Reserved for future use
 
+// MM: Match Manager
+#define MM_NO_TEAM      "NO"
+#define MM_BLUE_TEAM    "BLUE"
+#define MM_RED_TEAM     "RED"
+
 #define GAME_APPID      70
 
 enum (+=103) {
@@ -191,6 +197,12 @@ new bool:gIsOutdated = false;
 
 new gDownloadRetries;
 new gDownloadCounter;
+
+// MM: Match Manager
+new gMMVersusType[2];
+new gMMMenuOwner;
+
+new Trie:gMMUserIDPlayers;
 
 new const gConsistencySoundFiles[][] = {
     "ambience/pulsemachine.wav",
@@ -347,6 +359,10 @@ public plugin_init() {
 
     register_clcmd("hash", "CmdSHA1Hash");
     register_clcmd("say /hash", "CmdSHA1Hash");
+
+    gMMUserIDPlayers = TrieCreate();
+
+    register_clcmd("llhl_match_manager", "MatchManagerMenu", ADMIN_BAN);
     
     // AG Messages
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
@@ -424,6 +440,22 @@ public client_connect(id) {
     gCheatNumDetections[id] = 0;
     gFirstCheatValidation[id] = false;
     gSecondCheatValidation[id] = false;
+
+    new userID[8];
+    num_to_str(get_user_userid(id), userID, charsmax(userID));
+
+    if (!TrieKeyExists(gMMUserIDPlayers, userID)) {
+        TrieSetString(gMMUserIDPlayers, userID, MM_NO_TEAM);
+    }
+}
+
+public client_disconnected(id) {
+    new userID[8];
+    num_to_str(get_user_userid(id), userID, charsmax(userID));
+
+    if (TrieKeyExists(gMMUserIDPlayers, userID)) {
+        TrieDeleteKey(gMMUserIDPlayers, userID);
+    }
 }
 
 public client_putinserver(id) {
@@ -1301,4 +1333,219 @@ public LoadSpawns() {
 
         gSpawnsCounter++;
     }
+}
+
+public MatchManagerMenu(id) {
+    if (!gMMMenuOwner || id == gMMMenuOwner) {
+        gMMMenuOwner = id;
+
+        new multilangString[64];
+
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_MENU_MAIN_TITLE");
+        new managerMenu = menu_create(multilangString, "MatchManagerHandler");
+
+        new versusType[8];
+        if (!gMMVersusType[0]) {
+            versusType = "N/A";
+        } else {
+            formatex(versusType, charsmax(versusType), "%svs%s", gMMVersusType, gMMVersusType);
+        }
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_2", versusType);
+        menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
+
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_3", GetPlayersNumInTeam(MM_BLUE_TEAM), GetPlayersNumInTeam(MM_RED_TEAM));
+        menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
+
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_4");
+        menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
+
+        menu_display(id, managerMenu, 0);
+    } else {
+        client_print(id, print_chat, "%l", "LLHL_MM_MENU_IN_USE");
+    }
+}
+
+public MatchManagerHandler(id, menu, item) {
+    menu_destroy(menu);
+    switch (item) {
+        case 0: {
+            MatchManagerVersusTypeMenu(id);
+            return PLUGIN_HANDLED;
+        }
+        case 1: {
+            MatchManagerAssignPlayersMenu(id);
+            return PLUGIN_HANDLED;
+        }
+        case 2: {
+            MatchManagerStartMatch(id);
+            return PLUGIN_HANDLED;
+        }
+    }
+    CleanMenuData();
+    return PLUGIN_HANDLED;
+}
+
+public MatchManagerVersusTypeMenu(id) {
+    new multilangString[64];
+
+    formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_OPT_2_TITLE");
+    new versusMenu = menu_create(multilangString, "MatchManagerVersusTypeHandler");
+
+    new menuDescription[8];
+    new typeString[2];
+    for (new i = 1; i <= 6; i++) {
+        formatex(menuDescription, charsmax(menuDescription), "%ivs%i", i, i);
+        formatex(typeString, charsmax(typeString), "%i", i);
+        menu_additem(versusMenu, menuDescription, typeString, ADMIN_BAN);
+    }
+    
+    menu_display(id, versusMenu, 0);
+}
+
+public MatchManagerVersusTypeHandler(id, menu, item) {
+    if (item >= 0 && item <= 5) {
+        new data[6], name[64];
+        new access, itemCallback;
+
+        menu_item_getinfo(menu, item, access, data, charsmax(data), name, charsmax(name), itemCallback);
+        copy(gMMVersusType, charsmax(gMMVersusType), data);
+    }
+
+    menu_destroy(menu);
+    MatchManagerMenu(id);
+
+    return PLUGIN_HANDLED;
+}
+
+public MatchManagerAssignPlayersMenu(id) {
+    new multilangString[64];
+
+    formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_OPT_3_TITLE");
+    new playersMenu = menu_create(multilangString, "MatchManagerAssignPlayersHandler");
+
+    new TrieIter:iterator = TrieIterCreate(gMMUserIDPlayers); {
+        new key[32];
+        new value[8], valueLength;
+
+        new target;
+        new username[MAX_NAME_LENGTH + 1];
+
+        new menuDescription[128];
+
+        while (!TrieIterEnded(iterator)) {
+            TrieIterGetKey(iterator, key, charsmax(key));
+            TrieIterGetString(iterator, value, charsmax(value), valueLength);
+
+            if ((target = find_player("k", str_to_num(key)))) {
+                get_user_name(target, username, charsmax(username));
+                formatex(menuDescription, charsmax(menuDescription), "%s [%s]", username, value);
+                menu_additem(playersMenu, menuDescription, key, ADMIN_BAN);
+            }
+            TrieIterNext(iterator);
+        }
+    }
+    TrieIterDestroy(iterator);
+
+    menu_display(id, playersMenu, 0);
+}
+
+public MatchManagerAssignPlayersHandler(id, menu, item) {
+    if (item == MENU_EXIT) {
+        menu_destroy(menu);
+        MatchManagerMenu(id);
+        return PLUGIN_HANDLED;
+	}
+
+    new data[6], name[64];
+    new access, itemCallback;
+    
+    menu_item_getinfo(menu, item, access, data, charsmax(data), name, charsmax(name), itemCallback);
+
+    new team[8];
+    TrieGetString(gMMUserIDPlayers, data, team, charsmax(team));
+
+    if (equali(team, MM_NO_TEAM)) {
+        TrieSetString(gMMUserIDPlayers, data, MM_BLUE_TEAM);
+    } else if (equali(team, MM_BLUE_TEAM)) {
+        TrieSetString(gMMUserIDPlayers, data, MM_RED_TEAM);
+    } else if (equali(team, MM_RED_TEAM)) {
+        TrieSetString(gMMUserIDPlayers, data, MM_NO_TEAM);
+    }
+
+    menu_destroy(menu);
+    MatchManagerAssignPlayersMenu(id);
+    return PLUGIN_HANDLED;
+}
+
+public MatchManagerStartMatch(id) {
+    if (!gMMVersusType[0]) {
+        client_print(id, print_chat, "%l", "LLHL_MM_NO_MATCH_TYPE");
+        MatchManagerMenu(id);
+    } else if (gGameState == GAME_STARTING) {
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_STARTING");
+        MatchManagerMenu(id);
+    } else {
+        if (GetPlayersNumInTeam(MM_BLUE_TEAM) == str_to_num(gMMVersusType) && GetPlayersNumInTeam(MM_RED_TEAM) == str_to_num(gMMVersusType)) {
+            new TrieIter:iterator = TrieIterCreate(gMMUserIDPlayers); {
+                new key[32];
+                new value[8], valueLength;
+                
+                new target;
+                while (!TrieIterEnded(iterator)) {
+                    TrieIterGetKey(iterator, key, charsmax(key));
+                    if ((target = find_player("k", str_to_num(key)))) {
+                        TrieIterGetString(iterator, value, charsmax(value), valueLength);
+                        if (!equali(value, MM_NO_TEAM)) {
+                            strtolower(value);
+                            client_cmd(target, "model %s", value);
+                        } else {
+                            if (!hl_get_user_spectator(id)) {
+                                client_cmd(target, "spectate");
+                            }
+                        }
+                    }
+                    TrieIterNext(iterator);
+                }
+            }
+            CleanMenuData();
+            server_cmd("agstart");
+            
+            TrieIterDestroy(iterator);
+        } else {
+            client_print(id, print_chat, "%l", "LLHL_MM_INVALID_PLAYER_COUNT");
+            MatchManagerMenu(id);
+        }
+    }
+}
+
+public GetPlayersNumInTeam(team[]) {
+    new counter;
+    new TrieIter:iterator = TrieIterCreate(gMMUserIDPlayers); {
+        new value[8], valueLength;
+
+        while (!TrieIterEnded(iterator)) {
+            TrieIterGetString(iterator, value, charsmax(value), valueLength);
+            if (equali(value, team)) {
+                counter++;
+            }
+            TrieIterNext(iterator);
+        }
+    }
+    TrieIterDestroy(iterator);
+    return counter;
+}
+
+public CleanMenuData() {
+    new TrieIter:iterator = TrieIterCreate(gMMUserIDPlayers); {
+        new key[32];
+        while (!TrieIterEnded(iterator)) {
+            TrieIterGetKey(iterator, key, charsmax(key));
+            TrieSetString(gMMUserIDPlayers, key, MM_NO_TEAM);
+            TrieIterNext(iterator);
+        }
+    }
+    TrieIterDestroy(iterator);
+
+    gMMMenuOwner = 0;
+    gMMVersusType = "";
 }

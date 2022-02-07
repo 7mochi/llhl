@@ -24,6 +24,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
 - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
 - Check for new updates and it will download them automatically.
+- llhl_match_manager command (For administrators only)
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
