@@ -134,7 +134,7 @@ enum _:LLHLFile {
 new gGameState;
 new gGhostMineBlockState;
 new gNumDetections[MAX_PLAYERS + 1];
-new gOldPlayerModel[MAX_PLAYERS + 1][32];
+new gOldPlayerModel[MAX_PLAYERS + 1][HL_MAX_TEAMNAME_LENGTH];
 new gDeathScreenshotTaken[MAX_PLAYERS + 1];
 new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
@@ -436,7 +436,6 @@ public inconsistent_file(id, const filename[], reason[64]) {
 
 public client_connect(id) {
     gNumDetections[id] = 0;
-    gOldPlayerModel[id][0] = 0;
     gCheatNumDetections[id] = 0;
     gFirstCheatValidation[id] = false;
     gSecondCheatValidation[id] = false;
@@ -461,6 +460,10 @@ public client_disconnected(id) {
 public client_putinserver(id) {
     if (gIsOutdated && get_pcvar_num(gCvarCheckUpdates)) {
         set_task(5.0, "ShowIsOutdated", id);
+    }
+    if (!gOldPlayerModel[id][0]) {
+        // Populate gOldPlayerModel on players after a changelevel
+		get_user_info(id, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
     }
     // Workaround for first spawn at join
     HamPlayerSpawnPost(id);
@@ -776,14 +779,14 @@ public FwSetModel(entid, model[]) {
 
 public FwClientUserInfoChangedPre(id, info) {
     static cvarRunning;
+    new stop, oldValue[32], newValue[32];
     if ((cvarRunning || (cvarRunning = get_cvar_pointer("sv_ag_match_running"))) && get_pcvar_num(cvarRunning) && gGameState == GAME_RUNNING && is_user_connected(id)) {
-        new changed, oldValue[32], newValue[32];
         new bool:isPlayerSpec = hl_get_user_spectator(id);
 
         if (get_pcvar_num(gCvarBlockNameChangeInMatch) && pev(id, pev_netname, oldValue, charsmax(oldValue)) && engfunc(EngFunc_InfoKeyValue, info, "name", newValue, charsmax(newValue)) && !equal(oldValue, newValue) && isPlayerSpec) {
             engfunc(EngFunc_SetClientKeyValue, id, info, "name", oldValue);
             client_print(id, print_chat, "%l", "BLOCK_NAMECHANGE_MSG");
-            changed = true;
+            stop = true;
         }
 
         if (get_pcvar_num(gCvarBlockModelChangeInMatch) && copy(oldValue, charsmax(oldValue), gOldPlayerModel[id]) && engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue))) {
@@ -791,25 +794,39 @@ public FwClientUserInfoChangedPre(id, info) {
                 if (isPlayerSpec) {
                     engfunc(EngFunc_SetClientKeyValue, id, info, "model", oldValue);
                     client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
-                    changed = true;
+                    stop = true;
                 } else {
                     if (get_pcvar_num(gCvarChangeModelPenalization)) {
                         ExecuteHam(Ham_AddPoints, id, -1, true);
                     }
                     engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+                    if (FixTeamPlayModelLen(id, info, newValue)) {
+                        stop = true;
+					}
                 }
             }
         } else {
             engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
         }
-
-        if (changed){
-            return FMRES_HANDLED;
-        }
     } else {
-        engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+        engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue));
+        copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
+
+        if (FixTeamPlayModelLen(id, info, newValue)) {
+            stop = true;
+        }
     }
-    return FMRES_IGNORED;
+    return (stop ? FMRES_SUPERCEDE : FMRES_IGNORED);
+}
+
+public FixTeamPlayModelLen(id, info, model[]) {
+	new newValue[HL_MAX_TEAMNAME_LENGTH];
+	copy(newValue, charsmax(newValue), model);
+	if (!equal(model, newValue)) {
+        engfunc(EngFunc_SetClientKeyValue, id, info, "model", newValue);
+        return 1;
+    }
+	return 0;
 }
 
 public CmdAgpauseRehldsHook(id) {
