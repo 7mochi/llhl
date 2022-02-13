@@ -99,6 +99,7 @@
 
 #define GetPlayerHullSize(%1)  ((pev(%1, pev_flags) & FL_DUCKING) ? HULL_HEAD : HULL_HUMAN)
 #define random_mod(%1) (random_num(0, (100 * (%1)) - 1) % (%1))
+#define cutmatex(%1,%2,%3) formatex(%1, %2, "%s", %3)
 
 // Vote state
 #define AGVOTE_ACCEPTED 2
@@ -463,7 +464,9 @@ public client_putinserver(id) {
     }
     if (!gOldPlayerModel[id][0]) {
         // Populate gOldPlayerModel on players after a changelevel
-		get_user_info(id, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+        new newValue[32];
+        get_user_info(id, "model", newValue, charsmax(newValue));
+        cutmatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
     }
     // Workaround for first spawn at join
     HamPlayerSpawnPost(id);
@@ -796,24 +799,27 @@ public FwClientUserInfoChangedPre(id, info) {
                     client_print(id, print_chat, "%l", "BLOCK_MODELCHANGE_MSG");
                     stop = true;
                 } else {
-                    if (get_pcvar_num(gCvarChangeModelPenalization)) {
-                        ExecuteHam(Ham_AddPoints, id, -1, true);
-                    }
-                    engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
                     if (FixTeamPlayModelLen(id, info, newValue)) {
                         stop = true;
-					}
+					} else {
+                        copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
+                    }
+
+                    if (get_pcvar_num(gCvarChangeModelPenalization) && !(stop && equal(oldValue, gOldPlayerModel[id]))) {
+                        ExecuteHam(Ham_AddPoints, id, -1, true);
+                    }
                 }
             }
         } else {
             engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
+            cutmatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
         }
     } else {
         engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue));
-        copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
-
         if (FixTeamPlayModelLen(id, info, newValue)) {
             stop = true;
+        } else {
+            copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
         }
     }
     return (stop ? FMRES_SUPERCEDE : FMRES_IGNORED);
@@ -821,8 +827,10 @@ public FwClientUserInfoChangedPre(id, info) {
 
 public FixTeamPlayModelLen(id, info, model[]) {
 	new newValue[HL_MAX_TEAMNAME_LENGTH];
-	copy(newValue, charsmax(newValue), model);
+	cutmatex(newValue, charsmax(newValue), model);
 	if (!equal(model, newValue)) {
+        // Fix Model Length
+        copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
         engfunc(EngFunc_SetClientKeyValue, id, info, "model", newValue);
         return 1;
     }
