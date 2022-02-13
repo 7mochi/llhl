@@ -99,7 +99,6 @@
 
 #define GetPlayerHullSize(%1)  ((pev(%1, pev_flags) & FL_DUCKING) ? HULL_HEAD : HULL_HUMAN)
 #define random_mod(%1) (random_num(0, (100 * (%1)) - 1) % (%1))
-#define cutmatex(%1,%2,%3) formatex(%1, %2, "%s", %3)
 
 // Vote state
 #define AGVOTE_ACCEPTED 2
@@ -466,7 +465,7 @@ public client_putinserver(id) {
         // Populate gOldPlayerModel on players after a changelevel
         new newValue[32];
         get_user_info(id, "model", newValue, charsmax(newValue));
-        cutmatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
+        formatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), "%s", newValue);
     }
     // Workaround for first spawn at join
     HamPlayerSpawnPost(id);
@@ -812,7 +811,7 @@ public FwClientUserInfoChangedPre(id, info) {
             }
         } else {
             engfunc(EngFunc_InfoKeyValue, info, "model", gOldPlayerModel[id], charsmax(gOldPlayerModel[]));
-            cutmatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
+            formatex(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), "%s", newValue);
         }
     } else {
         engfunc(EngFunc_InfoKeyValue, info, "model", newValue, charsmax(newValue));
@@ -827,7 +826,7 @@ public FwClientUserInfoChangedPre(id, info) {
 
 public FixTeamPlayModelLen(id, info, model[]) {
 	new newValue[HL_MAX_TEAMNAME_LENGTH];
-	cutmatex(newValue, charsmax(newValue), model);
+	formatex(newValue, charsmax(newValue), "%s", model);
 	if (!equal(model, newValue)) {
         // Fix Model Length
         copy(gOldPlayerModel[id], charsmax(gOldPlayerModel[]), newValue);
