@@ -162,6 +162,7 @@ new gCvarChangeModelPenalization;
 new gCvarBlockFamilySharing;
 new gCvarSteamAPIKey;
 new gCvarRandomSpawns;
+new gCvarBlockAGCmdEnhancements;
 new gCvarCheckUpdates;
 new gCvarCheckUpdatesRetrys;
 new gCvarCheckUpdatesRetryDelay;
@@ -189,6 +190,8 @@ new Array:gListPaths;
 
 new Array:gSpawnOrigins, Array:gSpawnAngles;
 new gSpawnsCounter;
+
+new Regex:gAGCmdEnhancementPattern;
 
 new gCheckUpdatesNumRetrys;
 new gRepoVersion[32];
@@ -314,6 +317,8 @@ public plugin_init() {
 
     gCvarRandomSpawns = create_cvar("sv_ag_random_spawns", "0");
 
+    gCvarBlockAGCmdEnhancements = create_cvar("sv_ag_block_cmd_enhancements", "1");
+
     gGameState = GAME_IDLE;
 
     if (gGhostMineBlockState == GMB_LOADED) {
@@ -352,6 +357,9 @@ public plugin_init() {
     LoadSpawns();
     
     RegisterHam(Ham_Spawn, "player", "HamPlayerSpawnPost", 1);
+
+    register_clcmd("say", "CmdSay");
+    register_clcmd("say_team", "CmdSay");
 
     register_clcmd("say /unstuck", "CmdUnstuck");
 
@@ -648,6 +656,25 @@ public TakeScreenshot(id) {
         show_dhudmessage(id, "%s^n%s (%s) Screeenshot has been taken", formatted, name, authID);
         client_cmd(id, "wait;wait;snapshot");
     }
+}
+
+public CmdSay(id) {
+    if (get_pcvar_num(gCvarBlockAGCmdEnhancements)) {
+        if (hl_get_user_spectator(id) && gGameState == GAME_RUNNING) {
+            new message[191];
+            read_args(message, charsmax(message));
+            
+            new ret, error[128];
+            gAGCmdEnhancementPattern = regex_compile("%[halwqpf]", ret, error, charsmax(error), "i") ;
+            
+            if (gAGCmdEnhancementPattern > REGEX_NO_MATCH) {
+                if (regex_match_c(message, gAGCmdEnhancementPattern, ret) > 0) {
+                    return PLUGIN_HANDLED;
+                }
+            }
+        }
+    }
+    return PLUGIN_CONTINUE;
 }
 
 public CmdUnstuck(id) {
