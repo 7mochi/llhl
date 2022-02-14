@@ -880,7 +880,7 @@ public ConnectGithubAPI() {
 }
 
 public ConnectSteamAPI(id) {
-    new url[250], steam64ID[32], steamAPIKey[32];
+    new url[250], steam64ID[32], steamAPIKey[64];
     get_user_info(id, "*sid", steam64ID, charsmax(steam64ID));
     get_pcvar_string(gCvarSteamAPIKey, steamAPIKey, charsmax(steamAPIKey));
 
