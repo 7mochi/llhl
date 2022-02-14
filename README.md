@@ -23,6 +23,8 @@ If you have any problem in your server, before opening an issue or contacting me
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
 - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
+- Random spawns (Optional, disabled by default)
+- Blocks location/HP/Weapon/etc messages for spectators
 - Check for new updates and it will download them automatically.
 - llhl_match_manager command (For administrators only)
 
@@ -46,6 +48,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_change_model_penalization "1"
 - sv_ag_block_family_sharing "0"
 - sv_ag_random_spawns "0"
+- sv_ag_block_cmd_enhancements "1"
 - sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"

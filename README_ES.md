@@ -22,6 +22,8 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
 - Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
+- Spawns aleatorias (Opcional, por defecto está desactivado).
+- Bloquea mensajes de ubicación/HP/arma/etc para los espectadores.
 - Verifica si hay nuevas actualizaciones y las descargará automáticamente.
 - Comando llhl_match_manager implementado (Solo para administradores)
 
@@ -45,6 +47,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_change_model_penalization "1"
 - sv_ag_block_family_sharing "0"
 - sv_ag_random_spawns "0"
+- sv_ag_block_cmd_enhancements "1"
 - sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"

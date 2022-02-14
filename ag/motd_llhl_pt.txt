@@ -19,6 +19,7 @@ Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-L
 # A mudança de model durante uma partida subtrai 1 da pontuação
 # Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas
 # Spawns aleatórias
+# Localização dos blocos/Mensagens de localização/HP/Weapon/etc para os espectadores
 
 -- Configurações do modo de jogo --
 # Respawn forçado activado
