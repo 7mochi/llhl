@@ -372,7 +372,7 @@ public plugin_init() {
 
     gMMUserIDPlayers = TrieCreate();
 
-    register_clcmd("llhl_match_manager", "MatchManagerMenu", ADMIN_BAN);
+    register_clcmd("llhl_match_manager", "MatchManagerMenu", ADMIN_MENU);
     
     // AG Messages
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
@@ -1388,7 +1388,15 @@ public LoadSpawns() {
     }
 }
 
-public MatchManagerMenu(id) {
+public MatchManagerMenu(id, level, cid) {
+    if (cmd_access(id, level, cid, 1)) {
+        DisplayMatchManagerMenu(id);
+    }
+
+    return PLUGIN_HANDLED;
+}
+
+public DisplayMatchManagerMenu(id) {
     if (!gMMMenuOwner || id == gMMMenuOwner) {
         gMMMenuOwner = id;
 
@@ -1465,7 +1473,7 @@ public MatchManagerVersusTypeHandler(id, menu, item) {
     }
 
     menu_destroy(menu);
-    MatchManagerMenu(id);
+    DisplayMatchManagerMenu(id);
 
     return PLUGIN_HANDLED;
 }
@@ -1505,7 +1513,7 @@ public MatchManagerAssignPlayersMenu(id) {
 public MatchManagerAssignPlayersHandler(id, menu, item) {
     if (item == MENU_EXIT) {
         menu_destroy(menu);
-        MatchManagerMenu(id);
+        DisplayMatchManagerMenu(id);
         return PLUGIN_HANDLED;
 	}
 
@@ -1533,10 +1541,10 @@ public MatchManagerAssignPlayersHandler(id, menu, item) {
 public MatchManagerStartMatch(id) {
     if (!gMMVersusType[0]) {
         client_print(id, print_chat, "%l", "LLHL_MM_NO_MATCH_TYPE");
-        MatchManagerMenu(id);
+        DisplayMatchManagerMenu(id);
     } else if (gGameState == GAME_STARTING) {
         client_print(id, print_chat, "%l", "LLHL_MM_MATCH_STARTING");
-        MatchManagerMenu(id);
+        DisplayMatchManagerMenu(id);
     } else {
         if (GetPlayersNumInTeam(MM_BLUE_TEAM) == str_to_num(gMMVersusType) && GetPlayersNumInTeam(MM_RED_TEAM) == str_to_num(gMMVersusType)) {
             new TrieIter:iterator = TrieIterCreate(gMMUserIDPlayers); {
@@ -1566,7 +1574,7 @@ public MatchManagerStartMatch(id) {
             TrieIterDestroy(iterator);
         } else {
             client_print(id, print_chat, "%l", "LLHL_MM_INVALID_PLAYER_COUNT");
-            MatchManagerMenu(id);
+            DisplayMatchManagerMenu(id);
         }
     }
 }
