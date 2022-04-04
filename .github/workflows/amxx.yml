@@ -100,7 +100,7 @@ jobs:
           cp ag/addons/amxmodx/configs/plugins-llhl.ini $systems/ag/addons/amxmodx/configs
 
           # Copy the rest of the directories and files from llhl repo
-          toCopy=("gamemodes" "sound" "motd_llhl.txt" "startup_server.cfg")
+          toCopy=("gamemodes" "sound" "motd_llhl_en.txt" "motd_llhl_es.txt" "motd_llhl_pt.txt" "startup_server.cfg")
           for tc in "${toCopy[@]}"
           do
             # Directory
