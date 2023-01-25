@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "amxxpawn.compiler.includePaths": [
+        "${workspaceRoot}/.compiler/include",
+        "${workspaceRoot}/.thirdparty/curl/addons/amxmodx/scripting/include",
+        "${workspaceRoot}/.thirdparty/grip/addons/amxmodx/scripting/include",
+        "${workspaceRoot}/.thirdparty/hlstocks-include",
+    ]
+}
