@@ -18,5 +18,10 @@ watch-linux:
 watch-windows:
 	npm run watch-windows
 
-clean:
+clean-linux:
 	rm -rf .compiler .thirdparty dist
+
+clean-windows:
+	rd /s /q .compiler
+	rd /s /q .thirdparty
+	rd /s /q dist
