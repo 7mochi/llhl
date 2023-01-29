@@ -913,8 +913,8 @@ public ConnectSteamAPI(id) {
         new CURL:curl = curl_easy_init();
 
         if (!curl) {
-            server_print("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_INIT_ERROR");
-            log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_INIT_ERROR");
+            server_print("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
+            log_amx("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
         }
 
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
@@ -1023,8 +1023,8 @@ public GetFamilySharingStatus(CURL:curl, CURLcode:code, data[]) {
             server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "LLHL_CHECK_FS_KICK_1");
         }
     } else {
-        server_print("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
-        log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        server_print("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
     }
 }
 
@@ -1112,8 +1112,8 @@ public DownloadHashfile() {
     new CURL:curl = curl_easy_init();
 
     if (!curl) {
-        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
-        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        server_print("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
     }
     
     new latestTagURL[128];
@@ -1145,8 +1145,8 @@ public CallbackHashfile(CURL:curl, CURLcode:code, data[]) {
         gDownloadRetries = 0;
         ParseHashFile();
     } else {
-        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
-        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        server_print("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         gDownloadRetries++;
         if (gDownloadRetries <= get_pcvar_num(gCvarAutoUpdateDlMaxRetries)) {
             server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_RETRYING", PLUGIN_ACRONYM, get_pcvar_float(gCvarAutoUpdateDlRetryDelay), gDownloadRetries, get_pcvar_num(gCvarAutoUpdateDlMaxRetries));
@@ -1227,8 +1227,8 @@ public DownloadLLHLFiles() {
     new CURL:curl = curl_easy_init();
 
     if (!curl) {
-        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
-        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_INIT_ERROR");
+        server_print("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
     }
     
     // cURL Static Options
@@ -1298,8 +1298,8 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
             needToRetry = true;
         }
     } else {
-        server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
-        log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        server_print("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
         needToRetry = true;
     }
 
