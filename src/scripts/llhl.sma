@@ -75,6 +75,7 @@
 #include <amxmodx>
 #include <amxmisc>
 #include <curl>
+#include <curl_helper>
 #include <engine>
 #include <fakemeta>
 #include <grip>
@@ -88,7 +89,7 @@
 #define VERSION         "2.0-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
-#define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/IsPlayingSharedGame/v1/?key=%s&steamid=%s&appid_playing=70"
+#define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
 #define UPDATER_DIR     "llhl-updater-temp"
 #define HASH_NAME       "hashfile.sha1"
 
@@ -184,8 +185,6 @@ static Float:gActualServerFPS;
 
 new GripRequestOptions:gGripUpdateIncomingHeader;
 new GripRequestCancellation:gGripUpdateIncomingHandler;
-new GripRequestOptions:gGripFamilyIncomingHeader;
-new GripRequestCancellation:gGripFamilyIncomingHandler;
 
 new Array:gListHashes;
 new Array:gListPaths;
@@ -419,18 +418,11 @@ public plugin_init() {
         gCheckUpdatesNumRetrys = 0;
         ConnectGithubAPI();
     }
-
-    if (get_pcvar_num(gCvarBlockFamilySharing)) {
-        gGripFamilyIncomingHeader = grip_create_default_options();
-    }
 }
 
 public plugin_end() {
     if (grip_is_request_active(gGripUpdateIncomingHandler)) {
         grip_cancel_request(gGripUpdateIncomingHandler);
-    }
-    if (grip_is_request_active(gGripFamilyIncomingHandler)) {
-        grip_cancel_request(gGripFamilyIncomingHandler);
     }
 }
 
@@ -917,7 +909,23 @@ public ConnectSteamAPI(id) {
         server_print("%L", LANG_SERVER, "LLHL_STEAM_API_KEY_EMPTY", PLUGIN_ACRONYM);
     } else {
         formatex(url, charsmax(url), STEAM_API_URL, steamAPIKey, steam64ID);
-        gGripFamilyIncomingHandler = grip_request(url, Empty_GripBody, GripRequestTypeGet, "GetFamilySharingStatus", gGripFamilyIncomingHeader, id);
+        
+        new CURL:curl = curl_easy_init();
+
+        if (!curl) {
+            server_print("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_INIT_ERROR");
+            log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_INIT_ERROR");
+        }
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_helper_set_write_options(curl);
+
+        new buffer[32];
+        formatex(buffer, charsmax(buffer), "%i", id);
+        
+        curl_easy_perform(curl, "GetFamilySharingStatus", buffer, charsmax(buffer));
     }
 }
 
@@ -990,35 +998,34 @@ public GetLatestVersion() {
     }
 }
 
-public GetFamilySharingStatus(id) {
-    if (grip_get_response_state() != GripResponseStateSuccessful) {
-        server_print("%L", LANG_SERVER, "LLHL_CHECK_STEAM_FAILED", PLUGIN_ACRONYM);
-        return;
-    }
+public GetFamilySharingStatus(CURL:curl, CURLcode:code, data[]) {
+    curl_easy_cleanup(curl);
+    
+    if (code == CURLE_OK) {
+        new response[2048];
 
-    new responseBody[INCOMING_BUFFER_LENGTH], jsonError[JSON_MESSAGE_LENGTH], GripJSONValue:json;
-    grip_get_response_body_string(responseBody, charsmax(responseBody));
-    json = grip_json_parse_string(responseBody, jsonError, charsmax(jsonError));
+        new id = str_to_num(data);
+        server_print("id: %d", id);
+        curl_helper_get_response(curl, response, charsmax(response));
+        
+        new const toSearch[] = "^"game_count^":";
+        new position = containi(response, toSearch);
 
-    if (strlen(jsonError) > 0) {
-        server_print("%L", LANG_SERVER, "LLHL_CHECK_STEAM_PARSE_ERROR", PLUGIN_ACRONYM);
-        return;
-    }
-
-    new lenderSteam64ID[32];
-    new GripJSONValue:responseValue = grip_json_object_get_value(json, "response");
-    grip_json_object_get_string(responseValue, "lender_steamid", lenderSteam64ID, charsmax(lenderSteam64ID));
-
-    if (!equal(lenderSteam64ID, "0")) {
         new name[64], authID[32];
         get_user_name(id, name, charsmax(name));
         get_user_authid(id, authID, charsmax(authID));
-
-        log_amx("%L", LANG_SERVER, "LLHL_CHECK_FAMILYSHARE_NOTICE", PLUGIN_ACRONYM, name, authID, lenderSteam64ID);
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "LLHL_CHECK_FAMILYSHARE_KICK");
+        
+        if (position == -1) {
+            log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_NOTICE_2", PLUGIN_ACRONYM, name, authID);
+            server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "LLHL_CHECK_FS_KICK_2");
+        } else if (response[position + charsmax(toSearch)] == '0') {
+            log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_NOTICE_1", PLUGIN_ACRONYM, name, authID);
+            server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "LLHL_CHECK_FS_KICK_1");
+        }
+    } else {
+        server_print("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
+        log_amx("%L", LANG_SERVER, "LLHL_CHECK_FS_CURL_CODE_ERROR", PLUGIN_ACRONYM, code);
     }
-
-    grip_destroy_json_value(json);
 }
 
 public RetryConnection() {
