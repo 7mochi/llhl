@@ -78,9 +78,9 @@
 #include <curl_helper>
 #include <engine>
 #include <fakemeta>
-#include <grip>
 #include <hamsandwich>
 #include <hlstocks>
+#include <json>
 #include <regex>
 
 #define PLUGIN          "Liga Latinoamericana de Half Life"
@@ -182,9 +182,6 @@ new gSHA1Hash[64];
 
 new Float:gUnstuckLastUsed[MAX_PLAYERS + 1];
 static Float:gActualServerFPS;
-
-new GripRequestOptions:gGripUpdateIncomingHeader;
-new GripRequestCancellation:gGripUpdateIncomingHandler;
 
 new Array:gListHashes;
 new Array:gListPaths;
@@ -414,15 +411,8 @@ public plugin_init() {
     gListPaths = ArrayCreate(128);
 
     if (get_pcvar_num(gCvarCheckUpdates)) {
-        gGripUpdateIncomingHeader = grip_create_default_options();
         gCheckUpdatesNumRetrys = 0;
         ConnectGithubAPI();
-    }
-}
-
-public plugin_end() {
-    if (grip_is_request_active(gGripUpdateIncomingHandler)) {
-        grip_cancel_request(gGripUpdateIncomingHandler);
     }
 }
 
@@ -897,7 +887,25 @@ public ShowIsOutdated(id) {
 }
 
 public ConnectGithubAPI() {
-    gGripUpdateIncomingHandler = grip_request(GH_API_URL, Empty_GripBody, GripRequestTypeGet, "GetLatestVersion", gGripUpdateIncomingHeader);
+    new CURL:curl = curl_easy_init();
+
+    if (!curl) {
+        server_print("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
+        log_amx("%L", LANG_SERVER, "LLHL_CURL_INIT_ERROR");
+    }
+
+    new curl_slist:headers;
+    headers = curl_slist_append(headers, "Content-Type:application/json");
+    headers = curl_slist_append(headers, "User-Agent: LLHL_AMXX_PLUGIN/1.0");
+
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1); // Follow Github Redirect
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(curl, CURLOPT_URL, GH_API_URL);
+    curl_helper_set_write_options(curl);
+
+    curl_easy_perform(curl, "GetLatestVersion");
 }
 
 public ConnectSteamAPI(id) {
@@ -929,72 +937,75 @@ public ConnectSteamAPI(id) {
     }
 }
 
-public GetLatestVersion() {
-    if (grip_get_response_state() != GripResponseStateSuccessful) {
+public GetLatestVersion(CURL:curl, CURLcode:code) {
+    curl_easy_cleanup(curl);
+
+    if (code == CURLE_OK) {
+        new response[1024], JSON:json;
+        curl_helper_get_response(curl, response, charsmax(response));
+        
+        json = json_parse(response);
+
+        if (json == Invalid_JSON) {
+            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_PARSE_ERROR", PLUGIN_ACRONYM);
+            RetryConnection();
+            return;
+        }
+
+        new repoLatestVersion[32];
+        new JSON:responseValue = json_array_get_value(json, 0);
+        json_object_get_string(responseValue, "name", repoLatestVersion, charsmax(repoLatestVersion));
+
+        new ret, error[128];
+        new pluginVersion[32];
+        new Regex:regex_handle;
+
+        regex_handle = regex_match(repoLatestVersion, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
+
+        if (regex_handle > REGEX_NO_MATCH) {
+            regex_substr(regex_handle, 1, gRepoVersion, charsmax(gRepoVersion));
+        }
+        regex_free(regex_handle);
+
+        regex_handle = regex_match(VERSION, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
+
+        if (regex_handle > REGEX_NO_MATCH) {
+            regex_substr(regex_handle, 1, pluginVersion, charsmax(pluginVersion));
+        }
+        regex_free(regex_handle);
+
+        // Check for updates
+        switch (CompareVersion(pluginVersion, gRepoVersion)) {
+            case 0: {
+                gIsOutdated = false;
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
+            }
+            case 1: {
+                gIsOutdated = false;
+                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
+            }
+            case -1: {
+                if (get_pcvar_num(gCvarAutoupdate)) {
+                    server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                    log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
+                    // Only download as long as there is no player on the server or no match in progress.
+                    if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
+                        // Lock the server with password while updating the plugin
+                        get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
+                        set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
+                        DownloadHashfile();
+                    }
+                } else {
+                    gIsOutdated = true;
+                    server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
+                    log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
+                }
+            }
+        }
+    } else {
         server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_FAILED", PLUGIN_ACRONYM);
         RetryConnection();
         return;
-    }
-
-    new responseBody[INCOMING_BUFFER_LENGTH], jsonError[JSON_MESSAGE_LENGTH], GripJSONValue:json;
-    grip_get_response_body_string(responseBody, charsmax(responseBody));
-    json = grip_json_parse_string(responseBody, jsonError, charsmax(jsonError));
-
-    if (strlen(jsonError) > 0) {
-        server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_PARSE_ERROR", PLUGIN_ACRONYM);
-        RetryConnection();
-        return;
-    }
-
-    new repoLatestVersion[32];
-    new GripJSONValue:responseValue = grip_json_array_get_value(json, 0);
-    grip_json_object_get_string(responseValue, "name", repoLatestVersion, charsmax(repoLatestVersion));
-
-    new ret, error[128];
-    new pluginVersion[32];
-    new Regex:regex_handle;
-
-    regex_handle = regex_match(repoLatestVersion, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
-
-    if (regex_handle > REGEX_NO_MATCH) {
-        regex_substr(regex_handle, 1, gRepoVersion, charsmax(gRepoVersion));
-    }
-    regex_free(regex_handle);
-
-    regex_handle = regex_match(VERSION, "^^((0|[1-9]\d*)(\.(0|[1-9]\d*)){0,9})((-stable))*$", ret, error, charsmax(error));
-
-    if (regex_handle > REGEX_NO_MATCH) {
-        regex_substr(regex_handle, 1, pluginVersion, charsmax(pluginVersion));
-    }
-    regex_free(regex_handle);
-
-    // Check for updates
-    switch (CompareVersion(pluginVersion, gRepoVersion)) {
-        case 0: {
-            gIsOutdated = false;
-            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NO_UPDATE", PLUGIN_ACRONYM);
-        }
-        case 1: {
-            gIsOutdated = false;
-            server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_HIGHER_VER", PLUGIN_ACRONYM);
-        }
-        case -1: {
-            if (get_pcvar_num(gCvarAutoupdate)) {
-                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
-                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_1", PLUGIN_ACRONYM);
-                // Only download as long as there is no player on the server or no match in progress.
-                if (get_playersnum() == 0 || gGameState != GAME_IDLE) {
-                    // Lock the server with password while updating the plugin
-                    get_pcvar_string(gCvarPassword, gSvPasswordPreUpdate, charsmax(gSvPasswordPreUpdate));
-                    set_pcvar_string(gCvarPassword, "--updatingLLHLGamemode--");
-                    DownloadHashfile();
-                }
-            } else {
-                gIsOutdated = true;
-                server_print("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
-                log_amx("%L", LANG_SERVER, "LLHL_CHECK_GH_NEW_UPDATE_2", PLUGIN_ACRONYM);
-            }
-        }
     }
 }
 
