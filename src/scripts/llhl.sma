@@ -96,8 +96,7 @@
 #pragma semicolon 1
 #pragma dynamic 163840
 
-#define INCOMING_BUFFER_LENGTH  1024
-#define JSON_MESSAGE_LENGTH     256
+#define INCOMING_BUFFER_LENGTH  2048
 #define VERSION_ARRAY_SIZE      16
 
 #define GetPlayerHullSize(%1)  ((pev(%1, pev_flags) & FL_DUCKING) ? HULL_HEAD : HULL_HUMAN)
@@ -120,8 +119,6 @@
 #define MM_NO_TEAM      "NO"
 #define MM_BLUE_TEAM    "BLUE"
 #define MM_RED_TEAM     "RED"
-
-#define GAME_APPID      70
 
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
@@ -941,7 +938,7 @@ public GetLatestVersion(CURL:curl, CURLcode:code) {
     curl_easy_cleanup(curl);
 
     if (code == CURLE_OK) {
-        new response[1024], JSON:json;
+        new response[INCOMING_BUFFER_LENGTH], JSON:json;
         curl_helper_get_response(curl, response, charsmax(response));
         
         json = json_parse(response);
@@ -1013,10 +1010,9 @@ public GetFamilySharingStatus(CURL:curl, CURLcode:code, data[]) {
     curl_easy_cleanup(curl);
     
     if (code == CURLE_OK) {
-        new response[2048];
+        new response[INCOMING_BUFFER_LENGTH];
 
         new id = str_to_num(data);
-        server_print("id: %d", id);
         curl_helper_get_response(curl, response, charsmax(response));
         
         new const toSearch[] = "^"game_count^":";
