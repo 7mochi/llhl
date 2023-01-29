@@ -14,10 +14,6 @@
         "url": "https://github.com/7mochi/llhl-resources/raw/master/amxx-related/curl-1.1.1/curl.zip"
       },
       {
-        "name": "grip",
-        "url": "https://github.com/7mochi/llhl-resources/raw/master/amxx-related/gRIP/grip.zip"
-      },
-      {
         "name": "hlstocks-include",
         "url": "https://github.com/7mochi/llhl-resources/raw/master/amxx-related/half-life-stocks/hlstocks.zip"
       },
@@ -34,7 +30,6 @@
   "include": [
     "./.compiler/include",
     "./.thirdparty/curl/addons/amxmodx/scripting/include",
-    "./.thirdparty/grip/addons/amxmodx/scripting/include",
     "./.thirdparty/hlstocks-include"
   ],
   "input": {
@@ -49,15 +44,6 @@
       {
         "dir": "./.thirdparty/gm_block",
         "dest": "./addons/metamod/dlls",
-        "filter": "*.dll"
-      },
-      {
-        "dir": "./.thirdparty/grip/addons/amxmodx/configs",
-        "dest": "./addons/amxmodx/configs"
-      },
-      {
-        "dir": "./.thirdparty/grip/addons/amxmodx/modules",
-        "dest": "./addons/amxmodx/modules",
         "filter": "*.dll"
       },
       {
