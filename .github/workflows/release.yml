@@ -94,12 +94,12 @@ jobs:
         unzip amxx-windows.zip -d dist/ag
     
     - name: Upload all assets (Release)
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            llhl-${{github.ref}}-linux.zip
-            llhl-${{github.ref}}-windows.zip
-            dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
-            hashfile.sha1
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          llhl-${{github.ref}}-linux.zip
+          llhl-${{github.ref}}-windows.zip
+          dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
+          hashfile.sha1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
