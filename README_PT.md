@@ -1,5 +1,5 @@
 # ![LLHL Banner](https://raw.githubusercontent.com/FlyingCat-X/llhl/master/LLHL_logo.png)
-### [Versión en Inglés](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versión en Español](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versión en Portugués](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md)
+### [Versão em inglês](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versão em espanhol](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versão em português](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Versão em chinês (Pendente)
 Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo de jogo LLHL](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que foi desenvolvido para rtxa agmodx. A diferença do meu modo de jogo para agmodx, este suporta apenas o Portocolo 48.
 
 # Considerações importantes
@@ -20,7 +20,11 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre.
 - Evite o abuso de um bug ReHLDS (o servidor desaparece da lista da mundial quando e pausado)  apenas quando não há uma match em andamento.
 - A mudança de model durante uma partida subtrai 1 da pontuação. (Opcional, por padrão está activado).
-- Verifica automaticamente a existência de novas actualizações.
+- Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas.
+- Spawns aleatórias (Opcional, por padrão está desabilitado).
+- Localização dos blocos/Mensagens de localização/HP/Weapon/etc para os espectadores.
+- Verifica se há novas actualizações e vai baixar automaticamente.
+- Comando llhl_match_manager implementado (Apenas para administradores)
 
 ## Novas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -40,9 +44,16 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"
+- sv_ag_block_family_sharing "0"
+- sv_ag_random_spawns "0"
+- sv_ag_block_cmd_enhancements "1"
+- sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_autoupdate "1"
+- sv_ag_autoupdate_dl_max_retries "3"
+- sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requisitos
 - Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).
@@ -65,7 +76,7 @@ Baixe a [última versão](https://github.com/FlyingCat-X/llhl/releases/).
 - Extraia o conteúdo da pasta do servidor (fora da pasta ag) e confirme a substituição dos arquivos se solicitado.
 - Ligue seu servidor e divirta-se.
 
-## Agradecimientos
+## Agradecimentos
 - Th3-822: Limitador FPS, FPS do servidor e bloqueador de mudança de nome e modelo.
 - Arkshine: Comando unstuck.
 - naz: Códigos úteis para hookear as mensagens do motor AG.

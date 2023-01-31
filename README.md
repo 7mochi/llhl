@@ -1,5 +1,5 @@
 # ![LLHL Banner](https://raw.githubusercontent.com/FlyingCat-X/llhl/master/LLHL_logo.png)
-### [English Version](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Spanish Version](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Portuguese Version](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md)
+### [English Version](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Spanish Version](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Portuguese Version](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Chinese Version (Pending)
 This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) that was developed for rtxa's agmodx.
 Unlike my gamemode for agmodx, this one only supports Protocol 48.
 
@@ -22,7 +22,11 @@ If you have any problem in your server, before opening an issue or contacting me
 - Take screenshots at map end and occasionally when a player dies.
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
-- Checks for new updates automatically.
+- Block access to players who have the game via Family Sharing. (Optional, disabled by default).
+- Random spawns (Optional, disabled by default)
+- Blocks location/HP/Weapon/etc messages for spectators
+- Check for new updates and it will download them automatically.
+- llhl_match_manager command (For administrators only)
 
 ## New cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -42,9 +46,16 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"
+- sv_ag_block_family_sharing "0"
+- sv_ag_random_spawns "0"
+- sv_ag_block_cmd_enhancements "1"
+- sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_autoupdate "1"
+- sv_ag_autoupdate_dl_max_retries "3"
+- sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requirements
 - Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).

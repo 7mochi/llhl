@@ -1,0 +1,39 @@
+Welcome to the LLHL v2.0-stable game mode
+This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL).
+
+-- New features --
+# FPS Limiter
+# 'default_fov' Limiter
+# Records a demo automatically when a match is started
+# New commands: /unstuck, llhl_match_manager (For administrators only)
+# Sound verification
+# Be able to destroy other players satchels
+# Block nickname and model changes when a game is in progress
+# New intermission mode
+# More than 1 HLTV allowed
+# Force connected HLTV to have a certain delay value as a minimum
+# Wallhack Blocker
+# Ghostmine Blocker
+# Simple OpenGF32 and AGFix detection
+# Take screenshots at map end and occasionally when a player dies
+# Changing model during a match subtract 1 from the score
+# Block access to players who have the game via Family Sharing
+# Random spawns
+# Blocks location/HP/Weapon/etc messages for spectators
+
+-- Configuracion del modo de juego --
+# Forced Respawn Enabled
+# RPG Fix Enabled
+# Gauss Fix Enabled
+# Egon damage reduced by 35%
+# Crowbar damage increased by 30%
+# Hornetgun damage increased by 30%
+
+Keep all your screenshots and demos generated with this gamemode.
+An administrator may ask you to upload them.
+
+-- Gamemode information --
+# Version: 2.0-stable
+# Author: FlyingCat (Discord: Suisei#1966)
+# Repository: https://git.io/jkttq
+# Download: https://github.com/FlyingCat-X/llhl/releases/latest

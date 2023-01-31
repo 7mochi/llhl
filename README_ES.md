@@ -1,5 +1,5 @@
 # ![LLHL Banner](https://raw.githubusercontent.com/FlyingCat-X/llhl/master/LLHL_logo.png)
-### [Versión en Inglés](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versión en Español](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versión en Portugués](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md)
+### [Versión en Inglés](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versión en Español](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versión en Portugués](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Versión en Chino (Pendiente)
 Este plugin es una adaptación para Adrenaline Gamer 6.6 (y AGMini) de mi [LLHL gamemode](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que fue desarrollado para el agmodx de rtxa.
 A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 48.
 
@@ -21,7 +21,11 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
-- Verifica si hay nuevas actualizaciones automaticamente.
+- Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
+- Spawns aleatorias (Opcional, por defecto está desactivado).
+- Bloquea mensajes de ubicación/HP/arma/etc para los espectadores.
+- Verifica si hay nuevas actualizaciones y las descargará automáticamente.
+- Comando llhl_match_manager implementado (Solo para administradores)
 
 ## Nuevas cvars
 - sv_ag_fpslimit_max_fps "144"
@@ -41,9 +45,16 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"
+- sv_ag_block_family_sharing "0"
+- sv_ag_random_spawns "0"
+- sv_ag_block_cmd_enhancements "1"
+- sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
 - sv_ag_check_updates_retry_delay "2.0"
+- sv_ag_autoupdate "1"
+- sv_ag_autoupdate_dl_max_retries "3"
+- sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requerimientos
 - Última version de HLDS (build 8308) o ReHLDS 3.6 o más nueva (Advertencia: la versión más reciente de ReHLDS para Linux tiene un bug de auto apuntado, como alternativa se recomienda descargar la version 3.7.0.693).

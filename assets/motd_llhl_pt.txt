@@ -1,0 +1,39 @@
+Bem-vindo ao modo de jogo LLHL v2.0-stable.
+Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-Life (LLHL).
+
+-- Novas Características --
+# Limitador de FPS
+# Limitador do 'default_fov'
+# Uma demonstração e gravada automaticamente quando uma partida começa
+# Novo comandos: /unstuck, llhl_match_manager (Apenas para administradores)
+# Verificação do som
+# Possibilidade de destruir as satchels de outros jogadores
+# Não são permitidas mudanças de nome e model quando um jogo está em andamento
+# Novo modo de espera ao terminar um mapa
+# Mais de 1 HLTV permitido
+# Es forçado a ter HLTV conectado um certo valor de delay pelo mínimo
+# Bloqueador de Wallhack
+# Bloqueador de Ghostmine
+# Detecção simples de OpenGF32 e AGFix
+# Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre
+# A mudança de model durante uma partida subtrai 1 da pontuação
+# Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas
+# Spawns aleatórias
+# Localização dos blocos/Mensagens de localização/HP/Weapon/etc para os espectadores
+
+-- Configurações do modo de jogo --
+# Respawn forçado activado
+# RPG Fix activado
+# Gauss Fix activado
+# Dano do egon reduzido em 35%
+# Dano de crowbar aumentado em 30%
+# Dano de hornetgun aumentado em 30%
+
+Mantenha todas as suas capturas de ecrã e demos geradas com este modo de jogo.
+Um administrador pode pedir-lhe que os carregue.
+
+-- Informação sobre o modo de jogo --
+# Versão: 2.0-stable
+# Autor: FlyingCat (Discord: Suisei#1966)
+# Repositório: https://git.io/jkttq
+# Download: https://github.com/FlyingCat-X/llhl/releases/latest
