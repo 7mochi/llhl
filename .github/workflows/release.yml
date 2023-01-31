@@ -79,8 +79,8 @@ jobs:
     
     - name: Prepare releases in zip
       run: |
-        cd dist-linux && zip -r ../llhl-${{github.ref}}-linux.zip * && cd $GITHUB_WORKSPACE
-        cd dist && zip -r ../llhl-${{github.ref}}-windows.zip * && cd $GITHUB_WORKSPACE
+        cd dist-linux && zip -r ../llhl-${{github.ref_name}}-linux.zip * && cd $GITHUB_WORKSPACE
+        cd dist && zip -r ../llhl-${{github.ref_name}}-windows.zip * && cd $GITHUB_WORKSPACE
 
     - name: Replace llhl.amxx on windows with the one from linux
       run: |
@@ -97,8 +97,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./llhl-${{github.ref}}-linux.zip
-          ./llhl-${{github.ref}}-windows.zip
+          ./llhl-${{github.ref_name}}-linux.zip
+          ./llhl-${{github.ref_name}}-windows.zip
           ./dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
           ./hashfile.sha1
       env:
