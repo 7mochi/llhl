@@ -6,51 +6,14 @@
     "addons": [],
     "executable": "amxxpc"
   },
-  "thirdparty": {
-    "dir": "./.thirdparty",
-    "dependencies": [
-      {
-        "name": "curl",
-        "url": "https://github.com/7mochi/llhl-resources/raw/master/amxx-related/curl-1.1.1/curl.zip"
-      },
-      {
-        "name": "hlstocks-include",
-        "url": "https://github.com/7mochi/llhl-resources/raw/master/amxx-related/half-life-stocks/hlstocks.zip"
-      },
-      {
-        "name": "metamod",
-        "url": "https://www.amxmodx.org/release/metamod-1.21.1-am.zip"
-      },
-      {
-        "name": "gm_block",
-        "url": "https://github.com/7mochi/llhl-resources/raw/master/metamod-plugins/ghostmineblock-1.5/gm_block.zip"
-      }
-    ]
-  },
   "include": [
     "./.compiler/include",
-    "./.thirdparty/curl/addons/amxmodx/scripting/include",
-    "./.thirdparty/hlstocks-include"
+    "./assets/addons/amxmodx/scripting/include"
   ],
   "input": {
     "scripts": "./src/scripts",
     "assets": [
-      { "dir": "./assets" },
-      {
-        "dir": "./.thirdparty/metamod/addons/metamod/dlls",
-        "dest": "./addons/metamod/dlls",
-        "filter": "*.so"
-      },
-      {
-        "dir": "./.thirdparty/gm_block",
-        "dest": "./addons/metamod/dlls",
-        "filter": "*.so"
-      },
-      {
-        "dir": "./.thirdparty/curl/addons/amxmodx/modules",
-        "dest": "./addons/amxmodx/modules",
-        "filter": "*.so"
-      }
+      { "dir": "./assets", "filter": "*.!(|dll)"}
     ]
   },
   "output": {
