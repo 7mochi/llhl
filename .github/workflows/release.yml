@@ -57,7 +57,7 @@ jobs:
         cd $GITHUB_WORKSPACE
         
         # Move hashfile out of dist folder
-        mv dist-linux/hashfile.sha1 .
+        mv dist-linux/hashfile.sha1 hashfile.sha1
 
         # Now windows
         cd dist
@@ -69,7 +69,7 @@ jobs:
         cd $GITHUB_WORKSPACE
 
         # Move hashfile 2 out of dist folder
-        mv dist/hashfile_2.sha1 .
+        mv dist/hashfile_2.sha1 hashfile_2.sha1
 
         # Merge the contents of both files
         cat hashfile_2.sha1 >> hashfile.sha1 && rm hashfile_2.sha1
@@ -97,9 +97,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          llhl-${{github.ref}}-linux.zip
-          llhl-${{github.ref}}-windows.zip
-          dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
-          hashfile.sha1
+          ./llhl-${{github.ref}}-linux.zip
+          ./llhl-${{github.ref}}-windows.zip
+          ./dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
+          ./hashfile.sha1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
