@@ -1294,7 +1294,6 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
                     DeleteOgFiles();
                     server_print("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
                     log_amx("%L", LANG_SERVER, "LLHL_UPDATE_DL_ALL_FINISHED", PLUGIN_ACRONYM);
-                    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
                     set_task(0.5, "RestartServer");
                 }
             }
@@ -1370,6 +1369,8 @@ public CleanUpdaterFolder() {
 
     rmdir(UPDATER_DIR + "/update");
     rmdir(UPDATER_DIR);
+
+    set_pcvar_string(gCvarPassword, gSvPasswordPreUpdate);
 }
 
 public RestartServer(){
