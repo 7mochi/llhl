@@ -63,8 +63,7 @@ jobs:
         cd dist
 
         # Find remaining files
-        find "$PWD" -type f -name "*.dll" \ 
-        -exec sha1sum {} \; > hashfile_2.sha1
+        find "$PWD" -type f -name "*.dll" -exec sha1sum {} \; > hashfile_2.sha1
 
         # Go back again
         cd $GITHUB_WORKSPACE
