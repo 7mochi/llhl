@@ -47,6 +47,7 @@ jobs:
         find "$PWD" -type f -not -name "llhl.cfg" \
         -and -not -name "plugins.ini" \
         -and -not -name "*.inc" \
+        -and -not -name "*.sma" \
         -and -not -name "*.gam" \
         -and -not -name "motd_llhl*" \
         -and -not -name "startup_server.cfg" \
