@@ -79,6 +79,7 @@ jobs:
         sed -e "s,${PWD}/dist-linux/ag/,,g; s,${PWD}/dist/ag/,,g; s,ag/addons/amxmodx/plugins/,,g" -i hashfile.sha1
     
     - name: Prepare releases in zip
+      run: |
         cd dist-linux && zip -r ../llhl-${{github.ref}}-linux.zip * && cd $GITHUB_WORKSPACE
         cd dist && zip -r ../llhl-${{github.ref}}-windows.zip * && cd $GITHUB_WORKSPACE
 
@@ -101,5 +102,5 @@ jobs:
           llhl-${{github.ref}}-windows.zip
           dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
           hashfile.sha1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
