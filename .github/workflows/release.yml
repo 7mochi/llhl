@@ -76,7 +76,7 @@ jobs:
         cat hashfile_2.sha1 >> hashfile.sha1 && rm hashfile_2.sha1
 
         # Remove useless path from the hashfile
-        sed -e "s,${PWD}/dist-linux/,,g; s,${PWD}/dist/,,g; s,ag/addons/amxmodx/plugins/,,g" -i hashfile.sha1
+        sed -e "s,${PWD}/dist-linux/ag/,,g; s,${PWD}/dist/ag/,,g; s,ag/addons/amxmodx/plugins/,,g" -i hashfile.sha1
     
     - name: Prepare releases in zip
         cd dist-linux && zip -r ../llhl-${{github.ref}}-linux.zip * && cd $GITHUB_WORKSPACE

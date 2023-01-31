@@ -1204,7 +1204,7 @@ public PrepareDownload() {
 
 /**
   * Compiled binaries of the plugin aren't in the repo so they'll be uploaded in each release:
-  * - URL to download files that are in the repo: https://raw.githubusercontent.com/FlyingCat-X/llhl/<LATEST_BRANCH>/<PATH_FROM_HASHFILE>
+  * - URL to download files that are in the repo: https://raw.githubusercontent.com/FlyingCat-X/llhl/<LATEST_BRANCH>/assets/<PATH_FROM_HASHFILE>
   * - URL to download files that aren't in the repo (*.amxx): https://github.com/FlyingCat-X/llhl/releases/download/<LATEST_BRANCH>/<FILENAME>
   * 
   * Downloaded files will be temporarily stored inside 'llhl-updater-temp/update' and then moved to the appropriate folder.
@@ -1220,7 +1220,7 @@ public DownloadLLHLFiles() {
     if (equali(fileExtension, "amxx")) {
         formatex(downloadURL, charsmax(downloadURL), "https://github.com/FlyingCat-X/llhl/releases/download/%s-stable/%s", gRepoVersion, pathless);
     } else {
-        formatex(downloadURL, charsmax(downloadURL), "https://raw.githubusercontent.com/FlyingCat-X/llhl/%s-stable/ag/%s", gRepoVersion, pathInHashfile);
+        formatex(downloadURL, charsmax(downloadURL), "https://raw.githubusercontent.com/FlyingCat-X/llhl/%s-stable/assets/%s", gRepoVersion, pathInHashfile);
     }
 
     new file[1];
