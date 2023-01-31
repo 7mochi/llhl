@@ -1325,10 +1325,16 @@ public CallbackLLHLFile(CURL:curl, CURLcode:code, llhlFile[LLHLFile]) {
 
 public MoveLLHLFiles() {
     for (new i = 0; i < ArraySize(gListPaths); i++) {
-        new pathInHashfile[256], fullPath[256], ogFilePath[256], pathless[128];
+        new pathInHashfile[256], fullPath[256], ogFilePath[256], pathless[128], fileExtension[32];
         ArrayGetString(gListPaths, i, pathInHashfile, charsmax(pathInHashfile));
 
         remove_filepath(pathInHashfile, pathless, charsmax(pathless));
+        GetFileExtension(pathInHashfile, fileExtension, charsmax(fileExtension));
+
+        if (equali(fileExtension, "amxx")) {
+            formatex(pathInHashfile, charsmax(pathInHashfile), "%s", "addons/amxmodx/plugins/llhl.amxx");
+        }
+        
         formatex(fullPath, charsmax(fullPath), "%s/update/%s", UPDATER_DIR, pathless);
         formatex(ogFilePath, charsmax(ogFilePath), "%s_temp", pathInHashfile);
         rename_file(pathInHashfile, ogFilePath, 1);
