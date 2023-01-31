@@ -1,4 +1,4 @@
-name: LLHL - Full Package Release (Development)
+name: LLHL - Check node-amxxpack build
 
 on:
   push:
