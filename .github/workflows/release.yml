@@ -3,7 +3,7 @@ name: LLHL - New version release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   build:
