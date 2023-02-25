@@ -77,11 +77,6 @@ jobs:
 
         # Remove useless path from the hashfile
         sed -e "s,${PWD}/dist-linux/ag/,,g; s,${PWD}/dist/ag/,,g; s,addons/amxmodx/plugins/,,g" -i hashfile.sha1
-    
-    - name: Prepare releases in zip
-      run: |
-        cd dist-linux && zip -r ../llhl-${{github.ref_name}}-linux.zip * && cd $GITHUB_WORKSPACE
-        cd dist && zip -r ../llhl-${{github.ref_name}}-windows.zip * && cd $GITHUB_WORKSPACE
 
     - name: Replace llhl.amxx on windows with the one from linux
       run: |
@@ -93,6 +88,11 @@ jobs:
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
         tar -xzf amxx-linux.tar.gz -C dist-linux/ag
         unzip amxx-windows.zip -d dist/ag
+    
+    - name: Prepare releases in zip
+      run: |
+        cd dist-linux && zip -r ../llhl-${{github.ref_name}}-linux.zip * && cd $GITHUB_WORKSPACE
+        cd dist && zip -r ../llhl-${{github.ref_name}}-windows.zip * && cd $GITHUB_WORKSPACE
     
     - name: Upload all assets (Release)
       uses: softprops/action-gh-release@v1
