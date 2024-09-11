@@ -83,7 +83,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "2.0-stable"
+#define VERSION         "2.1-stable"
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
