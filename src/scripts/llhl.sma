@@ -56,9 +56,6 @@
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
     - sv_ag_check_updates_retry_delay "2.0"
-    - sv_ag_autoupdate "1"
-    - sv_ag_autoupdate_dl_max_retries "3"
-    - sv_ag_autoupdate_dl_retry_delay "3"
 
     # Thanks to:
     - Th3-822: FPS Limiter and blocking name and model changes
@@ -90,8 +87,6 @@
 #define AUTHOR          "FlyingCat"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
-#define UPDATER_DIR     "llhl-updater-temp"
-#define HASH_NAME       "hashfile.sha1"
 
 #pragma semicolon 1
 #pragma dynamic 163840
