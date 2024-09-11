@@ -362,6 +362,7 @@ public plugin_init() {
     register_forward(FM_SetModel, "FwSetModel");
     register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChangedPre", 0);
     register_forward(FM_StartFrame, "FwStartFrame");
+    register_forward(FM_GetGameDescription, "FwGameDescription");
     
     for (new i; i < sizeof gConsistencySoundFiles; i++) {
         force_unmodified(force_exactfile, {0,0,0}, {0,0,0}, gConsistencySoundFiles[i]);
@@ -400,6 +401,17 @@ public inconsistent_file(id, const filename[], reason[64]) {
     log_amx("%L", LANG_SERVER, "FILECONSISTENCY_MSG", name, authid, filename);
     server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FILECONSISTENCY_KICK", filename);
     return PLUGIN_HANDLED;
+}
+
+public FwGameDescription() {
+    new actualGamename[32];
+    dllfunc(DLLFunc_GetGameDescription, actualGamename, charsmax(actualGamename));
+    
+    new newGamename[128];
+    formatex(newGamename, charsmax(newGamename), "%s v%s", actualGamename, VERSION);
+    forward_return(FMV_STRING, newGamename);
+
+    return FMRES_SUPERCEDE;
 }
 
 public client_connect(id) {
