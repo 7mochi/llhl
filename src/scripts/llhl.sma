@@ -438,6 +438,7 @@ public client_putinserver(id) {
     }
     // Workaround for first spawn at join
     HamPlayerSpawnPost(id);
+    set_task(10.0, "ShowFpsVoteAdvertisement", id);
 }
 
 public client_authorized(id) {
@@ -511,6 +512,10 @@ public HamPlayerSpawnPost(id) {
 
 public IsSpawnValid(id, Float:origin[3]) {
 	return (trace_hull(origin, (get_user_flags(id) & FL_DUCKING ? HULL_HEAD : HULL_HUMAN), id, DONT_IGNORE_MONSTERS) & 2) ? 0 : 1;
+}
+
+public ShowFpsVoteAdvertisement(id) {
+    client_print(id, print_chat, "%l", "LLHL_FPS_LIMIT_MODE_AD", PLUGIN_ACRONYM);
 }
 
 // Called every second during the agstart countdown
