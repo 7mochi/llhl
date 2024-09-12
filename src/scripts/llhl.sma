@@ -1,6 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6 and AGMini
-    Version: 2.0-stable
+    Version: 2.1-stable
     Author: FlyingCat
 
     # Information:
@@ -9,7 +9,7 @@
     Unlike my gamemode for agmodx, this one only supports protocol 48.
 
     # Features:
-    - FPS Limiter (Default value is 144)
+    - FPS Limiter (Default value is 144, switchable from 144 to 240 and vice versa, you can toggle between them with the fpslimitmode vote)
     - FOV Limiter (Minimum value is 85, disabled by default)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
@@ -28,12 +28,11 @@
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
     - Blocks location/HP/Weapon/etc messages for spectators
-    - Check for new updates and it will download them automatically.
+    - Check for new updates
     - llhl_match_manager command (For administrators only)
 
     # New cvars:
-    - sv_ag_fpslimit_max_fps "144"
-    - sv_ag_fpslimit_max_detections "2"
+    - ag_fps_limit_warnings_interval "5.0"
     - sv_ag_min_default_fov_enabled "0"
     - sv_ag_min_default_fov "85"
     - sv_ag_cvar_check_interval "1.5"
@@ -66,7 +65,7 @@
     - Dcarlox: Grammar corrections in the README
     - leynieR: Portuguese Translation.
 
-    Contact: alonso.caychop@tutamail.com or Suisei#1966 (Discord)
+    Contact: alonso.caychop@protonmail.com or _7mochi (Discord)
 */
 
 #include <amxmodx>
