@@ -7,7 +7,7 @@ Unlike my gamemode for agmodx, this one only supports Protocol 48.
 If you have any problem in your server, before opening an issue or contacting me by any means (Facebook, Whatsapp, Discord, etc.) make sure that the error is related to the LLHL plugin. If you have any problem associated to the plugin try to be as detailed as possible and provide me with logs and ways to get to the error. I won’t give you support if the problem is related to other plugins e.g. dproto or reunion.
 
 ## Features
-- FPS Limiter (Default value is 144).
+- FPS Limiter (Default value is 144, switchable from 144 to 240 and vice versa, you can toggle between them with the fpslimitmode vote)
 - FOV Limiter (Minimum value is 85, disabled by default).
 - Records a demo automatically when a match is started (With agstart).
 - /unstuck command (10 seconds cooldown).
@@ -29,8 +29,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - llhl_match_manager command (For administrators only)
 
 ## New cvars
-- sv_ag_fpslimit_max_fps "144"
-- sv_ag_fpslimit_max_detections "2"
+- ag_fps_limit_warnings_interval "5.0"
 - sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"

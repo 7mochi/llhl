@@ -135,8 +135,6 @@ new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
-new gCvarMaxFps;
-new gCvarMaxDetections;
 new gCvarMinFovEnabled;
 new gCvarMinFov;
 new gCvarCheckInterval;
@@ -252,15 +250,11 @@ public plugin_init() {
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
 
-    // FPS Limiter
-    gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
-    gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
-
     // Mininum Default Fov Allowed (Disabled by default)
     gCvarMinFovEnabled = create_cvar("sv_ag_min_default_fov_enabled", "0");
     gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
 
-    // CVAR Checker Interval (FPS and Fov)
+    // Default Fov CVAR Checker Interval
     gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
 
     // Unstuck command
@@ -598,7 +592,7 @@ public FwMsgIntermission(id) {
 public TaskPreIntermission() {
     // Show vEngine
     set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
-    show_dhudmessage(0, "%s v%s^n----------------------^nMax Player FPS Allowed: %i^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarMaxFps), get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
+    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
     client_cmd(0, "wait;wait;snapshot");
 }
 
@@ -712,30 +706,12 @@ public CvarCheckRun() {
         if (is_user_hltv(players[i])) {
             CheckHLTVDelay(players[i]);
         } else if (!hl_get_user_spectator(players[i])) {
-            query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
             if (get_pcvar_num(gCvarMinFovEnabled)) {
                 query_client_cvar(players[i], "default_fov", "FovCheckReturn");
             }
         }
     }
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
-}
-
-public FpsCheckReturn(id, const cvar[], const value[]) {
-    if (equali(value, "Bad CVAR request")) {
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
-    } else if (equali(cvar, "fps_max") && str_to_num(value) > max(100, get_pcvar_num(gCvarMaxFps))) {
-        console_cmd(id, "^"FpS_MaX^" %d", max(100, get_pcvar_num(gCvarMaxFps)));
-        if (++gNumDetections[id] < get_pcvar_num(gCvarMaxDetections)) {
-            client_print(id, print_chat, "%L", id, "FPSL_WARNING_MSG", max(100, get_pcvar_num(gCvarMaxFps)));
-        } else {
-            static name[MAX_NAME_LENGTH];
-            get_user_name(id, name, charsmax(name));
-            server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_KICK", get_pcvar_num(gCvarMaxFps));
-            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
-            client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
-        }
-    }
 }
 
 public FovCheckReturn(id, const cvar[], const value[]) {

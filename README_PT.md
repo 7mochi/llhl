@@ -6,7 +6,7 @@ Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo
 Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em contato comigo por qualquer meio (Facebook, Whatsapp, Discord, etc) certifique-se de que o erro esteja relacionado ao plugin LLHL. Si tiver algum problema associado a o plugin tente ser o mais detalhado possível e forneça logs e maneiras de resolver esse erro. Não darei suporte / ajuda se o problema estiver relacionado a outros plugins como dproto ou reunion por exemplo.
 
 ## Características
-- Limitador de FPS (o valor por padrão e de 144).
+- Limitador de FPS (o valor por padrão e de 144, pode ser alternado de 144 para 240 e vice-versa, pode alternar entre eles com o voto fpslimitmode)
 - Limitador de FOV (o valor mínimo é 85, por padrão está desabilitado).
 - Uma demonstração e gravada automaticamente quando uma partida começa (con agstart).
 - Comando /unstuck implementado (O tempo de espera é de 10 segundos para usá-lo de volta).
@@ -27,8 +27,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Comando llhl_match_manager implementado (Apenas para administradores)
 
 ## Novas cvars
-- sv_ag_fpslimit_max_fps "144"
-- sv_ag_fpslimit_max_detections "2"
+- ag_fps_limit_warnings_interval "5.0"
 - sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"
