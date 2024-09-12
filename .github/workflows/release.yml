@@ -8,8 +8,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: centos:centos7
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
+    - name: Setting up mirrorlist
+      run: |
+        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+    - name: Install Node.js (v16)
+      run: |
+        curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+        yum install -y nodejs
+
+    - name: Checkout LLHL AGMOD repository
+      uses: actions/checkout@v2
+      with:
+        repository: 7mochi/llhl-agmod
+        path: llhl-agmod
+        fetch-depth: 0
+    
+    - name: Build LLHL AGMOD serverfile .so
+      run: |
+        yum install -y make git gcc gcc-c++ glibc-devel.i686 libstdc++-devel.i686
+
+        CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux CFG=$CONFIGURATION make -C dlls
+
+        mkdir ag-llhl-linux
+
+        cp -i dlls/ag_i386.so ag-llhl-linux/ag.so
+        cp -i network/delta.lst ag-llhl-linux
+
     - name: Checkout repository
       uses: actions/checkout@v3
     
@@ -88,6 +119,11 @@ jobs:
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
         tar -xzf amxx-linux.tar.gz -C dist-linux/ag
         unzip amxx-windows.zip -d dist/ag
+    
+    - name: Create folder and move LLHL AGMOD .so
+      run: |
+        mkdir dist-linux/ag/dlls
+        mv llhl-agmod/ag-llhl-linux/ag.so dist-linux/ag/ag.so
     
     - name: Prepare releases in zip
       run: |

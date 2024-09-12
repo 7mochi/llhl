@@ -7,7 +7,7 @@ A diferencia de mi gamemode para agmodx, este solo es compatible con Protocolo 4
 Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme por cualquier medio (Facebook, Whatsapp, Discord, etc) asegurate de que el error es relacionado al plugin LLHL. Si tienes algún problema asociado al plugin trata de ser lo mas detallado posible y brindarme logs y maneras de como llegar a que salga dicho error. No daré soporte/ayuda si el problema es relacionado a otros plugins como dproto o reunion por ejemplo.
 
 ## Características
-- Limitador de FPS (el valor por defecto es de 144).
+- Limitador de FPS (el valor por defecto es de 144, se puede cambiar de 144 a 240 y viceversa, puedes alternar entre ellos con el voto fpslimitmode).
 - Limitador de FOV (el valor mínimo es de 85, por defecto está desactivado).
 - Se graba una demo automaticamente cuando se inicia una partida (con agstart).
 - Comando /unstuck implementado (El tiempo de espera es de 10 segundos para volverlo a usar).
@@ -28,8 +28,8 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Comando llhl_match_manager implementado (Solo para administradores)
 
 ## Nuevas cvars
-- sv_ag_fpslimit_max_fps "144"
-- sv_ag_fpslimit_max_detections "2"
+- sv_ag_fps_limit_warnings "2"
+- sv_ag_fps_limit_warnings_interval "5.0"
 - sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"
