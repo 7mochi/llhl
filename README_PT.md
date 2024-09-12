@@ -27,7 +27,8 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Comando llhl_match_manager implementado (Apenas para administradores)
 
 ## Novas cvars
-- ag_fps_limit_warnings_interval "5.0"
+- sv_ag_fps_limit_warnings "2"
+- sv_ag_fps_limit_warnings_interval "5.0"
 - sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"

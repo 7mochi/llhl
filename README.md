@@ -29,7 +29,8 @@ If you have any problem in your server, before opening an issue or contacting me
 - llhl_match_manager command (For administrators only)
 
 ## New cvars
-- ag_fps_limit_warnings_interval "5.0"
+- sv_ag_fps_limit_warnings "2"
+- sv_ag_fps_limit_warnings_interval "5.0"
 - sv_ag_min_default_fov_enabled "0"
 - sv_ag_min_default_fov "85"
 - sv_ag_cvar_check_interval "1.5"
