@@ -6,137 +6,141 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     container: centos:centos7
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
-    - name: Setting up mirrorlist
+    - name: Setting up CentOS 7 mirrorlist
       run: |
         sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
         sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-    - name: Install Node.js (v16)
+    - name: Installing required packages
       run: |
-        curl -sL https://rpm.nodesource.com/setup_16.x | bash -
-        yum install -y nodejs
+        yum install -y git make wget tar zip gcc gcc-c++ glibc-devel.i686 libstdc++-devel.i686
 
-    - name: Checkout LLHL AGMOD repository
-      uses: actions/checkout@v2
-      with:
-        repository: 7mochi/llhl-agmod
-        path: llhl-agmod
-        fetch-depth: 0
-    
-    - name: Build LLHL AGMOD serverfile .so
-      run: |
-        yum install -y make git gcc gcc-c++ glibc-devel.i686 libstdc++-devel.i686
-
-        CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux CFG=$CONFIGURATION make -C dlls
-
-        mkdir ag-llhl-linux
-
-        cp -i dlls/ag_i386.so ag-llhl-linux/ag.so
-        cp -i network/delta.lst ag-llhl-linux
-
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    
     - name: Install NodeJS
       uses: actions/setup-node@v3
       with:
-        node-version: 18
-    
-    - name: Install dependencies for Linux
+        node-version: 12
+
+    - name: Clone LLHL AGMOD repository
       run: |
-        make init-linux
-    
+        git clone https://github.com/7mochi/llhl-agmod
+
+    - name: Clone LLHL repository
+      run: |
+        git clone https://github.com/7mochi/llhl
+
+    - name: Build LLHL AGMOD serverfile .so
+      run: |
+        cd llhl-agmod
+
+        CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux CFG=$CONFIGURATION make -C dlls
+
+        cd $GITHUB_WORKSPACE
+
     - name: Build LLHL proyect (Linux) with node-amxxpack
       run: |
-        make build-linux
-    
-    - name: Rename dist folder
-      run: |
-        mv dist dist-linux
-    
-    - name: Install dependencies for Windows
-      run: |
-        make init-windows
-    
-    - name: Build LLHL proyect (Windows) with node-amxxpack
-      run: |
-        make build-windows
-    
-    - name: Generate hashfile.sha1
-      run: |
-        # First linux
-        cd dist-linux
-
-        # Find all files in the dist folder except for a few
-        find "$PWD" -type f -not -name "llhl.cfg" \
-        -and -not -name "plugins.ini" \
-        -and -not -name "*.inc" \
-        -and -not -name "*.sma" \
-        -and -not -name "*.gam" \
-        -and -not -name "motd_llhl*" \
-        -and -not -name "startup_server.cfg" \
-        -and -not -name "*.sha1" \
-        -exec sha1sum {} \; > hashfile.sha1
-
-        # Go back to root folder
-        cd $GITHUB_WORKSPACE
-        
-        # Move hashfile out of dist folder
-        mv dist-linux/hashfile.sha1 hashfile.sha1
-
-        # Now windows
-        cd dist
-
-        # Find remaining files
-        find "$PWD" -type f -name "*.dll" -exec sha1sum {} \; > hashfile_2.sha1
-
-        # Go back again
-        cd $GITHUB_WORKSPACE
-
-        # Move hashfile 2 out of dist folder
-        mv dist/hashfile_2.sha1 hashfile_2.sha1
-
-        # Merge the contents of both files
-        cat hashfile_2.sha1 >> hashfile.sha1 && rm hashfile_2.sha1
-
-        # Remove useless path from the hashfile
-        sed -e "s,${PWD}/dist-linux/ag/,,g; s,${PWD}/dist/ag/,,g; s,addons/amxmodx/plugins/,,g" -i hashfile.sha1
-
-    - name: Replace llhl.amxx on windows with the one from linux
-      run: |
-        yes | cp -rf dist-linux/ag/addons/amxmodx/plugins/llhl.amxx dist/ag/addons/amxmodx/plugins/llhl.amxx
+        cd llhl && make init-linux && make build-linux
 
     - name: Download latest AMX Mod X 1.9
       run: |
-        wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx-linux.tar.gz
-        wget "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -O amxx-windows.zip
-        tar -xzf amxx-linux.tar.gz -C dist-linux/ag
-        unzip amxx-windows.zip -d dist/ag
-    
+        wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx.tar.gz
+        tar -xzf amxx.tar.gz -C llhl/dist/ag
+
     - name: Create folder and move LLHL AGMOD .so
       run: |
-        mkdir dist-linux/ag/dlls
-        mv llhl-agmod/ag-llhl-linux/ag.so dist-linux/ag/ag.so
-    
+        mkdir -p llhl/dist/ag/dlls
+        mv llhl-agmod/dlls/ag_i386.so llhl/dist/ag/dlls/ag.so
+        mv llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+
     - name: Prepare releases in zip
       run: |
-        cd dist-linux && zip -r ../llhl-${{github.ref_name}}-linux.zip * && cd $GITHUB_WORKSPACE
-        cd dist && zip -r ../llhl-${{github.ref_name}}-windows.zip * && cd $GITHUB_WORKSPACE
-    
-    - name: Upload all assets (Release)
+        cd llhl/dist && zip -r ../llhl-${{github.ref_name}}-linux.zip *
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-linux
+        path: llhl/dist
+
+  build-windows:
+    runs-on: windows-2019
+
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Clone LLHL AGMOD repository
+        run: |
+          git clone https://github.com/7mochi/llhl-agmod
+
+      - name: Clone LLHL repository
+        run: |
+          git clone https://github.com/7mochi/llhl
+          cd llhl && git checkout 3.0-stable && cd $GITHUB_WORKSPACE
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Build LLHL AGMOD serverfile .dll
+        run: |
+          cd llhl-agmod
+
+          msbuild multiplayer.sln -target:ag /p:Configuration=Release
+          
+          cd $GITHUB_WORKSPACE
+
+      - name: Build LLHL proyect (Windows) with node-amxxpack
+        run: |
+          cd llhl && make init-windows && make build-windows
+
+      - name: Download latest AMX Mod X 1.9
+        run: |
+          Invoke-WebRequest -Uri "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -OutFile amxx.zip
+          Expand-Archive -Path amxx.zip -DestinationPath llhl/dist/ag
+
+      - name: Create folder and move LLHL AGMOD .dll
+        run: |
+          mkdir -p llhl/dist/ag/dlls
+          move llhl-agmod/dlls/msvc/Release/ag.dll llhl/dist/ag/dlls/ag.dll
+          move llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+
+      - name: Prepare releases in zip
+        run: |
+          cd llhl/dist && Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: llhl-${{github.ref_name}}-windows
+          path: llhl/dist
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows]
+    steps:
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-linux
+
+    - name: Download Windows artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-windows
+
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./llhl-${{github.ref_name}}-linux.zip
-          ./llhl-${{github.ref_name}}-windows.zip
-          ./dist-linux/ag/addons/amxmodx/plugins/llhl.amxx
-          ./hashfile.sha1
+          llhl-${{github.ref_name}}-linux.zip
+          llhl-${{github.ref_name}}-windows.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
