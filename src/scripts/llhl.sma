@@ -1,10 +1,10 @@
 /*
-    LLHL Gamemode for AG 6.6 and AGMini
+    LLHL Gamemode for AG 6.6
     Version: 3.0-stable
     Author: FlyingCat
 
     # Information:
-    This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my LLHL gamemode that 
+    This plugin is a port for Adrenaline Gamer 6.6 from my LLHL gamemode that 
     was developed for rtxa's agmodx.
     Unlike my gamemode for agmodx, this one only supports protocol 48.
 

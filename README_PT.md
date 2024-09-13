@@ -1,6 +1,6 @@
 # ![LLHL Banner](https://raw.githubusercontent.com/FlyingCat-X/llhl/master/LLHL_logo.png)
 ### [Versão em inglês](https://github.com/FlyingCat-X/llhl/blob/master/README.md) | [Versão em espanhol](https://github.com/FlyingCat-X/llhl/blob/master/README_ES.md) | [Versão em português](https://github.com/FlyingCat-X/llhl/blob/master/README_PT.md) | Versão em chinês (Pendente)
-Este plugin é uma adaptação para Adrenaline Gamer 6.6 (e AGMini) do meu [modo de jogo LLHL](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que foi desenvolvido para rtxa agmodx. A diferença do meu modo de jogo para agmodx, este suporta apenas o Portocolo 48.
+Este plugin é uma adaptação para Adrenaline Gamer 6.6 do meu [modo de jogo LLHL](https://github.com/rtxa/agmodx/blob/master/valve/addons/amxmodx/scripting/agmodx_llhl.sma) que foi desenvolvido para rtxa agmodx. A diferença do meu modo de jogo para agmodx, este suporta apenas o Portocolo 48.
 
 # Considerações importantes
 Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em contato comigo por qualquer meio (Facebook, Whatsapp, Discord, etc) certifique-se de que o erro esteja relacionado ao plugin LLHL. Si tiver algum problema associado a o plugin tente ser o mais detalhado possível e forneça logs e maneiras de resolver esse erro. Não darei suporte / ajuda se o problema estiver relacionado a outros plugins como dproto ou reunion por exemplo.

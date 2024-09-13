@@ -1,7 +1,7 @@
 {
   "name": "llhl",
   "version": "3.0.0",
-  "description": "LLHL Gamemode for Adrenaline Gamer 6.6 (And maybe AGMini)",
+  "description": "LLHL Gamemode for Adrenaline Gamer",
   "scripts": {
     "install-linux": "amxxpack install --config .amxxpack.linux.json",
     "install-windows": "amxxpack install --config .amxxpack.windows.json",
