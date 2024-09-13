@@ -34,14 +34,16 @@ jobs:
     - name: Clone LLHL repository
       run: |
         git clone https://github.com/7mochi/llhl
+    
+    - name: Clone LLHL Resources repository
+      run: |
+        git clone https://github.com/7mochi/llhl-resources
 
     - name: Build LLHL AGMOD serverfile .so
       run: |
         cd llhl-agmod
 
         CPATH=$CPATH:/usr/include/c++/4.8.5/i686-redhat-linux CFG=$CONFIGURATION make -C dlls
-
-        cd $GITHUB_WORKSPACE
 
     - name: Build LLHL proyect (Linux) with node-amxxpack
       run: |
@@ -52,21 +54,42 @@ jobs:
         wget "https://www.amxmodx.org/latest.php?version=1.9&os=linux&package=base" -O amxx.tar.gz
         tar -xzf amxx.tar.gz -C llhl/dist/ag
 
-    - name: Create folder and move LLHL AGMOD .so
+    - name: Replace hamdata.ini with our custom one
+      run: |
+        cp -f llhl/assets/addons/amxmodx/configs/hamdata.ini llhl/dist/ag/addons/amxmodx/configs/hamdata.ini
+
+    - name: Create folder and copy LLHL AGMOD .so
       run: |
         mkdir -p llhl/dist/ag/dlls
-        mv llhl-agmod/dlls/ag_i386.so llhl/dist/ag/dlls/ag.so
-        mv llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+        cp llhl-agmod/dlls/ag_i386.so llhl/dist/ag/dlls/ag.so
+        cp llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+    
+    - name: Create folder for full release
+      run: |
+        mkdir -p llhl/dist-full
+        cp -r llhl/dist/* llhl/dist-full 
+    
+    - name: Copy LLHL resources to LLHL folder
+      run: |
+        cp -r llhl-resources/maps-ag-official/* llhl/dist-full/ag
+        cp -r llhl-resources/maps-ehll-unofficial/* llhl/dist-full/ag
+        cp -r llhl-resources/maps-valve-official/* llhl/dist-full/ag
 
     - name: Prepare releases in zip
       run: |
         cd llhl/dist && zip -r ../llhl-${{github.ref_name}}-linux.zip *
 
-    - name: Upload artifact
+    - name: Upload artifact (Lite version)
       uses: actions/upload-artifact@v3
       with:
-        name: llhl-${{github.ref_name}}-linux
+        name: llhl-${{github.ref_name}}-linux-lite
         path: llhl/dist
+
+    - name: Upload artifact (Full version)
+      uses: actions/upload-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-linux-full
+        path: llhl/dist-full
 
   build-windows:
     runs-on: windows-2019
@@ -84,7 +107,10 @@ jobs:
       - name: Clone LLHL repository
         run: |
           git clone https://github.com/7mochi/llhl
-          cd llhl && git checkout 3.0-stable && cd $GITHUB_WORKSPACE
+      
+      - name: Clone LLHL Resources repository
+        run: |
+          git clone https://github.com/7mochi/llhl-resources
 
       - name: Setup MSBuild.exe
         uses: microsoft/setup-msbuild@v1.1
@@ -94,8 +120,6 @@ jobs:
           cd llhl-agmod
 
           msbuild multiplayer.sln -target:ag /p:Configuration=Release
-          
-          cd $GITHUB_WORKSPACE
 
       - name: Build LLHL proyect (Windows) with node-amxxpack
         run: |
@@ -104,43 +128,76 @@ jobs:
       - name: Download latest AMX Mod X 1.9
         run: |
           Invoke-WebRequest -Uri "https://www.amxmodx.org/latest.php?version=1.9&os=windows&package=base" -OutFile amxx.zip
-          Expand-Archive -Path amxx.zip -DestinationPath llhl/dist/ag
+          Expand-Archive -Force -Path amxx.zip -DestinationPath llhl/dist/ag
 
-      - name: Create folder and move LLHL AGMOD .dll
+      - name: Replace hamdata.ini with our custom one
+        run: |
+          Copy-Item llhl/assets/addons/amxmodx/configs/hamdata.ini llhl/dist/ag/addons/amxmodx/configs/hamdata.ini -Force
+
+      - name: Create folder and copy LLHL AGMOD .dll
         run: |
           mkdir -p llhl/dist/ag/dlls
-          move llhl-agmod/dlls/msvc/Release/ag.dll llhl/dist/ag/dlls/ag.dll
-          move llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+          Copy-Item llhl-agmod/dlls/msvc/Release/ag.dll llhl/dist/ag/dlls/ag.dll
+          Copy-Item llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
+
+      - name: Create folder for full release
+        run: |
+          mkdir -p llhl/dist-full
+          Copy-Item -Path llhl/dist/* -Destination llhl/dist-full -Recurse
+      
+      - name: Copy LLHL resources to LLHL folder
+        run: |
+          xcopy llhl-resources\maps-ag-official\* llhl\dist-full\ag /E /Y /I
+          xcopy llhl-resources\maps-ehll-unofficial\* llhl\dist-full\ag /E /Y /I
+          xcopy llhl-resources\maps-valve-official\* llhl\dist-full\ag /E /Y /I
 
       - name: Prepare releases in zip
         run: |
           cd llhl/dist && Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows.zip
 
-      - name: Upload artifact
+      - name: Upload artifact (Lite version)
         uses: actions/upload-artifact@v3
         with:
-          name: llhl-${{github.ref_name}}-windows
+          name: llhl-${{github.ref_name}}-windows-lite
           path: llhl/dist
+
+      - name: Upload artifact (Full version)
+        uses: actions/upload-artifact@v3
+        with:
+          name: llhl-${{github.ref_name}}-windows-full
+          path: llhl/dist-full
 
   release:
     runs-on: ubuntu-latest
     needs: [build-linux, build-windows]
     steps:
-    - name: Download Linux artifact
+    - name: Download Linux artifact (Lite version)
       uses: actions/download-artifact@v3
       with:
-        name: llhl-${{github.ref_name}}-linux
+        name: llhl-${{github.ref_name}}-linux-lite
 
-    - name: Download Windows artifact
+    - name: Download Linux artifact (Full version)
       uses: actions/download-artifact@v3
       with:
-        name: llhl-${{github.ref_name}}-windows
+        name: llhl-${{github.ref_name}}-linux-full
+
+    - name: Download Windows artifact (Lite version)
+      uses: actions/download-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-windows-lite
+
+    - name: Download Windows artifact (Full version)
+      uses: actions/download-artifact@v3
+      with:
+        name: llhl-${{github.ref_name}}-windows-full
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          llhl-${{github.ref_name}}-linux.zip
-          llhl-${{github.ref_name}}-windows.zip
+          llhl-${{github.ref_name}}-linux-lite.zip
+          llhl-${{github.ref_name}}-linux-full.zip
+          llhl-${{github.ref_name}}-windows-lite.zip
+          llhl-${{github.ref_name}}-windows-full.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
