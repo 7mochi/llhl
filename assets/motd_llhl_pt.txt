@@ -1,8 +1,8 @@
-Bem-vindo ao modo de jogo LLHL v2.0-stable.
+Bem-vindo ao modo de jogo LLHL v3.0-stable.
 Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-Life (LLHL).
 
 -- Novas Características --
-# Limitador de FPS
+# Limitador de FPS (Use o voto 'fpslimitmode' para alternar entre 144 e 244 fps)
 # Limitador do 'default_fov'
 # Uma demonstração e gravada automaticamente quando uma partida começa
 # Novo comandos: /unstuck, llhl_match_manager (Apenas para administradores)

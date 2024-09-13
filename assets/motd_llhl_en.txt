@@ -1,8 +1,8 @@
-Welcome to the LLHL v2.0-stable game mode
+Welcome to the LLHL v3.0-stable game mode
 This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL).
 
 -- New features --
-# FPS Limiter
+# FPS Limiter (Use the 'fpslimitmode' vote to toggle between 144 and 244 fps)
 # 'default_fov' Limiter
 # Records a demo automatically when a match is started
 # New commands: /unstuck, llhl_match_manager (For administrators only)
