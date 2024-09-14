@@ -11,7 +11,6 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Uma demonstração e gravada automaticamente quando uma partida começa (con agstart).
 - Comando /unstuck implementado (O tempo de espera é de 10 segundos para usá-lo de volta).
 - Verificação dos arquivos de som, são os mesmos verificados no modo de jogo EHLL - AG6.6.
-- Possibilidade de destruir as satchels de outros jogadores (Opcional, por padrão está desativado)
 - Não são permitidas mudanças de nome e model quando um jogo está em andamento (opcional ambos ativados por padrão).
 - Novo modo de espera ao terminar um mapa.
 - Es forçado a ter HLTV conectado um certo valor de delay pelo mínimo (o valor padrão mínimo é 30).
@@ -35,8 +34,6 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_unstuck_cooldown "10.0"
 - sv_ag_unstuck_start_distance "32"
 - sv_ag_unstuck_max_attempts "64"
-- sv_ag_destroyable_satchel "0"
-- sv_ag_destroyable_satchel_hp "1"
 - sv_ag_block_namechange_inmatch "1"
 - sv_ag_block_modelchange_inmatch "1"
 - sv_ag_min_hltv_delay "30.0"

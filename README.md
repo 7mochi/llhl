@@ -12,7 +12,6 @@ If you have any problem in your server, before opening an issue or contacting me
 - Records a demo automatically when a match is started (With agstart).
 - /unstuck command (10 seconds cooldown).
 - Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6.
-- Be able to destroy other players satchels (Optional, disabled by default).
 - Block nickname and model changes when a game is in progress (Optional, both enabled by default).
 - New intermission mode.
 - More than 1 HLTV allowed.
@@ -37,8 +36,6 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_unstuck_cooldown "10.0"
 - sv_ag_unstuck_start_distance "32"
 - sv_ag_unstuck_max_attempts "64"
-- sv_ag_destroyable_satchel "0"
-- sv_ag_destroyable_satchel_hp "1"
 - sv_ag_block_namechange_inmatch "1"
 - sv_ag_block_modelchange_inmatch "1"
 - sv_ag_min_hltv_delay "30.0"

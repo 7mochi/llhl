@@ -15,7 +15,6 @@
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
     EHLL gamemode - AG6.6
-    - Be able to destroy other players satchels (Optional, disabled by default)
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
     - More than 1 HLTV allowed
@@ -40,8 +39,6 @@
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
     - sv_ag_unstuck_max_attempts "64"
-    - sv_ag_destroyable_satchel "0"
-    - sv_ag_destroyable_satchel_hp "1"
     - sv_ag_block_namechange_inmatch "1"
     - sv_ag_block_modelchange_inmatch "1"
     - sv_ag_min_hltv_delay "30.0"
@@ -138,8 +135,6 @@ new gCvarAgStartMinPlayers;
 new gCvarUnstuckCooldown;
 new gCvarUnstuckStartDistance;
 new gCvarUnstuckMaxSearchAttempts;
-new gCvarDestroyableSatchel;
-new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarNumHLTVAllowed;
@@ -252,9 +247,6 @@ public plugin_init() {
     gCvarUnstuckStartDistance = create_cvar("sv_ag_unstuck_start_distance", "32");
     gCvarUnstuckMaxSearchAttempts = create_cvar("sv_ag_unstuck_max_attempts", "64");
 
-    // Destroyable Satchel
-    gCvarDestroyableSatchel =  create_cvar("sv_ag_destroyable_satchel", "0");
-    gCvarDestroyableSatchelHP = create_cvar("sv_ag_destroyable_satchel_hp", "1");
 
     // Block name change (Only spectators) log in match
     gCvarBlockNameChangeInMatch = create_cvar("sv_ag_block_namechange_inmatch", "1");
@@ -338,7 +330,6 @@ public plugin_init() {
 
     register_event("DeathMsg", "EventDeathMsg", "ad");
 
-    register_forward(FM_SetModel, "FwSetModel");
     register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChangedPre", 0);
     register_forward(FM_StartFrame, "FwStartFrame");
     register_forward(FM_GetGameDescription, "FwGameDescription");
@@ -696,22 +687,6 @@ public CheatCommandRun() {
     copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
     client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
-}
-
-public FwSetModel(entid, model[]) {
-    if (!get_pcvar_num(gCvarDestroyableSatchel) || !pev_valid(entid) || !equal(model, "models/w_satchel.mdl"))
-        return FMRES_IGNORED;
-
-    static id;
-    id = pev(entid, pev_owner);
-
-    if (!id || !is_user_connected(id) || !is_user_alive(id))
-        return FMRES_IGNORED;
-
-    new Float:health = get_pcvar_float(gCvarDestroyableSatchelHP);
-    set_pev(entid, pev_health, health);
-    set_pev(entid, pev_takedamage, DAMAGE_YES);
-    return FMRES_IGNORED;
 }
 
 public FwClientUserInfoChangedPre(id, info) {

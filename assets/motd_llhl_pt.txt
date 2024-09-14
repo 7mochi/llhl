@@ -7,7 +7,6 @@ Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-L
 # Uma demonstração e gravada automaticamente quando uma partida começa
 # Novo comandos: /unstuck, llhl_match_manager (Apenas para administradores)
 # Verificação do som
-# Possibilidade de destruir as satchels de outros jogadores
 # Não são permitidas mudanças de nome e model quando um jogo está em andamento
 # Novo modo de espera ao terminar um mapa
 # Mais de 1 HLTV permitido
