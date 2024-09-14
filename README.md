@@ -8,7 +8,7 @@ If you have any problem in your server, before opening an issue or contacting me
 
 ## Features
 - FPS Limiter (Default value is 144, switchable from 144 to 240 and vice versa, you can toggle between them with the fpslimitmode vote)
-- FOV Limiter (Minimum value is 85, disabled by default).
+- FOV Limiter (Default value is 85, enabled by default).
 - Records a demo automatically when a match is started (With agstart).
 - /unstuck command (10 seconds cooldown).
 - Check certain sound files, they're the same sounds that are verified in the EHLL gamemode - AG6.6.

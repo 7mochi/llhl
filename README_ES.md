@@ -8,7 +8,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 
 ## Características
 - Limitador de FPS (el valor por defecto es de 144, se puede cambiar de 144 a 240 y viceversa, puedes alternar entre ellos con el voto fpslimitmode).
-- Limitador de FOV (el valor mínimo es de 85, por defecto está desactivado).
+- Limitador de FOV (el valor por defecto es de 85, por defecto está activado).
 - Se graba una demo automaticamente cuando se inicia una partida (con agstart).
 - Comando /unstuck implementado (El tiempo de espera es de 10 segundos para volverlo a usar).
 - Verificación de archivos de sonido, son los mismos que son checkeados en el EHLL gamemode - AG6.6.

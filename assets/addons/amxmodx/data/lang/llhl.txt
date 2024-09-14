@@ -1,7 +1,5 @@
 [en]
 CVAR_PROTECTOR_KICK = CVAR Blocker/Protector Detected
-MINFOV_KICK = Your 'default_fov' value is lower than %d
-MINFOV_KICK_MSG = %s has been kicked for exceeding the minimum FOV value (Min: %d)
 FILECONSISTENCY_MSG = %s (%s) has an invalid sound: %s
 FILECONSISTENCY_KICK = Use the original sounds. Sound to change: %s
 DEMO_RECORDING = Recording %s.dem
@@ -59,8 +57,6 @@ LLHL_MM_INVALID_PLAYER_COUNT = The number of players selected isn't correct.
 
 [es]
 CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
-MINFOV_KICK = El valor de 'default_fov' que estas usando es menor que %d
-MINFOV_KICK_MSG = %s ha sido desconectado por superar el valor minimo de FOV (Minimo: %d)
 FILECONSISTENCY_MSG = %s (%s) tiene un sonido invalido: %s
 FILECONSISTENCY_KICK = Usa los sonidos originales. Sonido a cambiar: %s
 DEMO_RECORDING = Grabando %s.dem
@@ -118,8 +114,6 @@ LLHL_MM_INVALID_PLAYER_COUNT = La cantidad de jugadores seleccionados no es la c
 
 [pt]
 CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
-MINFOV_KICK = O valor de 'default_fov' que está usando é menor que %d
-MINFOV_KICK_MSG = %s foi desconectado por exceder o valor mínimo de FOV (Minimo: %d)
 FILECONSISTENCY_MSG = %s (%s) tem um som inválido: %s
 FILECONSISTENCY_KICK = Use os sons originais. Som para mudar: %s
 DEMO_RECORDING = Gravando %s.dem
@@ -177,8 +171,6 @@ LLHL_MM_INVALID_PLAYER_COUNT = O número de jogadores seleccionados não é o co
 
 [cn]
 CVAR_PROTECTOR_KICK = 检测到参数限制器.
-MINFOV_KICK = 您目前的“default_fov”值低于 %d
-MINFOV_KICK_MSG = %s 由于FOV低于允许的最小值而被踢出. (允许的最小值: %d)
 FILECONSISTENCY_MSG = %s (%s) 有一个无效声音: %s
 FILECONSISTENCY_KICK = 请恢复为原版音效. 需要恢复的音效: %s
 DEMO_RECORDING = 正在录制 %s.dem
