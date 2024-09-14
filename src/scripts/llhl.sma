@@ -1,7 +1,7 @@
 /*
     LLHL Gamemode for AG 6.6
     Version: 3.0-stable
-    Author: FlyingCat
+    Author: 7mochi
 
     # Information:
     This plugin is a port for Adrenaline Gamer 6.6 from my LLHL gamemode that 
@@ -81,7 +81,7 @@
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
 #define VERSION         "3.0-stable"
-#define AUTHOR          "FlyingCat"
+#define AUTHOR          "7mochi"
 #define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
 
