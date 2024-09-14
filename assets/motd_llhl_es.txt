@@ -3,7 +3,7 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 
 -- Nuevas caracteristicas --
 # Limitador de FPS (Usa el voto 'fpslimitmode' para alternar entre 144 y 244 fps)
-# Limitador de default_fov
+# Limitador de 'default_fov'
 # Graba demos automaticamente cuando se inicia una partida
 # Nuevo comandos: /unstuck, llhl_match_manager (Solo para administradores)
 # Verificacion de sonidos

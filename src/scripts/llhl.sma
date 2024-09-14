@@ -10,7 +10,7 @@
 
     # Features:
     - FPS Limiter (Default value is 144, switchable from 144 to 240 and vice versa, you can toggle between them with the fpslimitmode vote)
-    - FOV Limiter (Minimum value is 85, disabled by default)
+    - FOV Limiter (Minimum value is 85, enabled by default)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
@@ -34,9 +34,9 @@
     # New cvars:
     - sv_ag_fps_limit_warnings "2"
     - sv_ag_fps_limit_warnings_interval "5.0"
-    - sv_ag_min_default_fov_enabled "0"
-    - sv_ag_min_default_fov "85"
-    - sv_ag_cvar_check_interval "1.5"
+    - sv_ag_fov_min_enabled "1"
+    - sv_ag_fov_min_check_interval "1.5"
+    - sv_ag_fov_min "85"
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
     - sv_ag_unstuck_max_attempts "64"
@@ -135,9 +135,6 @@ new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
-new gCvarMinFovEnabled;
-new gCvarMinFov;
-new gCvarCheckInterval;
 new gCvarUnstuckCooldown;
 new gCvarUnstuckStartDistance;
 new gCvarUnstuckMaxSearchAttempts;
@@ -250,13 +247,6 @@ public plugin_init() {
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
 
-    // Mininum Default Fov Allowed (Disabled by default)
-    gCvarMinFovEnabled = create_cvar("sv_ag_min_default_fov_enabled", "0");
-    gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
-
-    // Default Fov CVAR Checker Interval
-    gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
-
     // Unstuck command
     gCvarUnstuckCooldown = create_cvar("sv_ag_unstuck_cooldown", "10.0");
     gCvarUnstuckStartDistance = create_cvar("sv_ag_unstuck_start_distance", "32");
@@ -356,8 +346,6 @@ public plugin_init() {
     for (new i; i < sizeof gConsistencySoundFiles; i++) {
         force_unmodified(force_exactfile, {0,0,0}, {0,0,0}, gConsistencySoundFiles[i]);
     }
-
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
 
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 
@@ -701,34 +689,6 @@ public CheckHLTVDelay(id) {
     get_user_info(id, "hdelay", hltvDelay, charsmax(hltvDelay));
     if (str_to_float(hltvDelay) < get_pcvar_float(gCvarMinHLTVDelay)) {
         server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINDELAY_HLTV_KICK", get_pcvar_float(gCvarMinHLTVDelay));
-    }
-}
-
-public CvarCheckRun() {
-    static players[MAX_PLAYERS], pCount;
-    get_players(players, pCount, "c");
-    for (new i = 0; i < pCount; i++) {
-        if (is_user_hltv(players[i])) {
-            CheckHLTVDelay(players[i]);
-        } else if (!hl_get_user_spectator(players[i])) {
-            if (get_pcvar_num(gCvarMinFovEnabled)) {
-                query_client_cvar(players[i], "default_fov", "FovCheckReturn");
-            }
-        }
-    }
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
-}
-
-public FovCheckReturn(id, const cvar[], const value[]) {
-    if (equali(value, "Bad CVAR request")) {
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
-    } else if (equali(cvar, "default_fov") && str_to_num(value) < min(85, get_pcvar_num(gCvarMinFov))) {
-        static name[MAX_NAME_LENGTH];
-        get_user_name(id, name, charsmax(name));
-        console_cmd(id, "default_fov %d", 90);
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINFOV_KICK", get_pcvar_num(gCvarMinFov));
-        log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
-        client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
     }
 }
 
