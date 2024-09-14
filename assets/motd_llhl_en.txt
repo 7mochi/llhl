@@ -7,7 +7,6 @@ This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL)
 # Records a demo automatically when a match is started
 # New commands: /unstuck, llhl_match_manager (For administrators only)
 # Sound verification
-# Be able to destroy other players satchels
 # Block nickname and model changes when a game is in progress
 # New intermission mode
 # More than 1 HLTV allowed
