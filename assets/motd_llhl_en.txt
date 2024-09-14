@@ -32,7 +32,7 @@ Keep all your screenshots and demos generated with this gamemode.
 An administrator may ask you to upload them.
 
 -- Gamemode information --
-# Version: 2.0-stable
-# Author: FlyingCat (Discord: Suisei#1966)
+# Version: 3.0-stable
+# Author: 7mochi (Discord: _7mochi)
 # Repository: https://git.io/jkttq
-# Download: https://github.com/FlyingCat-X/llhl/releases/latest
+# Download: https://github.com/7mochi/llhl/releases/latest
