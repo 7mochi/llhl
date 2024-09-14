@@ -34,7 +34,7 @@
     # New cvars:
     - sv_ag_fps_limit_warnings "2"
     - sv_ag_fps_limit_warnings_interval "5.0"
-    - sv_ag_fov_min_enabled "0/1"
+    - sv_ag_fov_min_enabled "1"
     - sv_ag_fov_min_check_interval "1.5"
     - sv_ag_fov_min "85"
     - sv_ag_unstuck_cooldown "10.0"
