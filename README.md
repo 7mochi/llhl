@@ -57,7 +57,7 @@ If you have any problem in your server, before opening an issue or contacting me
 ## Requirements
 - Pre-anniversary edition of HLDS (Build 8684) or latest [ReHLDS](https://github.com/dreamstalker/rehlds/releases) installed. 25th Anniversary compatibility hasn't been tested.
 - A base installation of [AGMOD](https://openag.pro/latest/ag.7z).
-- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Bots-United/metamod-p/releases/tag/v1.21p38)
+- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/theAsmodai/metamod-r/releases/tag/1.3.0.149)
 - Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer.
 - AMXX Module: [Curl](https://forums.alliedmods.net/showthread.php?t=285656).
 
