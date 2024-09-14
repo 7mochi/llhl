@@ -31,9 +31,9 @@ If you have any problem in your server, before opening an issue or contacting me
 ## New cvars
 - sv_ag_fps_limit_warnings "2"
 - sv_ag_fps_limit_warnings_interval "5.0"
-- sv_ag_min_default_fov_enabled "0"
-- sv_ag_min_default_fov "85"
-- sv_ag_cvar_check_interval "1.5"
+- sv_ag_fov_min_enabled "1"
+- sv_ag_fov_min_check_interval "1.5"
+- sv_ag_fov_min "85"
 - sv_ag_unstuck_cooldown "10.0"
 - sv_ag_unstuck_start_distance "32"
 - sv_ag_unstuck_max_attempts "64"
