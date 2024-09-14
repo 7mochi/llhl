@@ -64,7 +64,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer.
 - AMXX Module: [Curl](https://forums.alliedmods.net/showthread.php?t=285656).
 
-## Download (Stable)
+## Download
 - Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
 - Lite releases: Only contain what is necessary for the correct functioning of the LLHL gamemode. (Metamod, AMXX and the custom AGMOD for LLHL)
 
