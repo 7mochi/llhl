@@ -82,7 +82,7 @@
 #define PLUGIN_GAMEMODE "llhl"
 #define VERSION         "3.0-stable"
 #define AUTHOR          "7mochi"
-#define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
+#define GH_API_URL      "https://api.github.com/repos/7mochi/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
 
 #pragma semicolon 1
