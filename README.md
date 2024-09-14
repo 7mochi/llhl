@@ -58,19 +58,17 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requirements
-- Last version of HLDS (build 8308) or ReHLDS 3.6 or newer (Warning: Last version of ReHLDS for Linux has an auto-aim bug, download version 3.7.0.693 instead).
-- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (included and ready to use in development builds).
-- Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer (included and ready to use in development builds).
-- AMXX Module: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
+- Pre-anniversary edition of HLDS (Build 8684) or latest [ReHLDS](https://github.com/dreamstalker/rehlds/releases) installed. 25th Anniversary compatibility hasn't been tested.
+- A base installation of [AGMOD](https://openag.pro/latest/ag.7z).
+- Metamod 1.21.37p or newer, I recommend using [this version of metamod](https://github.com/Bots-United/metamod-p/releases/tag/v1.21p38)
+- Have [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) installed or newer.
+- AMXX Module: [Curl](https://forums.alliedmods.net/showthread.php?t=285656).
 
 ## Download (Stable)
 - Full releases: Besides containing everything necessary for the proper functioning of the LLHL gamemode, it has new maps with their respective dependencies (Locs, wads, sprites, sounds, etc).
-- Lite releases: Only contain what is necessary for the correct functioning of the LLHL gamemode. (Metamod and AMXX)
+- Lite releases: Only contain what is necessary for the correct functioning of the LLHL gamemode. (Metamod, AMXX and the custom AGMOD for LLHL)
 
 Download the [Latest Release](https://github.com/FlyingCat-X/llhl/releases/).
-
-## Download (Dev builds)
-- You can download them from [Github Actions](https://github.com/FlyingCat-X/llhl/actions). Click on any of the commits you want to try and download the corresponding artifact. (Windows or linux). The artifacts come with everything you need to run LLHL (Plugin, Gamemode .cfg file, Sounds to verify, amxmodx, metamod, etc).
 
 ## Installation (The easy way)
 - Have a clean installation of Half Life with Adrenaline Gamer ready.

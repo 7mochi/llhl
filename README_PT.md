@@ -56,19 +56,17 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_autoupdate_dl_retry_delay "3"
 
 ## Requisitos
-- Versão mais recente do HLDS (build 8308) ou ReHLDS 3.6 ou mais recente (Atenção: a versão mais recente do ReHLDS para Linux tem um bug de auto-apontar, como alternativa é recomendado baixar a versão 3.7.0.693).
-- Metamod 1.21.37p ou mais recente; recomendo usar [esta versão do metamod](https://github.com/Solokiller/Metamod-P-CMake/releases/tag/v1.21p39) (incluído e pronto para uso em versões de desenvolvimento).
-- Ter AMXX 1.9 instalado a versão mais recente (incluído e pronto para uso em versões de desenvolvimento).
-- Módulo AMXX: [GoldSrc REST In Pawn (gRIP)](https://forums.alliedmods.net/showthread.php?t=315567)
+- Edição pré-aniversário do HLDS (Build 8684) ou a última versão [ReHLDS] (https://github.com/dreamstalker/rehlds/releases) instalada. A compatibilidade com a versão do 25º aniversário não foi testada.
+- Uma instalação base do [AGMOD](https://openag.pro/latest/ag.7z)
+- Metamod 1.21.37p ou mais recente; recomendo usar [esta versão do metamod](https://github.com/Bots-United/metamod-p/releases/tag/v1.21p38).
+- Ter [AMXX 1.9](https://www.amxmodx.org/downloads-new.php) instalado a versão mais recente.
+- Módulo AMXX: [Curl](https://forums.alliedmods.net/showthread.php?t=285656)
 
-## Downloads (Estável)
+## Downloads
 - Pacote completo: Além de ter todo o necessário para o correto funcionamento do LLHL gamemode, novos mapas são incluídos com seus respectivos arquivos adicionais (Locs, wads, sprites, sounds, etc).
-- Pacote Lite: Contém apenas o necessário para o bom funcionamento do LLHL gamemode (Metamod y AMXX).
+- Pacote Lite: Contém apenas o necessário para o bom funcionamento do LLHL gamemode (Metamod, AMXX e o AGMOD personalizado para LLHL).
 
 Baixe a [última versão](https://github.com/FlyingCat-X/llhl/releases/).
-
-## Downloads (versões de desenvolvimento)
-- Podem ser baixados do [Github Actions](https://github.com/FlyingCat-X/llhl/actions). Clique em qualquer um dos commits que deseja testar e baixe o artifact correspondente (Windows ou linux). Os artifacts têm tudo o que precisa para executar o LLHL  (Plugin, arquivo .cfg de gamemode, sons para verificar, amxmodx, metamod, etc).
 
 ## Instalação (a maneira fácil)
 - Ter o Half-Life instalado com o Adrenaline Gamer pronto para usar.
