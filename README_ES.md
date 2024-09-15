@@ -28,6 +28,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 
 ## Nuevas cvars
 - sv_ag_fps_limit_warnings "2"
+- sv_ag_fps_limit_check_interval "10.0"
 - sv_ag_fps_limit_warnings_interval "5.0"
 - sv_ag_fov_min_enabled "1"
 - sv_ag_fov_min_check_interval "1.5"
