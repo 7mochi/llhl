@@ -328,6 +328,9 @@ public plugin_init() {
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
     register_message(get_user_msgid("Settings"), "FwMsgSettings");
     register_message(get_user_msgid("Vote"), "FwMsgVote");
+    register_message(get_user_msgid("FpsWarning"), "FwFpsWarning");
+    register_message(get_user_msgid("FpsKick"), "FwFpsKick");
+    register_message(get_user_msgid("FovKick"), "FwFovKick");
 
     register_message(SVC_INTERMISSION, "FwMsgIntermission");
 
@@ -564,6 +567,50 @@ public FwMsgVote(id) {
             }
         }
     }
+}
+
+public FwFpsWarning(id, dest, ent) {
+    static warnings, fpsLimit;
+    warnings = get_msg_arg_int(1);
+    fpsLimit = get_msg_arg_int(2);
+
+    client_print(ent, print_chat, "%l", "FPSL_WARNING_MSG", warnings, fpsLimit);
+    return PLUGIN_HANDLED;
+}
+
+public FwFpsKick(id, dest, ent) {
+    static player, username[MAX_NAME_LENGTH + 1], fpsLimit;
+    player = get_msg_arg_int(1);
+    fpsLimit = get_msg_arg_int(2);
+
+    if (!is_user_connected(player))
+        return PLUGIN_HANDLED;
+
+    get_user_name(player, username, charsmax(username));
+    log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", username, fpsLimit);
+    client_print(0, print_chat, "%l", "FPSL_KICK_MSG", username, fpsLimit);
+
+    server_cmd("kick #%d ^"%L^"", get_user_userid(player), player, "FPSL_KICK", fpsLimit);
+
+    return PLUGIN_HANDLED;
+}
+
+public FwFovKick(id, dest, ent) {
+    static player, username[MAX_NAME_LENGTH + 1], fovLimit;
+    player = get_msg_arg_int(1);
+    fovLimit = get_msg_arg_int(2);
+
+    if (!is_user_connected(player))
+        return PLUGIN_HANDLED;
+
+    get_user_name(player, username, charsmax(username));
+    // TODO: This message is sent twice, probably because the forward is being executed very quickly in player PostThink()
+    log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", username, fovLimit);
+    client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", username, fovLimit);
+
+    server_cmd("kick #%d ^"%L^"", get_user_userid(player), player, "MINFOV_KICK", fovLimit);
+
+    return PLUGIN_HANDLED;
 }
 
 public FwMsgIntermission(id) {
