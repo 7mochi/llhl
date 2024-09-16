@@ -19,6 +19,8 @@ Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-L
 # Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas
 # Spawns aleatórias
 # Localização dos blocos/Mensagens de localização/HP/Weapon/etc para os espectadores
+# Corrige corpos congelados em pleno ar quando se usa fps elevado
+# Verifica se há novas actualizações e será notificado na consola do servidor
 
 -- Configurações do modo de jogo --
 # Respawn forçado activado

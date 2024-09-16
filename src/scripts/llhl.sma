@@ -27,7 +27,9 @@
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
     - Blocks location/HP/Weapon/etc messages for spectators
-    - Check for new updates
+    - Respawn time are now FPS-independent
+    - Fixes bodies frozen in the air when using high fps
+    - Check for new updates and it will notify you in the server console
     - llhl_match_manager command (For administrators only)
 
     # New cvars:
@@ -36,6 +38,7 @@
     - sv_ag_fov_min_enabled "1"
     - sv_ag_fov_min_check_interval "1.5"
     - sv_ag_fov_min "85"
+    - sv_ag_respawn_delay "0.75"
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
     - sv_ag_unstuck_max_attempts "64"

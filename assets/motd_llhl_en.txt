@@ -19,6 +19,8 @@ This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL)
 # Block access to players who have the game via Family Sharing
 # Random spawns
 # Blocks location/HP/Weapon/etc messages for spectators
+# Respawn time are now FPS-independent
+# Fixes bodies frozen in the air when using high fps
 
 -- Configuracion del modo de juego --
 # Forced Respawn Enabled

@@ -19,6 +19,8 @@ Este modo de juego se usa actualmente para la Liga Latinoamericana de Half-Life 
 # Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar
 # Spawns aleatorios
 # Bloquea mensajes de ubicación/HP/arma/etc para los espectadores
+# Los tiempos de respawn son ahora independientes de los FPS
+# Arregla los cuerpos congelados en el aire cuando se utilizan altos fps
 
 -- Configuracion del modo de juego --
 # Forzado de respawn activado

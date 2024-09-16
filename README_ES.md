@@ -23,8 +23,10 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
 - Spawns aleatorias (Opcional, por defecto está desactivado).
 - Bloquea mensajes de ubicación/HP/arma/etc para los espectadores.
-- Verifica si hay nuevas actualizaciones y las descargará automáticamente.
-- Comando llhl_match_manager implementado (Solo para administradores)
+- Los tiempos de respawn son ahora independientes de los FPS.
+- Arregla los cuerpos congelados en el aire cuando se utilizan altos fps.
+- Verifica si hay nuevas actualizaciones y te notificará en la consola del server.
+- Comando llhl_match_manager implementado (Solo para administradores).
 
 ## Nuevas cvars
 - sv_ag_fps_limit_warnings "2"
@@ -32,6 +34,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_fov_min_enabled "1"
 - sv_ag_fov_min_check_interval "1.5"
 - sv_ag_fov_min "85"
+- sv_ag_respawn_delay "0.75"
 - sv_ag_unstuck_cooldown "10.0"
 - sv_ag_unstuck_start_distance "32"
 - sv_ag_unstuck_max_attempts "64"
