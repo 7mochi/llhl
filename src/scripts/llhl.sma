@@ -27,6 +27,7 @@
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
     - Blocks location/HP/Weapon/etc messages for spectators
+    - Block spectators from voting (Optional, enabled by default)
     - Respawn time are now FPS-independent
     - Fixes bodies frozen in the air when using high fps
     - Check for new updates and it will notify you in the server console
@@ -52,6 +53,7 @@
     - sv_ag_block_family_sharing "0"
     - sv_ag_random_spawns "0"
     - sv_ag_block_cmd_enhancements "1"
+    - sv_ag_block_vote_spectators "1"
     - sv_ag_steam_api_key ""
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
@@ -587,6 +589,7 @@ public FwFpsKick(id, dest, ent) {
         return PLUGIN_HANDLED;
 
     get_user_name(player, username, charsmax(username));
+    // TODO: This message is sent twice, probably because the forward is being executed very quickly in player PostThink()
     log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", username, fpsLimit);
     client_print(0, print_chat, "%l", "FPSL_KICK_MSG", username, fpsLimit);
 

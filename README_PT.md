@@ -22,6 +22,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas.
 - Spawns aleatórias (Opcional, por padrão está desabilitado).
 - Localização dos blocos/Mensagens de localização/HP/Weapon/etc para os espectadores.
+- Bloquear a votação dos espectadores (opcional, por padrão está ativado).
 - Os tempos de respawn são agora independentes do FPS.
 - Corrige corpos congelados em pleno ar quando se usa fps elevado.
 - Verifica se há novas actualizações e será notificado na consola do servidor.
@@ -47,6 +48,7 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - sv_ag_block_family_sharing "0"
 - sv_ag_random_spawns "0"
 - sv_ag_block_cmd_enhancements "1"
+- sv_ag_block_vote_spectators "1"
 - sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"

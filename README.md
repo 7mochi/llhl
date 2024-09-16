@@ -24,6 +24,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
 - Random spawns (Optional, disabled by default).
 - Blocks location/HP/Weapon/etc messages for spectators.
+- Block spectators from voting (Optional, enabled by default).
 - Respawn time are now FPS-independent.
 - Fixes bodies frozen in the air when using high fps.
 - Check for new updates and it will notify you in the server console.
@@ -49,6 +50,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_block_family_sharing "0"
 - sv_ag_random_spawns "0"
 - sv_ag_block_cmd_enhancements "1"
+- sv_ag_block_vote_spectators "1"
 - sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"

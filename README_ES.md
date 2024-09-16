@@ -23,6 +23,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
 - Spawns aleatorias (Opcional, por defecto está desactivado).
 - Bloquea mensajes de ubicación/HP/arma/etc para los espectadores.
+- Bloquear que los espectadores voten (Opcional, activado por defecto).
 - Los tiempos de respawn son ahora independientes de los FPS.
 - Arregla los cuerpos congelados en el aire cuando se utilizan altos fps.
 - Verifica si hay nuevas actualizaciones y te notificará en la consola del server.
@@ -48,6 +49,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_block_family_sharing "0"
 - sv_ag_random_spawns "0"
 - sv_ag_block_cmd_enhancements "1"
+- sv_ag_block_vote_spectators "1"
 - sv_ag_steam_api_key ""
 - sv_ag_check_updates "1"
 - sv_ag_check_updates_retrys "3"
