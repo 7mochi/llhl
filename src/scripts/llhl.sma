@@ -1251,7 +1251,7 @@ public MatchManagerAbortMatch(id) {
         client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_IDLE");
         DisplayMatchManagerMenu(id);
     } else {
-        CleanMenuData();
+        DisplayMatchManagerMenu(id);
         server_cmd("agabort");
         client_print(id, print_chat, "%l", "LLHL_MM_MATCH_ABORTED");
     }
