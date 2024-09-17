@@ -1076,6 +1076,9 @@ public DisplayMatchManagerMenu(id) {
         formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_4");
         menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
 
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_5");
+        menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
+
         menu_display(id, managerMenu, 0);
     } else {
         client_print(id, print_chat, "%l", "LLHL_MM_MENU_IN_USE");
@@ -1095,6 +1098,10 @@ public MatchManagerHandler(id, menu, item) {
         }
         case 2: {
             MatchManagerStartMatch(id);
+            return PLUGIN_HANDLED;
+        }
+        case 3: {
+            MatchManagerAbortMatch(id);
             return PLUGIN_HANDLED;
         }
     }
@@ -1204,8 +1211,8 @@ public MatchManagerStartMatch(id) {
     if (!gMMVersusType[0]) {
         client_print(id, print_chat, "%l", "LLHL_MM_NO_MATCH_TYPE");
         DisplayMatchManagerMenu(id);
-    } else if (gGameState == GAME_STARTING) {
-        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_STARTING");
+    } else if (gGameState == GAME_STARTING || gGameState == GAME_RUNNING) {
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_RUNNING");
         DisplayMatchManagerMenu(id);
     } else {
         if (GetPlayersNumInTeam(MM_BLUE_TEAM) == str_to_num(gMMVersusType) && GetPlayersNumInTeam(MM_RED_TEAM) == str_to_num(gMMVersusType)) {
@@ -1230,12 +1237,23 @@ public MatchManagerStartMatch(id) {
             }
             CleanMenuData();
             server_cmd("agstart");
-            
+            client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_STARTING");
             TrieIterDestroy(iterator);
         } else {
             client_print(id, print_chat, "%l", "LLHL_MM_INVALID_PLAYER_COUNT");
             DisplayMatchManagerMenu(id);
         }
+    }
+}
+
+public MatchManagerAbortMatch(id) {
+    if (gGameState == GAME_IDLE) {
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_IDLE");
+        DisplayMatchManagerMenu(id);
+    } else {
+        CleanMenuData();
+        server_cmd("agabort");
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_ABORTED");
     }
 }
 
