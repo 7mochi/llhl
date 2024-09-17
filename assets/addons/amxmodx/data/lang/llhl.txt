@@ -1,5 +1,4 @@
 [en]
-CVAR_PROTECTOR_KICK = CVAR Blocker/Protector Detected
 FPSL_WARNING_MSG = Warning #%d: Your 'fps_max' can't be higher than %d
 FPSL_KICK = Your 'fps_max' value is higher than %d
 FPSL_KICK_MSG = %s has been kicked for exceeding the FPS limit (Max: %d)
@@ -26,7 +25,6 @@ LLHL_CHECK_GH_HIGHER_VER = [%s] You have a higher than official version of LLHL.
 LLHL_CHECK_GH_NEW_UPDATE = [%s] There is a new update available. Download it from: https://github.com/7mochi/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Retrying within %.1f seconds. Attempts: %i/%i
 LLHL_STEAM_API_KEY_EMPTY = [%s] You haven't set any Steam API Key or isn't valid.
-LLHL_CHECK_STEAM_FAILED = [%s] Couldn't connect to Steam API. Connection failed.
 LLHL_CURL_INIT_ERROR = [%s] ERROR: cURL couldn't be initialized.
 LLHL_CURL_CODE_ERROR = [%s] ERROR: The request couldn't be completed. (Error code: %i)
 LLHL_CHECK_FS_KICK_1 = Family Sharing isn't allowed on this server.
@@ -53,7 +51,6 @@ LLHL_MM_MATCH_IS_RUNNING = A match is in progress. Abort it before starting anot
 LLHL_MM_INVALID_PLAYER_COUNT = The number of players selected isn't correct.
 
 [es]
-CVAR_PROTECTOR_KICK = Bloqueador/Protector de CVAR Detectado
 FPSL_WARNING_MSG = Advertencia #%d: El valor de 'fps_max' no puede ser mayor que %d
 FPSL_KICK = El valor de 'fps_max' que estas usando es mayor que %d
 FPSL_KICK_MSG = %s ha sido desconectado por superar el limite de FPS (Maximo: %d)
@@ -80,7 +77,6 @@ LLHL_CHECK_GH_HIGHER_VER = [%s] Tienes una versión más alta que la oficial del
 LLHL_CHECK_GH_NEW_UPDATE = [%s] Hay una nueva actualización disponible. Descárguela de: https://github.com/7mochi/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Reintentando dentro de %.1f segundos. Intentos: %i/%i
 LLHL_STEAM_API_KEY_EMPTY = [%s] No has establecido ninguna clave API de Steam o no es válida.
-LLHL_CHECK_STEAM_FAILED = [%s] No se pudo conectar a la API de Steam. Conexión fallida.
 LLHL_CURL_INIT_ERROR = [%s] ERROR: No se pudo inicializar cURL.
 LLHL_CURL_CODE_ERROR = [%s] ERROR: No se ha podido realizar la solicitud. (Codigo de error: %i)
 LLHL_CHECK_FS_KICK_1 = El prestamo familiar no está permitido en este servidor.
@@ -107,7 +103,6 @@ LLHL_MM_MATCH_IS_RUNNING = Una partida está en curso. Abortala antes de iniciar
 LLHL_MM_INVALID_PLAYER_COUNT = La cantidad de jugadores seleccionados no es la correcta.
 
 [pt]
-CVAR_PROTECTOR_KICK = Bloqueador/Protetor de CVAR Detectado
 FPSL_WARNING_MSG = Aviso #%d: O valor de 'fps_max' não pode ser maior que %d
 FPSL_KICK = O valor de 'fps_max' que esta usando é maior que %d
 FPSL_KICK_MSG = %s foi desconectado por exceder o limite de FPS (Maximo: %d)
@@ -134,7 +129,6 @@ LLHL_CHECK_GH_HIGHER_VER = [%s] Tem uma versão superior ao LLHL oficial. Pode s
 LLHL_CHECK_GH_NEW_UPDATE = [%s] Há uma nova atualização disponível. Baixe de: https://github.com/7mochi/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] Tentando novamente em %.1f segundos. Tentativas: %i/%i
 LLHL_STEAM_API_KEY_EMPTY = [%s] Você não definiu nenhuma chave Steam API ou não é válida.
-LLHL_CHECK_STEAM_FAILED = [%s] Não foi possível conectar à API do Steam. A conexão falhou.
 LLHL_CURL_INIT_ERROR = [%s] ERROR: Não pôde inicializar cURL.
 LLHL_CURL_CODE_ERROR = [%s] ERROR: Não pôde ser feito a solicitação. (Codigo do error: %i)
 LLHL_CHECK_FS_KICK_1 = O compartilhamento de bibliotecas não é permitido neste servidor.
@@ -161,7 +155,6 @@ LLHL_MM_MATCH_IS_RUNNING = Um jogo está em andamento. Aborta-o antes de iniciar
 LLHL_MM_INVALID_PLAYER_COUNT = O número de jogadores seleccionados não é o correcto.
 
 [cn]
-CVAR_PROTECTOR_KICK = 检测到参数限制器.
 FPSL_WARNING_MSG = 警告 #%d: “fps_max”的值不能高于 %d
 FPSL_KICK = 您目前的“fps_max”值高于 %d
 FPSL_KICK_MSG = %s 由于超出FPS限制而被踢出. (允许的最大值: %d)
@@ -188,7 +181,6 @@ LLHL_CHECK_GH_HIGHER_VER = [%s] 您正在使用的版本高于目前LLHL的官�
 LLHL_CHECK_GH_NEW_UPDATE = [%s] 有新的LLHL版本可用,下载地址: https://github.com/7mochi/llhl/releases/latest
 LLHL_CHECK_GH_RETRYING = [%s] 将在 %.1f 秒后重试. 尝试次数: %i/%i
 LLHL_STEAM_API_KEY_EMPTY = [%s] 您尚未设置任何Steam API密钥或该密钥无效.
-LLHL_CHECK_STEAM_FAILED = [%s] 无法连接到Steam API,连接失败.
 LLHL_CURL_INIT_ERROR = [%s] 错误 cURL 无法初始化.
 LLHL_CURL_CODE_ERROR = [%s] [%s] 错误:无法完成请求. (错误代码: %i)
 LLHL_CHECK_FS_KICK_1 = 此服务器不支持家庭共享游戏.
