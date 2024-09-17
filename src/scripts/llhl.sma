@@ -1090,7 +1090,7 @@ public MatchManagerHandler(id, menu, item) {
             return PLUGIN_HANDLED;
         }
         case 1: {
-            MatchManagerAssignPlayersMenu(id);
+            MatchManagerAssignPlayersMenu(id, 0);
             return PLUGIN_HANDLED;
         }
         case 2: {
@@ -1134,7 +1134,7 @@ public MatchManagerVersusTypeHandler(id, menu, item) {
     return PLUGIN_HANDLED;
 }
 
-public MatchManagerAssignPlayersMenu(id) {
+public MatchManagerAssignPlayersMenu(id, page) {
     new multilangString[64];
 
     formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_OPT_3_TITLE");
@@ -1163,16 +1163,26 @@ public MatchManagerAssignPlayersMenu(id) {
     }
     TrieIterDestroy(iterator);
 
-    menu_display(id, playersMenu, 0);
+    menu_display(id, playersMenu, page);
 }
 
 public MatchManagerAssignPlayersHandler(id, menu, item) {
-    if (item == MENU_EXIT) {
-        menu_destroy(menu);
-        DisplayMatchManagerMenu(id);
-        return PLUGIN_HANDLED;
-	}
+    switch (item) {
+        case MENU_EXIT: {
+            menu_destroy(menu);
+            DisplayMatchManagerMenu(id);
+        }
+        default: {
+            MatchManagerHandlePlayerTeamChange(id, menu, item);
+            menu_destroy(menu);
+            MatchManagerAssignPlayersMenu(id, item / 7); // There are 7 items per page
+        }
+    }
 
+    return PLUGIN_HANDLED;
+}
+
+public MatchManagerHandlePlayerTeamChange(id, menu, item) {
     new data[6], name[64];
     new access, itemCallback;
     
@@ -1188,10 +1198,6 @@ public MatchManagerAssignPlayersHandler(id, menu, item) {
     } else if (equali(team, MM_RED_TEAM)) {
         TrieSetString(gMMUserIDPlayers, data, MM_NO_TEAM);
     }
-
-    menu_destroy(menu);
-    MatchManagerAssignPlayersMenu(id);
-    return PLUGIN_HANDLED;
 }
 
 public MatchManagerStartMatch(id) {
@@ -1214,11 +1220,9 @@ public MatchManagerStartMatch(id) {
                         TrieIterGetString(iterator, value, charsmax(value), valueLength);
                         if (!equali(value, MM_NO_TEAM)) {
                             strtolower(value);
-                            client_cmd(target, "model %s", value);
+                            server_cmd("agforceteamup #%d %s", get_user_userid(target), value);
                         } else {
-                            if (!hl_get_user_spectator(id)) {
-                                client_cmd(target, "spectate");
-                            }
+                            server_cmd("agforcespectator #%d", get_user_userid(target));
                         }
                     }
                     TrieIterNext(iterator);
