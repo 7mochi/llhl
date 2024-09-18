@@ -15,7 +15,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - No se permiten cambios de nombre y model cuando hay una partida en curso (Opcional, ambos activados por defecto).
 - Nuevo modo de espera al finalizar un mapa.
 - Se fuerza al HLTV conectado a tener un cierto valor de delay como mínimo (Valor mínimo por defecto es 30).
-- Bloqueador de ghostmines.
+- Capacidades de bloqueo de nukes (Lampgauss, ghostmine, cohetes, etc)
 - Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
@@ -42,7 +42,15 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_block_namechange_inmatch "1"
 - sv_ag_block_modelchange_inmatch "1"
 - sv_ag_min_hltv_delay "30.0"
-- sv_ag_block_ghostmine "1"
+- sv_ag_nuke_grenade "0"
+- sv_ag_nuke_crossbow "0"
+- sv_ag_nuke_rpg "0"
+- sv_ag_nuke_gauss "1"
+- sv_ag_nuke_egon "0"
+- sv_ag_nuke_tripmine "0"
+- sv_ag_nuke_satchel "0"
+- sv_ag_nuke_snark "0"
+- sv_ag_explosion_fix "0
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"

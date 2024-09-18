@@ -16,7 +16,7 @@ If you have any problem in your server, before opening an issue or contacting me
 - New intermission mode.
 - More than 1 HLTV allowed.
 - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30).
-- Ghostmine Blocker.
+- Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
 - Simple OpenGF32 and AGFix detection (Through cheat commands).
 - Take screenshots at map end and occasionally when a player dies.
 - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
@@ -43,7 +43,15 @@ If you have any problem in your server, before opening an issue or contacting me
 - sv_ag_block_namechange_inmatch "1"
 - sv_ag_block_modelchange_inmatch "1"
 - sv_ag_min_hltv_delay "30.0"
-- sv_ag_block_ghostmine "1"
+- sv_ag_nuke_grenade "0"
+- sv_ag_nuke_crossbow "0"
+- sv_ag_nuke_rpg "0"
+- sv_ag_nuke_gauss "1"
+- sv_ag_nuke_egon "0"
+- sv_ag_nuke_tripmine "0"
+- sv_ag_nuke_satchel "0"
+- sv_ag_nuke_snark "0"
+- sv_ag_explosion_fix "0"
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"

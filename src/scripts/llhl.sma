@@ -19,7 +19,7 @@
     - New intermission mode
     - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
-    - Ghostmine Blocker
+    - Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
     - Simple OpenGF32 and AGFix detection (Through cheat commands)
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
@@ -46,7 +46,15 @@
     - sv_ag_block_namechange_inmatch "1"
     - sv_ag_block_modelchange_inmatch "1"
     - sv_ag_min_hltv_delay "30.0"
-    - sv_ag_block_ghostmine "1"
+    - sv_ag_nuke_grenade "0"
+    - sv_ag_nuke_crossbow "0"
+    - sv_ag_nuke_rpg "0"
+    - sv_ag_nuke_gauss "1"
+    - sv_ag_nuke_egon "0"
+    - sv_ag_nuke_tripmine "0"
+    - sv_ag_nuke_satchel "0"
+    - sv_ag_nuke_snark "0"
+    - sv_ag_explosion_fix "0"
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
@@ -107,11 +115,6 @@
 #define GAME_STARTING   1
 #define GAME_RUNNING    2
 
-// Is GhostMineBlock loaded?
-#define GMB_NOTLOADED   0
-#define GMB_LOADED      1 // Reserved for future use
-#define GMB_BLOCKED     2 // Reserved for future use
-
 // MM: Match Manager
 #define MM_NO_TEAM      "NO"
 #define MM_BLUE_TEAM    "BLUE"
@@ -129,7 +132,6 @@ enum _:LLHLFile {
 }
 
 new gGameState;
-new gGhostMineBlockState;
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][HL_MAX_TEAMNAME_LENGTH];
 new gDeathScreenshotTaken[MAX_PLAYERS + 1];
@@ -144,7 +146,6 @@ new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarNumHLTVAllowed;
 new gCvarMinHLTVDelay;
-new gCvarBlockGhostmine;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
@@ -217,24 +218,11 @@ public plugin_init() {
     new gamemode[32];
     get_cvar_string("sv_ag_gamemode", gamemode, charsmax(gamemode));
 
-    // Check if GhostMineBlock is loaded even when the gamemode isn't LLHL
-    if (!cvar_exists("gm_block_on")) {
-        gGhostMineBlockState = GMB_NOTLOADED;
-    } else {
-        gGhostMineBlockState = GMB_LOADED;
-    }
-
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
         server_print("%L", LANG_SERVER, "LLHL_CANT_RUN", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
-        // If GhostMineBlock is loaded and the gamemode isn't LLHL, it'll be deactivated
-        if (gGhostMineBlockState == GMB_LOADED) {
-            gGhostMineBlockState = GMB_BLOCKED;
-            set_cvar_num("gm_block_on", 0);
-            server_print("%L", LANG_SERVER, "LLHL_GM_BLOCK_DEACTIVATED", PLUGIN_ACRONYM);
-            // Try to load the default motd
-            server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
-            server_exec();
-        }
+        // Try to load the default motd
+        server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
+        server_exec();
         pause("ad");
         return;
     }
@@ -280,10 +268,6 @@ public plugin_init() {
 
     gGameState = GAME_IDLE;
 
-    if (gGhostMineBlockState == GMB_LOADED) {
-        gCvarBlockGhostmine = create_cvar("sv_ag_block_ghostmine", "1");
-    }
-
     // Check updates from Github Repo
     gCvarCheckUpdates = create_cvar("sv_ag_check_updates", "1");
     gCvarCheckUpdatesRetrys = create_cvar("sv_ag_check_updates_retrys", "3");
@@ -297,13 +281,6 @@ public plugin_init() {
     set_cvar_num("sv_proxies", get_pcvar_num(gCvarNumHLTVAllowed));
     hook_cvar_change(gCvarNumHLTVAllowed, "CvarHLTVAllowedHook");
     hook_cvar_change(get_cvar_pointer("sv_proxies"), "CvarSVProxiesHook");
-
-    if (cvar_exists("sv_ag_block_ghostmine")) {
-        // Reload GhostMineBlock original cvar
-        set_cvar_num("gm_block_on", get_pcvar_num(gCvarBlockGhostmine));
-        hook_cvar_change(gCvarBlockGhostmine, "CvarGhostMineHook");
-        hook_cvar_change(get_cvar_pointer("gm_block_on"), "MetaCvarGhostMineHook");
-    }
     
     gSpawnOrigins = ArrayCreate(3);
     gSpawnAngles = ArrayCreate(3);
@@ -629,7 +606,7 @@ public FwMsgIntermission(id) {
 public TaskPreIntermission() {
     // Show vEngine
     set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
-    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
+    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS));
     client_cmd(0, "wait;wait;snapshot");
 }
 
@@ -819,14 +796,6 @@ public CvarHLTVAllowedHook(pcvar, const old_value[], const new_value[]) {
 
 public CvarSVProxiesHook(pcvar, const old_value[], const new_value[]) {
     set_pcvar_string(gCvarNumHLTVAllowed, new_value);
-}
-
-public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
-    set_cvar_string("gm_block_on", new_value);
-}
-
-public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
-    set_pcvar_string(gCvarBlockGhostmine, new_value);
 }
 
 public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
