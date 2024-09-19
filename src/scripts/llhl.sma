@@ -217,13 +217,21 @@ public plugin_init() {
 
     register_plugin(PLUGIN, VERSION, AUTHOR);
 
-    new gamemode[32];
+    new gamemode[32], serverAGVersion[32];
     get_cvar_string("sv_ag_gamemode", gamemode, charsmax(gamemode));
+    get_cvar_string("sv_ag_version", serverAGVersion, charsmax(serverAGVersion));
 
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
         server_print("%L", LANG_SERVER, "LLHL_CANT_RUN", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
         // Try to load the default motd
-        server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
+        server_cmd("motdfile motd.txt");
+        server_exec();
+        pause("ad");
+        return;
+    } else if (equali(gamemode, PLUGIN_GAMEMODE) && !equali("6.6llhl", serverAGVersion)) {
+        server_print("%L", LANG_SERVER, "LLHL_CANT_RUN_2", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
+        // Try to load the default motd
+        server_cmd("motdfile motd.txt");
         server_exec();
         pause("ad");
         return;
@@ -341,6 +349,8 @@ public plugin_init() {
         gCheckUpdatesNumRetrys = 0;
         ConnectGithubAPI();
     }
+
+    server_print("%L", LANG_SERVER, "LLHL_INITIALIZED", PLUGIN_ACRONYM);
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
