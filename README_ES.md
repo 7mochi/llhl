@@ -16,7 +16,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Nuevo modo de espera al finalizar un mapa.
 - Se fuerza al HLTV conectado a tener un cierto valor de delay como mínimo (Valor mínimo por defecto es 30).
 - Capacidades de bloqueo de nukes (Lampgauss, ghostmine, cohetes, etc)
-- Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat).
+- Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat. Opcional, por defecto está activado).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
 - Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
@@ -51,6 +51,7 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - sv_ag_nuke_satchel "0"
 - sv_ag_nuke_snark "0"
 - sv_ag_explosion_fix "0
+- sv_ag_cheat_cmd_check "1"
 - sv_ag_cheat_cmd_check_interval "5.0"
 - sv_ag_cheat_cmd_max_detections "5"
 - sv_ag_change_model_penalization "1"

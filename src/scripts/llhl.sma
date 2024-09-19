@@ -20,7 +20,7 @@
     - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
     - Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
-    - Simple OpenGF32 and AGFix detection (Through cheat commands)
+    - Simple OpenGF32 and AGFix detection (Through cheat commands. Optional, enabled by default)
     - Take screenshots at map end and occasionally when a player dies
     - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
@@ -55,6 +55,7 @@
     - sv_ag_nuke_satchel "0"
     - sv_ag_nuke_snark "0"
     - sv_ag_explosion_fix "0"
+    - sv_ag_cheat_cmd_check "1"
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
@@ -147,6 +148,7 @@ new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarNumHLTVAllowed;
 new gCvarMinHLTVDelay;
+new gCvarCheatCmdCheck;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
@@ -253,6 +255,7 @@ public plugin_init() {
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
     // Simple OpenGF32 and AGFix Detection
+    gCvarCheatCmdCheck = create_cvar("sv_ag_cheat_cmd_check", "1");
     gCvarCheatCmdCheckInterval = create_cvar("sv_ag_cheat_cmd_check_interval", "5.0");
     gCvarCheatCmdMaxDetections = create_cvar("sv_ag_cheat_cmd_max_detections", "5");
 
@@ -415,40 +418,43 @@ public client_authorized(id) {
 public client_command(id) {
     new command[64];
     read_argv(0, command, charsmax(command));
-    if (equali(command, "preCheck")) {
-        gFirstCheatValidation[id] = true;
-        gSecondCheatValidation[id] = false;
-        return PLUGIN_HANDLED;
-    } else if (IsCheatCommand(command)) {
-        if (gFirstCheatValidation[id]) {
-            gSecondCheatValidation[id] = true;
+
+    if (get_pcvar_num(gCvarCheatCmdCheck)) {
+        if (equali(command, "preCheck")) {
+            gFirstCheatValidation[id] = true;
+            gSecondCheatValidation[id] = false;
+            return PLUGIN_HANDLED;
+        } else if (IsCheatCommand(command)) {
+            if (gFirstCheatValidation[id]) {
+                gSecondCheatValidation[id] = true;
+                return PLUGIN_HANDLED;
+            }
+        } else if (equali(command, "postCheck")) {
+            if (gFirstCheatValidation[id] && !gSecondCheatValidation[id]) {
+                gCheatNumDetections[id]++;
+                gFirstCheatValidation[id] = false;
+                gSecondCheatValidation[id] = false;
+                new name[32], authID[32], formatted[32], fileName[32];
+                new timestamp = get_systime();
+                format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+                formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
+                get_user_name(id, name, charsmax(name));
+                get_user_authid(id, authID, charsmax(authID));
+                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCommandSended, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+
+                if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
+                    log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                    if (!gDetectionScreenshotTaken[id] && random_num(69, 70) == 69) {
+                        if (gGameState == GAME_RUNNING) {
+                            TakeScreenshot(id);
+                            gDetectionScreenshotTaken[id] = 1;
+                        }
+                    }
+                    gCheatNumDetections[id] = 0;
+                }
+            }
             return PLUGIN_HANDLED;
         }
-    } else if (equali(command, "postCheck")) {
-        if (gFirstCheatValidation[id] && !gSecondCheatValidation[id]) {
-            gCheatNumDetections[id]++;
-            gFirstCheatValidation[id] = false;
-            gSecondCheatValidation[id] = false;
-            new name[32], authID[32], formatted[32], fileName[32];
-            new timestamp = get_systime();
-            format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
-            formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
-            get_user_name(id, name, charsmax(name));
-            get_user_authid(id, authID, charsmax(authID));
-            log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCommandSended, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
-
-            if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
-                if (!gDetectionScreenshotTaken[id] && random_num(69, 70) == 69) {
-                    if (gGameState == GAME_RUNNING) {
-                        TakeScreenshot(id);
-                        gDetectionScreenshotTaken[id] = 1;
-                    }
-                }
-                gCheatNumDetections[id] = 0;
-            }
-        }
-        return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
 }
@@ -715,8 +721,10 @@ public CheckHLTVDelay(id) {
 }
 
 public CheatCommandRun() {
-    copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
-    client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
+    if (get_pcvar_num(gCvarCheatCmdCheck)) {
+        copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
+        client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
+    }
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 }
 
