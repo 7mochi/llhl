@@ -11,8 +11,7 @@ This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL)
 # New intermission mode
 # More than 1 HLTV allowed
 # Force connected HLTV to have a certain delay value as a minimum
-# Wallhack Blocker
-# Ghostmine Blocker
+# Nuke blocking capabilities
 # Simple OpenGF32 and AGFix detection
 # Take screenshots at map end and occasionally when a player dies
 # Changing model during a match subtract 1 from the score

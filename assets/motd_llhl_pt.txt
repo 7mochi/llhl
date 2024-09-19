@@ -12,7 +12,7 @@ Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-L
 # Mais de 1 HLTV permitido
 # Es forçado a ter HLTV conectado um certo valor de delay pelo mínimo
 # Bloqueador de Wallhack
-# Bloqueador de Ghostmine
+# Capacidades de bloqueio de nukes
 # Detecção simples de OpenGF32 e AGFix
 # Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre
 # A mudança de model durante uma partida subtrai 1 da pontuação
