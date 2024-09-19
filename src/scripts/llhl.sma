@@ -616,7 +616,7 @@ public FwMsgIntermission(id) {
 public TaskPreIntermission() {
     // Show vEngine
     set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
-    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS));
+    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f^nCheat check: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), get_pcvar_num(gCvarCheatCmdCheck) ? "On" : "Off");
     client_cmd(0, "wait;wait;snapshot");
 }
 
