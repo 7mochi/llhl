@@ -17,7 +17,6 @@ Se tiver um problema no seu servidor antes de abrir uma issue ou entrar em conta
 - Capacidades de bloqueio de nukes (Lampgauss, ghostmine, rocket, etc.)
 - Detecção simples de OpenGF32 e AGFix (Atraves do comandos do cheat. Opcional, por padrão está activado).
 - Faça screenshots no final de um mapa e ocasionalmente quando um jogador morre.
-- Evite o abuso de um bug ReHLDS (o servidor desaparece da lista da mundial quando e pausado)  apenas quando não há uma match em andamento.
 - A mudança de model durante uma partida subtrai 1 da pontuação. (Opcional, por padrão está activado).
 - Bloquear o acesso aos jogadores que têm o jogo através do compartilhamento de bibliotecas.
 - Spawns aleatórias (Opcional, por padrão está desabilitado).

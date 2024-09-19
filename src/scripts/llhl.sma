@@ -22,7 +22,6 @@
     - Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
     - Simple OpenGF32 and AGFix detection (Through cheat commands. Optional, enabled by default)
     - Take screenshots at map end and occasionally when a player dies
-    - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
@@ -228,12 +227,6 @@ public plugin_init() {
         server_exec();
         pause("ad");
         return;
-    }
-
-    // Only ReHLDS
-    if (cvar_exists("sv_rcon_condebug")) {
-        register_clcmd("agpause", "CmdAgpauseRehldsHook");
-        server_print("%L", LANG_SERVER, "LLHL_REHLDS_DETECTED", PLUGIN_ACRONYM);
     }
 
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
@@ -783,20 +776,6 @@ public FixTeamPlayModelLen(id, info, model[]) {
         return 1;
     }
 	return 0;
-}
-
-public CmdAgpauseRehldsHook(id) {
-    if (get_playersnum() == 1 && gGameState == GAME_IDLE) {
-        new name[32], authID[32], formatted[32], fileName[32];
-        new timestamp = get_systime();
-        format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
-        formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
-        get_user_name(id, name, charsmax(name));
-        get_user_authid(id, authID, charsmax(authID));
-        log_to_file(fileName, "%L", LANG_SERVER, "LLHL_REHLDS_XPLOIT", PLUGIN_ACRONYM, name, authID);
-        return PLUGIN_HANDLED;
-    }
-    return PLUGIN_CONTINUE;
 }
 
 public CvarHLTVAllowedHook(pcvar, const old_value[], const new_value[]) {

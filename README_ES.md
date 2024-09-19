@@ -18,7 +18,6 @@ Si tienes algún problema en tu servidor, antes de abrir una issue o contactarme
 - Capacidades de bloqueo de nukes (Lampgauss, ghostmine, cohetes, etc)
 - Detección simple de OpenGF32 y AGFix (Mediante comandos del cheat. Opcional, por defecto está activado).
 - Toma screenshots al termino de un mapa y ocasionalmente cuando un jugador muere.
-- Se evita el abuso de un bug de ReHLDS (el servidor desaparece de la lista mundial cuando está pausado) solo cuando no hay una partida en curso.
 - Cambiar de model durante una partida resta 1 de la puntuación. (Opcional, por defecto está activado).
 - Bloquear el acceso a los jugadores que tengan el juego vía prestamo familiar. (Opcional, por defecto está desactivado).
 - Spawns aleatorias (Opcional, por defecto está desactivado).

@@ -19,7 +19,6 @@ If you have any problem in your server, before opening an issue or contacting me
 - Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
 - Simple OpenGF32 and AGFix detection (Through cheat commands. Optional, enabled by default).
 - Take screenshots at map end and occasionally when a player dies.
-- Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
 - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
 - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
 - Random spawns (Optional, disabled by default).
