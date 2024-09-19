@@ -123,7 +123,8 @@
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE,
-    TASK_CHEATCHECKER
+    TASK_CHEATCHECKER,
+    TASK_MM_START_MATCH
 };
 
 enum _:LLHLFile {
@@ -1195,6 +1196,9 @@ public MatchManagerStartMatch(id) {
                     if ((target = find_player("k", str_to_num(key)))) {
                         TrieIterGetString(iterator, value, charsmax(value), valueLength);
                         if (!equali(value, MM_NO_TEAM)) {
+                            if (hl_get_user_spectator(target)) {
+                                client_cmd(target, "spectate");
+                            }
                             strtolower(value);
                             server_cmd("agforceteamup #%d %s", get_user_userid(target), value);
                         } else {
@@ -1205,14 +1209,18 @@ public MatchManagerStartMatch(id) {
                 }
             }
             CleanMenuData();
-            server_cmd("agstart");
             client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_STARTING");
             TrieIterDestroy(iterator);
+            set_task(0.1, "TaskMatchManagerAgstart", TASK_MM_START_MATCH);
         } else {
             client_print(id, print_chat, "%l", "LLHL_MM_INVALID_PLAYER_COUNT");
             DisplayMatchManagerMenu(id);
         }
     }
+}
+
+public TaskMatchManagerAgstart() {
+    server_cmd("agstart");
 }
 
 public MatchManagerAbortMatch(id) {
