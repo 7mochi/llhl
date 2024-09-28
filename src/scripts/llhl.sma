@@ -1,57 +1,67 @@
 /*
-    LLHL Gamemode for AG 6.6 and AGMini
-    Version: 2.0-stable
-    Author: FlyingCat
+    LLHL Gamemode for AG 6.6
+    Version: 3.0-stable
+    Author: 7mochi
 
     # Information:
-    This plugin is a port for Adrenaline Gamer 6.6 (And AGMini) from my LLHL gamemode that 
+    This plugin is a port for Adrenaline Gamer 6.6 from my LLHL gamemode that 
     was developed for rtxa's agmodx.
     Unlike my gamemode for agmodx, this one only supports protocol 48.
 
     # Features:
-    - FPS Limiter (Default value is 144)
-    - FOV Limiter (Minimum value is 85, disabled by default)
+    - FPS Limiter (Default value is 144, switchable from 144 to 240 and vice versa, you can toggle between them with the fpslimitmode vote)
+    - FOV Limiter (Minimum value is 85, enabled by default)
     - Records a demo automatically when a match is started (With agstart)
     - /unstuck command (10 seconds cooldown)
     - Check certain sound files, they're the same sounds that are verified in the 
     EHLL gamemode - AG6.6
-    - Be able to destroy other players satchels (Optional, disabled by default)
     - Block nickname changes when a game is in progress (Optional, enabled by default)
     - New intermission mode
     - More than 1 HLTV allowed
     - Force connected HLTV to have a certain delay value as a minimum (Minimum value is 30)
-    - Ghostmine Blocker
-    - Simple OpenGF32 and AGFix detection (Through cheat commands)
+    - Nuke blocking capabilities (Lampgauss, ghostmine, rocket, etc)
+    - Simple OpenGF32 and AGFix detection (Through cheat commands. Optional, enabled by default)
     - Take screenshots at map end and occasionally when a player dies
-    - Avoid abusing a ReHLDS bug (Server disappears from the masterlist when it's' paused) only when there's no game in progress.
     - Changing model during a match subtract 1 from the score. (Optional, enabled by default).
     - Block access to players who have the game via Family Sharing. (Optional, disabled by default).
     - Random spawns (Optional, disabled by default)
     - Blocks location/HP/Weapon/etc messages for spectators
-    - Check for new updates and it will download them automatically.
+    - Block spectators from voting (Optional, enabled by default)
+    - Respawn time are now FPS-independent
+    - Fixes bodies frozen in the air when using high fps
+    - Check for new updates and it will notify you in the server console
     - llhl_match_manager command (For administrators only)
 
     # New cvars:
-    - sv_ag_fpslimit_max_fps "144"
-    - sv_ag_fpslimit_max_detections "2"
-    - sv_ag_min_default_fov_enabled "0"
-    - sv_ag_min_default_fov "85"
-    - sv_ag_cvar_check_interval "1.5"
+    - sv_ag_fps_limit_warnings "2"
+    - sv_ag_fps_limit_check_interval "5.0"
+    - sv_ag_fov_min_enabled "1"
+    - sv_ag_fov_min_check_interval "1.5"
+    - sv_ag_fov_min "85"
+    - sv_ag_respawn_delay "0.75"
     - sv_ag_unstuck_cooldown "10.0"
     - sv_ag_unstuck_start_distance "32"
     - sv_ag_unstuck_max_attempts "64"
-    - sv_ag_destroyable_satchel "0"
-    - sv_ag_destroyable_satchel_hp "1"
     - sv_ag_block_namechange_inmatch "1"
     - sv_ag_block_modelchange_inmatch "1"
     - sv_ag_min_hltv_delay "30.0"
-    - sv_ag_block_ghostmine "1"
+    - sv_ag_nuke_grenade "0"
+    - sv_ag_nuke_crossbow "0"
+    - sv_ag_nuke_rpg "0"
+    - sv_ag_nuke_gauss "1"
+    - sv_ag_nuke_egon "0"
+    - sv_ag_nuke_tripmine "0"
+    - sv_ag_nuke_satchel "0"
+    - sv_ag_nuke_snark "0"
+    - sv_ag_explosion_fix "0"
+    - sv_ag_cheat_cmd_check "1"
     - sv_ag_cheat_cmd_check_interval "5.0"
     - sv_ag_cheat_cmd_max_detections "5"
     - sv_ag_change_model_penalization "1"
     - sv_ag_block_family_sharing "0"
     - sv_ag_random_spawns "0"
     - sv_ag_block_cmd_enhancements "1"
+    - sv_ag_block_vote_spectators "1"
     - sv_ag_steam_api_key ""
     - sv_ag_check_updates "1"
     - sv_ag_check_updates_retrys "3"
@@ -66,7 +76,7 @@
     - Dcarlox: Grammar corrections in the README
     - leynieR: Portuguese Translation.
 
-    Contact: alonso.caychop@tutamail.com or Suisei#1966 (Discord)
+    Contact: alonso.caychop@protonmail.com or _7mochi (Discord)
 */
 
 #include <amxmodx>
@@ -83,9 +93,9 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "2.1-stable"
-#define AUTHOR          "FlyingCat"
-#define GH_API_URL      "https://api.github.com/repos/FlyingCat-X/llhl/tags?per_page=1"
+#define VERSION         "3.0-stable"
+#define AUTHOR          "7mochi"
+#define GH_API_URL      "https://api.github.com/repos/7mochi/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
 
 #pragma semicolon 1
@@ -105,11 +115,6 @@
 #define GAME_STARTING   1
 #define GAME_RUNNING    2
 
-// Is GhostMineBlock loaded?
-#define GMB_NOTLOADED   0
-#define GMB_LOADED      1 // Reserved for future use
-#define GMB_BLOCKED     2 // Reserved for future use
-
 // MM: Match Manager
 #define MM_NO_TEAM      "NO"
 #define MM_BLUE_TEAM    "BLUE"
@@ -118,7 +123,8 @@
 enum (+=103) {
     TASK_CVARCHECKER = 72958,
     TASK_SHOWVENGINE,
-    TASK_CHEATCHECKER
+    TASK_CHEATCHECKER,
+    TASK_MM_START_MATCH
 };
 
 enum _:LLHLFile {
@@ -127,7 +133,6 @@ enum _:LLHLFile {
 }
 
 new gGameState;
-new gGhostMineBlockState;
 new gNumDetections[MAX_PLAYERS + 1];
 new gOldPlayerModel[MAX_PLAYERS + 1][HL_MAX_TEAMNAME_LENGTH];
 new gDeathScreenshotTaken[MAX_PLAYERS + 1];
@@ -135,21 +140,14 @@ new gDetectionScreenshotTaken[MAX_PLAYERS + 1];
 
 // Cvars pointers
 new gCvarAgStartMinPlayers;
-new gCvarMaxFps;
-new gCvarMaxDetections;
-new gCvarMinFovEnabled;
-new gCvarMinFov;
-new gCvarCheckInterval;
 new gCvarUnstuckCooldown;
 new gCvarUnstuckStartDistance;
 new gCvarUnstuckMaxSearchAttempts;
-new gCvarDestroyableSatchel;
-new gCvarDestroyableSatchelHP;
 new gCvarBlockNameChangeInMatch;
 new gCvarBlockModelChangeInMatch;
 new gCvarNumHLTVAllowed;
 new gCvarMinHLTVDelay;
-new gCvarBlockGhostmine;
+new gCvarCheatCmdCheck;
 new gCvarCheatCmdCheckInterval;
 new gCvarCheatCmdMaxDetections;
 new gCvarChangeModelPenalization;
@@ -219,58 +217,33 @@ public plugin_init() {
 
     register_plugin(PLUGIN, VERSION, AUTHOR);
 
-    new gamemode[32];
+    new gamemode[32], serverAGVersion[32];
     get_cvar_string("sv_ag_gamemode", gamemode, charsmax(gamemode));
-
-    // Check if GhostMineBlock is loaded even when the gamemode isn't LLHL
-    if (!cvar_exists("gm_block_on")) {
-        gGhostMineBlockState = GMB_NOTLOADED;
-    } else {
-        gGhostMineBlockState = GMB_LOADED;
-    }
+    get_cvar_string("sv_ag_version", serverAGVersion, charsmax(serverAGVersion));
 
     if (!equali(gamemode, PLUGIN_GAMEMODE)) {
         server_print("%L", LANG_SERVER, "LLHL_CANT_RUN", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
-        // If GhostMineBlock is loaded and the gamemode isn't LLHL, it'll be deactivated
-        if (gGhostMineBlockState == GMB_LOADED) {
-            gGhostMineBlockState = GMB_BLOCKED;
-            set_cvar_num("gm_block_on", 0);
-            server_print("%L", LANG_SERVER, "LLHL_GM_BLOCK_DEACTIVATED", PLUGIN_ACRONYM);
-            // Try to load the default motd
-            server_cmd("motdfile motd.txt", PLUGIN_GAMEMODE);
-            server_exec();
-        }
+        // Try to load the default motd
+        server_cmd("motdfile motd.txt");
+        server_exec();
+        pause("ad");
+        return;
+    } else if (equali(gamemode, PLUGIN_GAMEMODE) && !equali("6.6llhl", serverAGVersion)) {
+        server_print("%L", LANG_SERVER, "LLHL_CANT_RUN_2", PLUGIN_ACRONYM, PLUGIN, PLUGIN_GAMEMODE);
+        // Try to load the default motd
+        server_cmd("motdfile motd.txt");
+        server_exec();
         pause("ad");
         return;
     }
 
-    // Only ReHLDS
-    if (cvar_exists("sv_rcon_condebug")) {
-        register_clcmd("agpause", "CmdAgpauseRehldsHook");
-        server_print("%L", LANG_SERVER, "LLHL_REHLDS_DETECTED", PLUGIN_ACRONYM);
-    }
-
     gCvarAgStartMinPlayers = get_cvar_pointer("sv_ag_start_minplayers");
-
-    // FPS Limiter
-    gCvarMaxFps = create_cvar("sv_ag_fpslimit_max_fps", "144");
-    gCvarMaxDetections = create_cvar("sv_ag_fpslimit_max_detections", "2");
-
-    // Mininum Default Fov Allowed (Disabled by default)
-    gCvarMinFovEnabled = create_cvar("sv_ag_min_default_fov_enabled", "0");
-    gCvarMinFov = create_cvar("sv_ag_min_default_fov", "85");
-
-    // CVAR Checker Interval (FPS and Fov)
-    gCvarCheckInterval = create_cvar("sv_ag_cvar_check_interval", "1.5");
 
     // Unstuck command
     gCvarUnstuckCooldown = create_cvar("sv_ag_unstuck_cooldown", "10.0");
     gCvarUnstuckStartDistance = create_cvar("sv_ag_unstuck_start_distance", "32");
     gCvarUnstuckMaxSearchAttempts = create_cvar("sv_ag_unstuck_max_attempts", "64");
 
-    // Destroyable Satchel
-    gCvarDestroyableSatchel =  create_cvar("sv_ag_destroyable_satchel", "0");
-    gCvarDestroyableSatchelHP = create_cvar("sv_ag_destroyable_satchel_hp", "1");
 
     // Block name change (Only spectators) log in match
     gCvarBlockNameChangeInMatch = create_cvar("sv_ag_block_namechange_inmatch", "1");
@@ -283,6 +256,7 @@ public plugin_init() {
     gCvarMinHLTVDelay = create_cvar("sv_ag_min_hltv_delay", "30.0");
 
     // Simple OpenGF32 and AGFix Detection
+    gCvarCheatCmdCheck = create_cvar("sv_ag_cheat_cmd_check", "1");
     gCvarCheatCmdCheckInterval = create_cvar("sv_ag_cheat_cmd_check_interval", "5.0");
     gCvarCheatCmdMaxDetections = create_cvar("sv_ag_cheat_cmd_max_detections", "5");
 
@@ -299,10 +273,6 @@ public plugin_init() {
 
     gGameState = GAME_IDLE;
 
-    if (gGhostMineBlockState == GMB_LOADED) {
-        gCvarBlockGhostmine = create_cvar("sv_ag_block_ghostmine", "1");
-    }
-
     // Check updates from Github Repo
     gCvarCheckUpdates = create_cvar("sv_ag_check_updates", "1");
     gCvarCheckUpdatesRetrys = create_cvar("sv_ag_check_updates_retrys", "3");
@@ -316,13 +286,6 @@ public plugin_init() {
     set_cvar_num("sv_proxies", get_pcvar_num(gCvarNumHLTVAllowed));
     hook_cvar_change(gCvarNumHLTVAllowed, "CvarHLTVAllowedHook");
     hook_cvar_change(get_cvar_pointer("sv_proxies"), "CvarSVProxiesHook");
-
-    if (cvar_exists("sv_ag_block_ghostmine")) {
-        // Reload GhostMineBlock original cvar
-        set_cvar_num("gm_block_on", get_pcvar_num(gCvarBlockGhostmine));
-        hook_cvar_change(gCvarBlockGhostmine, "CvarGhostMineHook");
-        hook_cvar_change(get_cvar_pointer("gm_block_on"), "MetaCvarGhostMineHook");
-    }
     
     gSpawnOrigins = ArrayCreate(3);
     gSpawnAngles = ArrayCreate(3);
@@ -349,12 +312,14 @@ public plugin_init() {
     register_message(get_user_msgid("Countdown"), "FwMsgCountdown");
     register_message(get_user_msgid("Settings"), "FwMsgSettings");
     register_message(get_user_msgid("Vote"), "FwMsgVote");
+    register_message(get_user_msgid("FpsWarning"), "FwFpsWarning");
+    register_message(get_user_msgid("FpsKick"), "FwFpsKick");
+    register_message(get_user_msgid("FovKick"), "FwFovKick");
 
     register_message(SVC_INTERMISSION, "FwMsgIntermission");
 
     register_event("DeathMsg", "EventDeathMsg", "ad");
 
-    register_forward(FM_SetModel, "FwSetModel");
     register_forward(FM_ClientUserInfoChanged, "FwClientUserInfoChangedPre", 0);
     register_forward(FM_StartFrame, "FwStartFrame");
     register_forward(FM_GetGameDescription, "FwGameDescription");
@@ -362,8 +327,6 @@ public plugin_init() {
     for (new i; i < sizeof gConsistencySoundFiles; i++) {
         force_unmodified(force_exactfile, {0,0,0}, {0,0,0}, gConsistencySoundFiles[i]);
     }
-
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun");
 
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
 
@@ -386,6 +349,8 @@ public plugin_init() {
         gCheckUpdatesNumRetrys = 0;
         ConnectGithubAPI();
     }
+
+    server_print("%L", LANG_SERVER, "LLHL_INITIALIZED", PLUGIN_ACRONYM);
 }
 
 public inconsistent_file(id, const filename[], reason[64]) {
@@ -444,6 +409,7 @@ public client_putinserver(id) {
     }
     // Workaround for first spawn at join
     HamPlayerSpawnPost(id);
+    set_task(10.0, "ShowFpsVoteAdvertisement", id);
 }
 
 public client_authorized(id) {
@@ -455,40 +421,43 @@ public client_authorized(id) {
 public client_command(id) {
     new command[64];
     read_argv(0, command, charsmax(command));
-    if (equali(command, "preCheck")) {
-        gFirstCheatValidation[id] = true;
-        gSecondCheatValidation[id] = false;
-        return PLUGIN_HANDLED;
-    } else if (IsCheatCommand(command)) {
-        if (gFirstCheatValidation[id]) {
-            gSecondCheatValidation[id] = true;
+
+    if (get_pcvar_num(gCvarCheatCmdCheck)) {
+        if (equali(command, "preCheck")) {
+            gFirstCheatValidation[id] = true;
+            gSecondCheatValidation[id] = false;
+            return PLUGIN_HANDLED;
+        } else if (IsCheatCommand(command)) {
+            if (gFirstCheatValidation[id]) {
+                gSecondCheatValidation[id] = true;
+                return PLUGIN_HANDLED;
+            }
+        } else if (equali(command, "postCheck")) {
+            if (gFirstCheatValidation[id] && !gSecondCheatValidation[id]) {
+                gCheatNumDetections[id]++;
+                gFirstCheatValidation[id] = false;
+                gSecondCheatValidation[id] = false;
+                new name[32], authID[32], formatted[32], fileName[32];
+                new timestamp = get_systime();
+                format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
+                formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
+                get_user_name(id, name, charsmax(name));
+                get_user_authid(id, authID, charsmax(authID));
+                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCommandSended, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
+
+                if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
+                    log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
+                    if (!gDetectionScreenshotTaken[id] && random_num(69, 70) == 69) {
+                        if (gGameState == GAME_RUNNING) {
+                            TakeScreenshot(id);
+                            gDetectionScreenshotTaken[id] = 1;
+                        }
+                    }
+                    gCheatNumDetections[id] = 0;
+                }
+            }
             return PLUGIN_HANDLED;
         }
-    } else if (equali(command, "postCheck")) {
-        if (gFirstCheatValidation[id] && !gSecondCheatValidation[id]) {
-            gCheatNumDetections[id]++;
-            gFirstCheatValidation[id] = false;
-            gSecondCheatValidation[id] = false;
-            new name[32], authID[32], formatted[32], fileName[32];
-            new timestamp = get_systime();
-            format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
-            formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
-            get_user_name(id, name, charsmax(name));
-            get_user_authid(id, authID, charsmax(authID));
-            log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_POSSIBLE_DETECTION", PLUGIN_ACRONYM, name, authID, gCommandSended, gCheatNumDetections[id], get_pcvar_num(gCvarCheatCmdMaxDetections));
-
-            if (gCheatNumDetections[id] >= get_pcvar_num(gCvarCheatCmdMaxDetections)) {
-                log_to_file(fileName, "%L", LANG_SERVER, "LLHL_SCD_DETECTION", PLUGIN_ACRONYM, name, authID, gCheatNumDetections[id]);
-                if (!gDetectionScreenshotTaken[id] && random_num(69, 70) == 69) {
-                    if (gGameState == GAME_RUNNING) {
-                        TakeScreenshot(id);
-                        gDetectionScreenshotTaken[id] = 1;
-                    }
-                }
-                gCheatNumDetections[id] = 0;
-            }
-        }
-        return PLUGIN_HANDLED;
     }
     return PLUGIN_CONTINUE;
 }
@@ -517,6 +486,10 @@ public HamPlayerSpawnPost(id) {
 
 public IsSpawnValid(id, Float:origin[3]) {
 	return (trace_hull(origin, (get_user_flags(id) & FL_DUCKING ? HULL_HEAD : HULL_HUMAN), id, DONT_IGNORE_MONSTERS) & 2) ? 0 : 1;
+}
+
+public ShowFpsVoteAdvertisement(id) {
+    client_print(id, print_chat, "%l", "LLHL_FPS_LIMIT_MODE_AD", PLUGIN_ACRONYM);
 }
 
 // Called every second during the agstart countdown
@@ -585,6 +558,51 @@ public FwMsgVote(id) {
     }
 }
 
+public FwFpsWarning(id, dest, ent) {
+    static warnings, fpsLimit;
+    warnings = get_msg_arg_int(1);
+    fpsLimit = get_msg_arg_int(2);
+
+    client_print(ent, print_chat, "%l", "FPSL_WARNING_MSG", warnings, fpsLimit);
+    return PLUGIN_HANDLED;
+}
+
+public FwFpsKick(id, dest, ent) {
+    static player, username[MAX_NAME_LENGTH + 1], fpsLimit;
+    player = get_msg_arg_int(1);
+    fpsLimit = get_msg_arg_int(2);
+
+    if (!is_user_connected(player))
+        return PLUGIN_HANDLED;
+
+    get_user_name(player, username, charsmax(username));
+    // TODO: This message is sent twice, probably because the forward is being executed very quickly in player PostThink()
+    log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", username, fpsLimit);
+    client_print(0, print_chat, "%l", "FPSL_KICK_MSG", username, fpsLimit);
+
+    server_cmd("kick #%d ^"%L^"", get_user_userid(player), player, "FPSL_KICK", fpsLimit);
+
+    return PLUGIN_HANDLED;
+}
+
+public FwFovKick(id, dest, ent) {
+    static player, username[MAX_NAME_LENGTH + 1], fovLimit;
+    player = get_msg_arg_int(1);
+    fovLimit = get_msg_arg_int(2);
+
+    if (!is_user_connected(player))
+        return PLUGIN_HANDLED;
+
+    get_user_name(player, username, charsmax(username));
+    // TODO: This message is sent twice, probably because the forward is being executed very quickly in player PostThink()
+    log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", username, fovLimit);
+    client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", username, fovLimit);
+
+    server_cmd("kick #%d ^"%L^"", get_user_userid(player), player, "MINFOV_KICK", fovLimit);
+
+    return PLUGIN_HANDLED;
+}
+
 public FwMsgIntermission(id) {
     gActualServerFPS = get_global_float(GL_frametime);
     client_cmd(0, "stop;wait;wait;+showscores");
@@ -598,7 +616,7 @@ public FwMsgIntermission(id) {
 public TaskPreIntermission() {
     // Show vEngine
     set_dhudmessage(0, 100, 200, -1.0, -0.125, 0, 0.0, 99.0);
-    show_dhudmessage(0, "%s v%s^n----------------------^nMax Player FPS Allowed: %i^nHLTV Allowed: %i^nServer fps: %.1f^nGhostmine Blocker: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarMaxFps), get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), !cvar_exists("sv_ag_block_ghostmine") ? "Not available" : get_pcvar_num(gCvarBlockGhostmine) ? "On" : "Off");
+    show_dhudmessage(0, "%s v%s^n----------------------^nHLTV Allowed: %i^nServer fps: %.1f^nCheat check: %s", PLUGIN_ACRONYM, VERSION, get_pcvar_num(gCvarNumHLTVAllowed), (1.0 / gActualServerFPS), get_pcvar_num(gCvarCheatCmdCheck) ? "On" : "Off");
     client_cmd(0, "wait;wait;snapshot");
 }
 
@@ -705,72 +723,12 @@ public CheckHLTVDelay(id) {
     }
 }
 
-public CvarCheckRun() {
-    static players[MAX_PLAYERS], pCount;
-    get_players(players, pCount, "c");
-    for (new i = 0; i < pCount; i++) {
-        if (is_user_hltv(players[i])) {
-            CheckHLTVDelay(players[i]);
-        } else if (!hl_get_user_spectator(players[i])) {
-            query_client_cvar(players[i], "fps_max", "FpsCheckReturn");
-            if (get_pcvar_num(gCvarMinFovEnabled)) {
-                query_client_cvar(players[i], "default_fov", "FovCheckReturn");
-            }
-        }
-    }
-    set_task(floatmax(1.0, get_pcvar_float(gCvarCheckInterval)), "CvarCheckRun", TASK_CVARCHECKER);
-}
-
-public FpsCheckReturn(id, const cvar[], const value[]) {
-    if (equali(value, "Bad CVAR request")) {
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
-    } else if (equali(cvar, "fps_max") && str_to_num(value) > max(100, get_pcvar_num(gCvarMaxFps))) {
-        console_cmd(id, "^"FpS_MaX^" %d", max(100, get_pcvar_num(gCvarMaxFps)));
-        if (++gNumDetections[id] < get_pcvar_num(gCvarMaxDetections)) {
-            client_print(id, print_chat, "%L", id, "FPSL_WARNING_MSG", max(100, get_pcvar_num(gCvarMaxFps)));
-        } else {
-            static name[MAX_NAME_LENGTH];
-            get_user_name(id, name, charsmax(name));
-            server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "FPSL_KICK", get_pcvar_num(gCvarMaxFps));
-            log_amx("%L", LANG_SERVER, "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
-            client_print(0, print_chat, "%l", "FPSL_KICK_MSG", name, get_pcvar_num(gCvarMaxFps));
-        }
-    }
-}
-
-public FovCheckReturn(id, const cvar[], const value[]) {
-    if (equali(value, "Bad CVAR request")) {
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "CVAR_PROTECTOR_KICK");
-    } else if (equali(cvar, "default_fov") && str_to_num(value) < min(85, get_pcvar_num(gCvarMinFov))) {
-        static name[MAX_NAME_LENGTH];
-        get_user_name(id, name, charsmax(name));
-        console_cmd(id, "default_fov %d", 90);
-        server_cmd("kick #%d ^"%L^"", get_user_userid(id), id, "MINFOV_KICK", get_pcvar_num(gCvarMinFov));
-        log_amx("%L", LANG_SERVER, "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
-        client_print(0, print_chat, "%l", "MINFOV_KICK_MSG", name, get_pcvar_num(gCvarMinFov));
-    }
-}
-
 public CheatCommandRun() {
-    copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
-    client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
+    if (get_pcvar_num(gCvarCheatCmdCheck)) {
+        copy(gCommandSended, charsmax(gCommandSended), gCheatsCommands[random_num(0, charsmax(gCheatsCommands))]);
+        client_cmd(0, "preCheck;%s;postCheck", gCommandSended);
+    }
     set_task(floatmax(1.0, get_pcvar_float(gCvarCheatCmdCheckInterval)), "CheatCommandRun", TASK_CHEATCHECKER);
-}
-
-public FwSetModel(entid, model[]) {
-    if (!get_pcvar_num(gCvarDestroyableSatchel) || !pev_valid(entid) || !equal(model, "models/w_satchel.mdl"))
-        return FMRES_IGNORED;
-
-    static id;
-    id = pev(entid, pev_owner);
-
-    if (!id || !is_user_connected(id) || !is_user_alive(id))
-        return FMRES_IGNORED;
-
-    new Float:health = get_pcvar_float(gCvarDestroyableSatchelHP);
-    set_pev(entid, pev_health, health);
-    set_pev(entid, pev_takedamage, DAMAGE_YES);
-    return FMRES_IGNORED;
 }
 
 public FwClientUserInfoChangedPre(id, info) {
@@ -830,34 +788,12 @@ public FixTeamPlayModelLen(id, info, model[]) {
 	return 0;
 }
 
-public CmdAgpauseRehldsHook(id) {
-    if (get_playersnum() == 1 && gGameState == GAME_IDLE) {
-        new name[32], authID[32], formatted[32], fileName[32];
-        new timestamp = get_systime();
-        format_time(formatted, charsmax(formatted), "%d%m%Y", timestamp);
-        formatex(fileName, charsmax(fileName), "llhl_detections_%s.log", formatted);
-        get_user_name(id, name, charsmax(name));
-        get_user_authid(id, authID, charsmax(authID));
-        log_to_file(fileName, "%L", LANG_SERVER, "LLHL_REHLDS_XPLOIT", PLUGIN_ACRONYM, name, authID);
-        return PLUGIN_HANDLED;
-    }
-    return PLUGIN_CONTINUE;
-}
-
 public CvarHLTVAllowedHook(pcvar, const old_value[], const new_value[]) {
     set_cvar_string("sv_proxies", new_value);
 }
 
 public CvarSVProxiesHook(pcvar, const old_value[], const new_value[]) {
     set_pcvar_string(gCvarNumHLTVAllowed, new_value);
-}
-
-public CvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
-    set_cvar_string("gm_block_on", new_value);
-}
-
-public MetaCvarGhostMineHook(pcvar, const old_value[], const new_value[]) {
-    set_pcvar_string(gCvarBlockGhostmine, new_value);
 }
 
 public CvarCheatCmdIntervalHook(pcvar, const old_value[], const new_value[]) {
@@ -1107,6 +1043,9 @@ public DisplayMatchManagerMenu(id) {
         formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_4");
         menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
 
+        formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_ITEM_MAIN_5");
+        menu_additem(managerMenu, multilangString, "", ADMIN_BAN);
+
         menu_display(id, managerMenu, 0);
     } else {
         client_print(id, print_chat, "%l", "LLHL_MM_MENU_IN_USE");
@@ -1121,11 +1060,15 @@ public MatchManagerHandler(id, menu, item) {
             return PLUGIN_HANDLED;
         }
         case 1: {
-            MatchManagerAssignPlayersMenu(id);
+            MatchManagerAssignPlayersMenu(id, 0);
             return PLUGIN_HANDLED;
         }
         case 2: {
             MatchManagerStartMatch(id);
+            return PLUGIN_HANDLED;
+        }
+        case 3: {
+            MatchManagerAbortMatch(id);
             return PLUGIN_HANDLED;
         }
     }
@@ -1165,7 +1108,7 @@ public MatchManagerVersusTypeHandler(id, menu, item) {
     return PLUGIN_HANDLED;
 }
 
-public MatchManagerAssignPlayersMenu(id) {
+public MatchManagerAssignPlayersMenu(id, page) {
     new multilangString[64];
 
     formatex(multilangString, charsmax(multilangString), "%L", LANG_PLAYER, "LLHL_MM_OPT_3_TITLE");
@@ -1194,16 +1137,26 @@ public MatchManagerAssignPlayersMenu(id) {
     }
     TrieIterDestroy(iterator);
 
-    menu_display(id, playersMenu, 0);
+    menu_display(id, playersMenu, page);
 }
 
 public MatchManagerAssignPlayersHandler(id, menu, item) {
-    if (item == MENU_EXIT) {
-        menu_destroy(menu);
-        DisplayMatchManagerMenu(id);
-        return PLUGIN_HANDLED;
-	}
+    switch (item) {
+        case MENU_EXIT: {
+            menu_destroy(menu);
+            DisplayMatchManagerMenu(id);
+        }
+        default: {
+            MatchManagerHandlePlayerTeamChange(id, menu, item);
+            menu_destroy(menu);
+            MatchManagerAssignPlayersMenu(id, item / 7); // There are 7 items per page
+        }
+    }
 
+    return PLUGIN_HANDLED;
+}
+
+public MatchManagerHandlePlayerTeamChange(id, menu, item) {
     new data[6], name[64];
     new access, itemCallback;
     
@@ -1219,18 +1172,14 @@ public MatchManagerAssignPlayersHandler(id, menu, item) {
     } else if (equali(team, MM_RED_TEAM)) {
         TrieSetString(gMMUserIDPlayers, data, MM_NO_TEAM);
     }
-
-    menu_destroy(menu);
-    MatchManagerAssignPlayersMenu(id);
-    return PLUGIN_HANDLED;
 }
 
 public MatchManagerStartMatch(id) {
     if (!gMMVersusType[0]) {
         client_print(id, print_chat, "%l", "LLHL_MM_NO_MATCH_TYPE");
         DisplayMatchManagerMenu(id);
-    } else if (gGameState == GAME_STARTING) {
-        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_STARTING");
+    } else if (gGameState == GAME_STARTING || gGameState == GAME_RUNNING) {
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_RUNNING");
         DisplayMatchManagerMenu(id);
     } else {
         if (GetPlayersNumInTeam(MM_BLUE_TEAM) == str_to_num(gMMVersusType) && GetPlayersNumInTeam(MM_RED_TEAM) == str_to_num(gMMVersusType)) {
@@ -1244,25 +1193,41 @@ public MatchManagerStartMatch(id) {
                     if ((target = find_player("k", str_to_num(key)))) {
                         TrieIterGetString(iterator, value, charsmax(value), valueLength);
                         if (!equali(value, MM_NO_TEAM)) {
-                            strtolower(value);
-                            client_cmd(target, "model %s", value);
-                        } else {
-                            if (!hl_get_user_spectator(id)) {
+                            if (hl_get_user_spectator(target)) {
                                 client_cmd(target, "spectate");
                             }
+                            strtolower(value);
+                            server_cmd("agforceteamup #%d %s", get_user_userid(target), value);
+                        } else {
+                            server_cmd("agforcespectator #%d", get_user_userid(target));
                         }
                     }
                     TrieIterNext(iterator);
                 }
             }
             CleanMenuData();
-            server_cmd("agstart");
-            
+            client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_STARTING");
             TrieIterDestroy(iterator);
+            set_task(0.1, "TaskMatchManagerAgstart", TASK_MM_START_MATCH);
         } else {
             client_print(id, print_chat, "%l", "LLHL_MM_INVALID_PLAYER_COUNT");
             DisplayMatchManagerMenu(id);
         }
+    }
+}
+
+public TaskMatchManagerAgstart() {
+    server_cmd("agstart");
+}
+
+public MatchManagerAbortMatch(id) {
+    if (gGameState == GAME_IDLE) {
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_IS_IDLE");
+        DisplayMatchManagerMenu(id);
+    } else {
+        DisplayMatchManagerMenu(id);
+        server_cmd("agabort");
+        client_print(id, print_chat, "%l", "LLHL_MM_MATCH_ABORTED");
     }
 }
 
