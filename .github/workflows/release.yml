@@ -195,9 +195,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          llhl-${{github.ref_name}}-linux-lite.zip
-          llhl-${{github.ref_name}}-linux-full.zip
-          llhl-${{github.ref_name}}-windows-lite.zip
-          llhl-${{github.ref_name}}-windows-full.zip
+          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-linux-lite.zip
+          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-linux-full.zip
+          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-windows-lite.zip
+          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-windows-full.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
