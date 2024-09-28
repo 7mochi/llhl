@@ -195,6 +195,9 @@ jobs:
       run: |
         pwd
         ls -la
+        ls ag
+        cd ..
+        ls -la
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
