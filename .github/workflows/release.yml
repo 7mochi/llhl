@@ -191,13 +191,18 @@ jobs:
       with:
         name: llhl-${{github.ref_name}}-windows-full
 
+    - name: Debug - Print working directory and list files
+      run: |
+        pwd
+        ls -la
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-linux-lite.zip
-          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-linux-full.zip
-          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-windows-lite.zip
-          /home/runner/work/llhl/llhl/llhl-${{ github.ref_name }}-windows-full.zip
+           ./llhl/llhl-${{ github.ref_name }}-linux-lite.zip
+           ./llhl/llhl-${{ github.ref_name }}-linux-full.zip
+           ./llhl/llhl-${{ github.ref_name }}-windows-lite.zip
+           ./llhl/llhl-${{ github.ref_name }}-windows-full.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
