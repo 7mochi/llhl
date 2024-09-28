@@ -215,13 +215,6 @@ jobs:
         cd llhl-${{github.ref_name}}-windows-full
         zip -r ../llhl-${{github.ref_name}}-windows-full.zip *
 
-    - name: Debug - Print working directory and list files
-      run: |
-        pwd
-        ls -la
-        cd ..
-        ls -la
-
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
