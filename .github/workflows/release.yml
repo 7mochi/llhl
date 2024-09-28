@@ -175,27 +175,50 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: llhl-${{github.ref_name}}-linux-lite
+        path: llhl-${{github.ref_name}}-linux-lite
 
     - name: Download Linux artifact (Full version)
       uses: actions/download-artifact@v3
       with:
         name: llhl-${{github.ref_name}}-linux-full
+        path: llhl-${{github.ref_name}}-linux-full
 
     - name: Download Windows artifact (Lite version)
       uses: actions/download-artifact@v3
       with:
         name: llhl-${{github.ref_name}}-windows-lite
+        path: llhl-${{github.ref_name}}-windows-lite
 
     - name: Download Windows artifact (Full version)
       uses: actions/download-artifact@v3
       with:
         name: llhl-${{github.ref_name}}-windows-full
+        path: llhl-${{github.ref_name}}-windows-full
+    
+    - name: Zip Linux artifact (Lite version)
+      run: |
+        cd llhl-${{github.ref_name}}-linux-lite
+        zip -r ../llhl-${{github.ref_name}}-linux-lite.zip *
+    
+    - name: Zip Linux artifact (Full version)
+      run: |
+        cd ../llhl-${{github.ref_name}}-linux-full
+        zip -r ../llhl-${{github.ref_name}}-linux-full.zip *
+    
+    - name: Zip Windows artifact (Lite version)
+      run: |
+        cd ../llhl-${{github.ref_name}}-windows-lite
+        Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows-lite.zip
+    
+    - name: Zip Windows artifact (Full version)
+      run: |
+        cd ../llhl-${{github.ref_name}}-windows-full
+        Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows-full.zip
 
     - name: Debug - Print working directory and list files
       run: |
         pwd
         ls -la
-        ls ag
         cd ..
         ls -la
 
@@ -203,9 +226,9 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-           ./llhl/llhl-${{ github.ref_name }}-linux-lite.zip
-           ./llhl/llhl-${{ github.ref_name }}-linux-full.zip
-           ./llhl/llhl-${{ github.ref_name }}-windows-lite.zip
-           ./llhl/llhl-${{ github.ref_name }}-windows-full.zip
+           ./llhl-${{ github.ref_name }}-linux-lite.zip
+           ./llhl-${{ github.ref_name }}-linux-full.zip
+           ./llhl-${{ github.ref_name }}-windows-lite.zip
+           ./llhl-${{ github.ref_name }}-windows-full.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
