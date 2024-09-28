@@ -202,17 +202,17 @@ jobs:
     
     - name: Zip Linux artifact (Full version)
       run: |
-        cd ../llhl-${{github.ref_name}}-linux-full
+        cd llhl-${{github.ref_name}}-linux-full
         zip -r ../llhl-${{github.ref_name}}-linux-full.zip *
     
     - name: Zip Windows artifact (Lite version)
       run: |
-        cd ../llhl-${{github.ref_name}}-windows-lite
+        cd llhl-${{github.ref_name}}-windows-lite
         Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows-lite.zip
     
     - name: Zip Windows artifact (Full version)
       run: |
-        cd ../llhl-${{github.ref_name}}-windows-full
+        cd llhl-${{github.ref_name}}-windows-full
         Compress-Archive -Path * -DestinationPath ../llhl-${{github.ref_name}}-windows-full.zip
 
     - name: Debug - Print working directory and list files
