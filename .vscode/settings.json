@@ -3,6 +3,7 @@
     "editor.insertSpaces": true,
     "amxxpawn.compiler.includePaths": [
         "${workspaceRoot}/.compiler/include",
-        "${workspaceRoot}/assets/addons/amxmodx/scripting/include"
+        "${workspaceRoot}/assets/addons/amxmodx/scripting/include",
+        "E:/win_apps/amxmodx/scripting/include"
     ]
 }
