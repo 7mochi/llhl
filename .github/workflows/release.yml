@@ -62,7 +62,6 @@ jobs:
       run: |
         mkdir -p llhl/dist/ag/dlls
         cp llhl-agmod/dlls/ag_i386.so llhl/dist/ag/dlls/ag.so
-        cp llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
     
     - name: Create folder for full release
       run: |
@@ -138,7 +137,6 @@ jobs:
         run: |
           mkdir -p llhl/dist/ag/dlls
           Copy-Item llhl-agmod/dlls/msvc/Release/ag.dll llhl/dist/ag/dlls/ag.dll
-          Copy-Item llhl-agmod/network/delta.lst llhl/dist/ag/delta.lst
 
       - name: Create folder for full release
         run: |
