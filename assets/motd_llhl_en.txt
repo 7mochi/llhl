@@ -1,4 +1,4 @@
-Welcome to the LLHL v3.0-stable game mode
+Welcome to the LLHL v3.1-stable game mode
 This gamemode is currently used for the Liga Latinoamericana de Half-Life (LLHL).
 
 -- New features --
@@ -34,7 +34,7 @@ Keep all your screenshots and demos generated with this gamemode.
 An administrator may ask you to upload them.
 
 -- Gamemode information --
-# Version: 3.0-stable
+# Version: 3.1-stable
 # Author: 7mochi (Discord: _7mochi)
 # Repository: https://git.io/jkttq
 # Download: https://github.com/7mochi/llhl/releases/latest

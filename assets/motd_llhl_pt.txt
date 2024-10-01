@@ -1,4 +1,4 @@
-Bem-vindo ao modo de jogo LLHL v3.0-stable.
+Bem-vindo ao modo de jogo LLHL v3.1-stable.
 Este modo de jogo é actualmente utilizado para a Liga Latinoamericana de Half-Life (LLHL).
 
 -- Novas Características --
@@ -35,7 +35,7 @@ Mantenha todas as suas capturas de ecrã e demos geradas com este modo de jogo.
 Um administrador pode pedir-lhe que os carregue.
 
 -- Informação sobre o modo de jogo --
-# Versão: 3.0-stable
+# Versão: 3.1-stable
 # Autor: 7mochi (Discord: _7mochi)
 # Repositório: https://git.io/jkttq
 # Download: https://github.com/7mochi/llhl/releases/latest

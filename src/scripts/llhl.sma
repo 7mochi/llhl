@@ -1,6 +1,6 @@
 /*
     LLHL Gamemode for AG 6.6
-    Version: 3.0-stable
+    Version: 3.1-stable
     Author: 7mochi
 
     # Information:
@@ -93,7 +93,7 @@
 #define PLUGIN          "Liga Latinoamericana de Half Life"
 #define PLUGIN_ACRONYM  "LLHL"
 #define PLUGIN_GAMEMODE "llhl"
-#define VERSION         "3.0-stable"
+#define VERSION         "3.1-stable"
 #define AUTHOR          "7mochi"
 #define GH_API_URL      "https://api.github.com/repos/7mochi/llhl/tags?per_page=1"
 #define STEAM_API_URL   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=%s&steamid=%s&format=json&appids_filter[0]=70"
